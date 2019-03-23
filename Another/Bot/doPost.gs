@@ -164,10 +164,10 @@ function help(chatId, Id) {
   } else {
     wi = 12;
   }
-  var writer = getValue(2, wi, 5) + "\nКоманды:\n\n";
+  var writer = getValue(2, wi, 5) + "\nГЉГ®Г¬Г Г­Г¤Г»:\n\n";
   while (true) {
     if (getValue(start, wi, 5) != "#") {
-    writer += getValue(start, 10, 5) + " \nШаблон использования: " + getValue(start, wi, 5) + " \n " + getValue(start + 1, wi, 5) + "\n\n";
+    writer += getValue(start, 10, 5) + " \nГГ ГЎГ«Г®Г­ ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГї: " + getValue(start, wi, 5) + " \n " + getValue(start + 1, wi, 5) + "\n\n";
     }
     start += 2;
     if (getValue(start, 10, 5) == "#") {
@@ -178,7 +178,7 @@ function help(chatId, Id) {
 }
 
 function info(chatId, Id) {
-  sendMessage(chatId, "Информация о Вас:\nid: " + Id + "\nUsername: " + getUsername(Id) + "\nName: " + getName(Id) + "\nPermission: " + getPermission(Id) + "\nMode: " + getMode(Id) + "\nAlarm: " + getAlarm(Id));
+  sendMessage(chatId, "Г€Г­ГґГ®Г°Г¬Г Г¶ГЁГї Г® Г‚Г Г±:\nid: " + Id + "\nUsername: " + getUsername(Id) + "\nName: " + getName(Id) + "\nPermission: " + getPermission(Id) + "\nMode: " + getMode(Id) + "\nAlarm: " + getAlarm(Id));
 }
 
 function prepare(chatId, message, Id) {
@@ -198,12 +198,12 @@ function prepare(chatId, message, Id) {
             setBackGround(i, w, NUM, 255, 255, 255);
           }
           setBackGround(newId + 1, w, NUM, 255, 255, 0); 
-          sendMessage(chatId, getName(newId) + " успешно вызван на задачу " + q);
+          sendMessage(chatId, getName(newId) + " ГіГ±ГЇГҐГёГ­Г® ГўГ»Г§ГўГ Г­ Г­Г  Г§Г Г¤Г Г·Гі " + q);
           return;
         }
         w++;
         if (getValue(1, w, NUM) == "#") {
-          sendMessage(chatId, "Таска не найдена!");
+          sendMessage(chatId, "Г’Г Г±ГЄГ  Г­ГҐ Г­Г Г©Г¤ГҐГ­Г !");
           return;
         }
       }
@@ -232,12 +232,12 @@ function call(chatId, message, Id) {
           }
           setBackGround(newId + 1, w, NUM, 0, 255, 0); 
           setValue(newId + 1, 5, NUM, getValue(newId + 1, 4, NUM) + 1);
-          sendMessage(chatId, getName(newId) + " успешно выполнил задачу " + q);
+          sendMessage(chatId, getName(newId) + " ГіГ±ГЇГҐГёГ­Г® ГўГ»ГЇГ®Г«Г­ГЁГ« Г§Г Г¤Г Г·Гі " + q);
           return;
         }
         w++;
         if (getValue(1, w, NUM) == "#") {
-          sendMessage(chatId, "Таска не найдена!");
+          sendMessage(chatId, "Г’Г Г±ГЄГ  Г­ГҐ Г­Г Г©Г¤ГҐГ­Г !");
           return;
         }
       }
@@ -248,12 +248,12 @@ function call(chatId, message, Id) {
 }
 
 function link(chatId) {
-  sendMessage(chatId, "<a href=\"https://docs.google.com/spreadsheets/d/1cLSB7agk9W0uroyQTHgwnmS_ikk36HTUJLbGtmjQpec/edit?usp=sharing\">Link</a>\nДМ: <a href=\"http://neerc.ifmo.ru/wiki/index.php?title=Список_заданий_по_ДМ_2019_весна\">ДЗ</a>, <a href=\"https://docs.google.com/spreadsheets/d/15rOCbXyZVFpBVg34wLKN3j4dzdoVc3kURMFyiqZxa3M/edit#gid=0\">Табличка, </a>/another_dm\n" +
-                   "АиСД: <a href=\"http://neerc.ifmo.ru/teaching/algo/year2018/tasks_36-37_sem2.pdf\">ДЗ</a>, <a href=\"https://docs.google.com/spreadsheets/d/1g3xIvGcPgE5Kch8ZwtDuJ8lmGzarN7QqA3jI8nAqOYY\">Табличка</a>\n" +
-                   "Матан: <a href=\"http://vilenin.narod.ru/Mm/Books/5/book.htm\">ДЗ</a>, <a href=\"https://cloud.mail.ru/public/J9qM/D3kjhHF6u\">Табличка</a>, /another_math\n" +
-                   "Программирование: <a href=\"http://www.kgeorgiy.info/courses/\">ДЗ</a>, <a href=\"https://docs.google.com/spreadsheets/d/e/2PACX-1vQyw-q3t_m9YUMGqk4zCLOdNMoJVtlyVQJv4dBsCTVIxkgNUWlMzZmmAPnad2fXVaY4FU1cJlDzTXtM/pubhtml\">Табличка</a>, <a href=\"https://www.lektorium.tv/course/2282\">Лекции</a>, /another_prog\n" +
-                    "C++: <a href=\"https://github.com/itiviti-cpp/wiki/wiki\">Единая страничка</a>\n" +
-                    "<a href=\"http://neerc.ifmo.ru/lgd.pdf\">Если что-то не осилил, держи в помощь</a>"
+  sendMessage(chatId, "<a href=\"https://docs.google.com/spreadsheets/d/1cLSB7agk9W0uroyQTHgwnmS_ikk36HTUJLbGtmjQpec/edit?usp=sharing\">Link</a>\nГ„ГЊ: <a href=\"http://neerc.ifmo.ru/wiki/index.php?title=Г‘ГЇГЁГ±Г®ГЄ_Г§Г Г¤Г Г­ГЁГ©_ГЇГ®_Г„ГЊ_2019_ГўГҐГ±Г­Г \">Г„Г‡</a>, <a href=\"https://docs.google.com/spreadsheets/d/15rOCbXyZVFpBVg34wLKN3j4dzdoVc3kURMFyiqZxa3M/edit#gid=0\">Г’Г ГЎГ«ГЁГ·ГЄГ , </a>/another_dm\n" +
+                   "ГЂГЁГ‘Г„: <a href=\"http://neerc.ifmo.ru/teaching/algo/year2018/tasks_36-37_sem2.pdf\">Г„Г‡</a>, <a href=\"https://docs.google.com/spreadsheets/d/1g3xIvGcPgE5Kch8ZwtDuJ8lmGzarN7QqA3jI8nAqOYY\">Г’Г ГЎГ«ГЁГ·ГЄГ </a>\n" +
+                   "ГЊГ ГІГ Г­: <a href=\"http://vilenin.narod.ru/Mm/Books/5/book.htm\">Г„Г‡</a>, <a href=\"https://cloud.mail.ru/public/J9qM/D3kjhHF6u\">Г’Г ГЎГ«ГЁГ·ГЄГ </a>, /another_math\n" +
+                   "ГЏГ°Г®ГЈГ°Г Г¬Г¬ГЁГ°Г®ГўГ Г­ГЁГҐ: <a href=\"http://www.kgeorgiy.info/courses/\">Г„Г‡</a>, <a href=\"https://docs.google.com/spreadsheets/d/e/2PACX-1vQyw-q3t_m9YUMGqk4zCLOdNMoJVtlyVQJv4dBsCTVIxkgNUWlMzZmmAPnad2fXVaY4FU1cJlDzTXtM/pubhtml\">Г’Г ГЎГ«ГЁГ·ГЄГ </a>, <a href=\"https://www.lektorium.tv/course/2282\">Г‹ГҐГЄГ¶ГЁГЁ</a>, /another_prog\n" +
+                    "C++: <a href=\"https://github.com/itiviti-cpp/wiki/wiki\">Г…Г¤ГЁГ­Г Гї Г±ГІГ°Г Г­ГЁГ·ГЄГ </a>\n" +
+                    "<a href=\"http://neerc.ifmo.ru/lgd.pdf\">Г…Г±Г«ГЁ Г·ГІГ®-ГІГ® Г­ГҐ Г®Г±ГЁГ«ГЁГ«, Г¤ГҐГ°Г¦ГЁ Гў ГЇГ®Г¬Г®Г№Гј</a>"
                    );
 }
 
@@ -513,6 +513,6 @@ function sendMessage(chatId, message) {
           "method": "post",
           "payload": payload
         }
-        var API_TOKEN = '691478699:AAGFR0YN4vY1FsaMyEXmskcsT4aw5ZwRtbg'
+        var API_TOKEN = 'Hello, put your to this';
         UrlFetchApp.fetch('https://api.telegram.org/bot' + API_TOKEN + '/', data);
 }
