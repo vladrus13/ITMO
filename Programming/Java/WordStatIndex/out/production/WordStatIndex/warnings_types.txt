@@ -1,0 +1,10 @@
+001:
+    Global Error: File not find or not access for file
+002:
+    Global Error: Not access for file or not access for directive (what directive? If I know...)
+003:
+    Global Error: Buffer end, but read not finished
+004:
+    Global Error: Encoding file is failed
+010:
+    Warning: Input number too long.

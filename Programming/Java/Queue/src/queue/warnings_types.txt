@@ -1,0 +1,2 @@
+01:
+    Erase element from empty queue
