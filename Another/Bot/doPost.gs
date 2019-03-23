@@ -64,7 +64,7 @@ function doPost(e) {
            sendMessage(chatId, "Success send: " + message);
         }
       }
-      if (message.indexOf(String("/vlad")) == 0) {
+      if (message.indexOf(String("/lalala")) == 0) {
         sendMessage(chatId, "DO YOU KNOW DE WEY. KNOCK KNOCK KNOCK");
       }
     }
@@ -93,11 +93,11 @@ function parser(message, p_l) {
 }
 
 function setValue(height, wight, sheet, value) {
-  SpreadsheetApp.openById('1cLSB7agk9W0uroyQTHgwnmS_ikk36HTUJLbGtmjQpec').getSheets()[sheet].getRange(height, wight).setValue(value);
+  SpreadsheetApp.openById('').getSheets()[sheet].getRange(height, wight).setValue(value);
 }
 
 function setBackGround(height, wight, sheet, r, g, b) {
-  SpreadsheetApp.openById('1cLSB7agk9W0uroyQTHgwnmS_ikk36HTUJLbGtmjQpec').getSheets()[sheet].getRange(height, wight).setBackgroundRGB(r, g, b);
+  SpreadsheetApp.openById('').getSheets()[sheet].getRange(height, wight).setBackgroundRGB(r, g, b);
 }
 
 function setValueFromAnotherSpread(t, h, wight, v, s) {
@@ -105,7 +105,7 @@ function setValueFromAnotherSpread(t, h, wight, v, s) {
 }
 
 function getValue(height, wight, sheet) {
-  return SpreadsheetApp.openById('1cLSB7agk9W0uroyQTHgwnmS_ikk36HTUJLbGtmjQpec').getSheets()[sheet].getRange(height, wight).getValue();
+  return SpreadsheetApp.openById('').getSheets()[sheet].getRange(height, wight).getValue();
 }
 
 function add(chatId, message, Id) {
@@ -127,7 +127,7 @@ function add(chatId, message, Id) {
     }
   } else {
     // TODO
-    sendMessage(chatId, "Please, write @vladrus13");
+    sendMessage(chatId, "Please, write III");
     return;
   }
 }
@@ -164,10 +164,10 @@ function help(chatId, Id) {
   } else {
     wi = 12;
   }
-  var writer = getValue(2, wi, 5) + "\nКоманды:\n\n";
+  var writer = getValue(2, wi, 5) + "\n:\n\n";
   while (true) {
     if (getValue(start, wi, 5) != "#") {
-    writer += getValue(start, 10, 5) + " \nШаблон использования: " + getValue(start, wi, 5) + " \n " + getValue(start + 1, wi, 5) + "\n\n";
+    writer += getValue(start, 10, 5) + " \n: " + getValue(start, wi, 5) + " \n " + getValue(start + 1, wi, 5) + "\n\n";
     }
     start += 2;
     if (getValue(start, 10, 5) == "#") {
@@ -178,7 +178,7 @@ function help(chatId, Id) {
 }
 
 function info(chatId, Id) {
-  sendMessage(chatId, "Информация о Вас:\nid: " + Id + "\nUsername: " + getUsername(Id) + "\nName: " + getName(Id) + "\nPermission: " + getPermission(Id) + "\nMode: " + getMode(Id) + "\nAlarm: " + getAlarm(Id));
+  sendMessage(chatId, ":\nid: " + Id + "\nUsername: " + getUsername(Id) + "\nName: " + getName(Id) + "\nPermission: " + getPermission(Id) + "\nMode: " + getMode(Id) + "\nAlarm: " + getAlarm(Id));
 }
 
 function prepare(chatId, message, Id) {
@@ -198,12 +198,12 @@ function prepare(chatId, message, Id) {
             setBackGround(i, w, NUM, 255, 255, 255);
           }
           setBackGround(newId + 1, w, NUM, 255, 255, 0); 
-          sendMessage(chatId, getName(newId) + " успешно вызван на задачу " + q);
+          sendMessage(chatId, getName(newId) + "  " + q);
           return;
         }
         w++;
         if (getValue(1, w, NUM) == "#") {
-          sendMessage(chatId, "Таска не найдена!");
+          sendMessage(chatId, "");
           return;
         }
       }
@@ -232,12 +232,12 @@ function call(chatId, message, Id) {
           }
           setBackGround(newId + 1, w, NUM, 0, 255, 0); 
           setValue(newId + 1, 5, NUM, getValue(newId + 1, 4, NUM) + 1);
-          sendMessage(chatId, getName(newId) + " успешно выполнил задачу " + q);
+          sendMessage(chatId, getName(newId) + "  " + q);
           return;
         }
         w++;
         if (getValue(1, w, NUM) == "#") {
-          sendMessage(chatId, "Таска не найдена!");
+          sendMessage(chatId, "!");
           return;
         }
       }
@@ -248,12 +248,7 @@ function call(chatId, message, Id) {
 }
 
 function link(chatId) {
-  sendMessage(chatId, "<a href=\"https://docs.google.com/spreadsheets/d/1cLSB7agk9W0uroyQTHgwnmS_ikk36HTUJLbGtmjQpec/edit?usp=sharing\">Link</a>\nДМ: <a href=\"http://neerc.ifmo.ru/wiki/index.php?title=Список_заданий_по_ДМ_2019_весна\">ДЗ</a>, <a href=\"https://docs.google.com/spreadsheets/d/15rOCbXyZVFpBVg34wLKN3j4dzdoVc3kURMFyiqZxa3M/edit#gid=0\">Табличка, </a>/another_dm\n" +
-                   "АиСД: <a href=\"http://neerc.ifmo.ru/teaching/algo/year2018/tasks_36-37_sem2.pdf\">ДЗ</a>, <a href=\"https://docs.google.com/spreadsheets/d/1g3xIvGcPgE5Kch8ZwtDuJ8lmGzarN7QqA3jI8nAqOYY\">Табличка</a>\n" +
-                   "Матан: <a href=\"http://vilenin.narod.ru/Mm/Books/5/book.htm\">ДЗ</a>, <a href=\"https://cloud.mail.ru/public/J9qM/D3kjhHF6u\">Табличка</a>, /another_math\n" +
-                   "Программирование: <a href=\"http://www.kgeorgiy.info/courses/\">ДЗ</a>, <a href=\"https://docs.google.com/spreadsheets/d/e/2PACX-1vQyw-q3t_m9YUMGqk4zCLOdNMoJVtlyVQJv4dBsCTVIxkgNUWlMzZmmAPnad2fXVaY4FU1cJlDzTXtM/pubhtml\">Табличка</a>, <a href=\"https://www.lektorium.tv/course/2282\">Лекции</a>, /another_prog\n" +
-                    "C++: <a href=\"https://github.com/itiviti-cpp/wiki/wiki\">Единая страничка</a>\n" +
-                    "<a href=\"http://neerc.ifmo.ru/lgd.pdf\">Если что-то не осилил, держи в помощь</a>"
+  sendMessage(chatId, "haha"
                    );
 }
 
@@ -513,6 +508,6 @@ function sendMessage(chatId, message) {
           "method": "post",
           "payload": payload
         }
-        var API_TOKEN = '691478699:AAGFR0YN4vY1FsaMyEXmskcsT4aw5ZwRtbg'
+        var API_TOKEN = 'Hello, put your token to this';
         UrlFetchApp.fetch('https://api.telegram.org/bot' + API_TOKEN + '/', data);
 }
