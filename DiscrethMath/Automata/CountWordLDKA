@@ -1,0 +1,90 @@
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cmath>
+#include <deque>
+#include <string>
+#include <vector>
+#include <cmath>
+#include <queue>
+#include <map>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+#include <queue>
+#include <iomanip>
+#include <bitset>
+#include <cassert>
+#include <random>
+
+typedef long double ld;
+typedef long long ll;
+typedef unsigned long long ull;
+
+using namespace std;
+//#pragma comment (linker, "/STACK:5000000000")
+#define INF (int)2e9;
+#define MOD (int)1e9+7;
+
+//////////////////////////////////////////////////////////////////
+// SYSTEM STARTS
+
+//////////////////////////////////////////////////////////////////
+// UTILS
+
+/////////////////////////////////////////////////////////////////
+// MAIN
+
+vector <vector <int> > g;
+vector <vector <ll> > dp;
+vector <bool> term;
+
+int main() {
+	// begin of my usless prog
+#ifdef _DEBUG
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#else
+	freopen("problem4.in", "r", stdin);
+	freopen("problem4.out", "w", stdout);
+#endif
+	ios_base::sync_with_stdio(NULL);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	int n, m, k, l, u, v;
+	char c;
+	cin >> n >> m >> k >> l;
+	term.resize(n);
+	g.resize(n);
+	dp.resize(n, vector <ll> (l + 1, 0));
+	for (int i = 0; i < k; i++) {
+		cin >> u;
+		u--;
+		term[u] = true;
+	}
+	for (int i = 0; i < m; i++) {
+		cin >> u >> v >> c;
+		v--, u--;
+		g[u].push_back(v);
+	}
+	dp[0][0] = 1;
+	for (int len = 0; len < l; len++) {
+		for (int v = 0; v < n; v++) {
+			if (dp[v][len] != 0) {
+				for (int u : g[v]) {
+					dp[u][len + 1] += dp[v][len];
+					dp[u][len + 1] %= MOD;
+				}
+			}
+		}
+	}
+	ll ans = 0;
+	for (int i = 0; i < n; i++) {
+		ans += (term[i] ? dp[i][l] : 0);
+		ans %= MOD;
+	}
+	cout << ans << endl;
+	return 0;
+}
