@@ -78,6 +78,16 @@
 (def NegateFather (OperationFather. - "negate" (fn [a da] (Negate da))))
 (defn Negate [& args] (OperaProducer. NegateFather args))
 
+;//// SQRT
+(declare Sqrt)
+(def SqrtFather (OperationFather. (fn [x] (Math/sqrt (Math/abs x))) "sqrt" (fn [a da] (Divide (Multiply da a) (Multiply (Constant 2) (Sqrt (Multiply a a a)))))))
+(defn Sqrt [& args] (OperaProducer. SqrtFather args))
+
+;//// SQUARE
+(declare Square)
+(def SquareFather (OperationFather. (fn [x] (* x x)) "square" (fn [a da] (Multiply (Constant 2) da a))))
+(defn Square [& args] (OperaProducer. SquareFather args))
+
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ;//////////////////////////////////       P A R S E R      /////////////////////////////////////////////////////////////
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +99,9 @@
                 "-" Subtract,
                 "*", Multiply,
                 "/", Divide,
-                "negate" Negate
+                "negate" Negate,
+                "sqrt" Sqrt,
+                "square" Square
                 })
 
 (def Variables {
