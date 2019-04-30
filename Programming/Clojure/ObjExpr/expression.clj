@@ -88,6 +88,16 @@
 (def SquareFather (OperationFather. (fn [x] (* x x)) "square" (fn [a da] (Multiply (Constant 2) da a))))
 (defn Square [& args] (OperaProducer. SquareFather args))
 
+;//// SINH
+(declare Cosh)
+(declare Sinh)
+(def SinhFather (OperationFather. (fn [x] (Math/sinh x)) "sinh" (fn [a da] (Multiply da (Cosh a)))))
+(defn Sinh [& args] (OperaProducer. SinhFather args))
+
+;//// COSH
+(def CoshFather (OperationFather. (fn [x] (Math/cosh x)) "cosh" (fn [a da] (Multiply da (Sinh a)))))
+(defn Cosh [& args] (OperaProducer. CoshFather args))
+
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ;//////////////////////////////////       P A R S E R      /////////////////////////////////////////////////////////////
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,7 +111,9 @@
                 "/", Divide,
                 "negate" Negate,
                 "sqrt" Sqrt,
-                "square" Square
+                "square" Square,
+                "sinh" Sinh,
+                "cosh" Cosh
                 })
 
 (def Variables {
