@@ -76,6 +76,8 @@
 (defn Add [& arguments] (BinaryOpera. "+" + arguments (fn [args var] (apply Add (map #(diff % var) args)))))
 (defn Subtract [& arguments] (BinaryOpera. "-" - arguments (fn [args var] (apply Subtract (map #(diff % var) args)))))
 (defn Multiply [& arguments] (BinaryOpera. "*" * arguments (fn [args var] (Add (apply Multiply (diff (first args) var) (rest args)) (if (== (count args) 1) (Constant 0) (Multiply (first args) (diff (apply Multiply (rest args)) var)))))))
+(defn Pow [& arguments] (BinaryOpera. "**" #(Math/pow %1 %2) arguments #()))
+(defn Log [& arguments] (BinaryOpera. "//" #(/ (Math/log (Math/abs %2)) (Math/log (Math/abs %1))) arguments #()))
 (def operations {'+ Add,
                  '- Subtract,
                  '* Multiply,
@@ -83,7 +85,9 @@
                  '& And,
                  (symbol "^") Xor,
                  '| Or,
-                 'negate Negate
+                 'negate Negate,
+                 '** Pow,
+                 (symbol "//") Log
                  })
 
 (defn parseExpression [expr] (cond (number? expr) (Constant expr) (symbol? expr) (Variable (str expr)) :else (apply (operations (first expr)) (map parseExpression (rest expr)))))
@@ -171,6 +175,7 @@
 
 (declare *valueInfix)
 (defn *parse_many [p sign] (+map (partial reduce #(list (first %2) %1 (second %2))) (+seqf cons *whitespaces p (+star (+seq *whitespaces sign *whitespaces p)) *whitespaces)))
+(defn *parse_many_right [p sign] (+map (fn [s] (reduce #(list (second %2) (first %2) %1) (second s) (reverse (first s)))) (+seq *whitespaces (+star (+seq p *whitespaces sign *whitespaces)) p *whitespaces)))
 (defn *Nsymbol [symbols] (fn [input] (if (not (symbols (-value (*symbol input)))) (*symbol input))))
 (defn *Esymbol [symbols] (fn [input] (if (symbols (-value (*symbol input))) (*symbol input))))
 (def *variables (+map symbol (+str (+plus (+char "XYZxyz")))))
@@ -179,17 +184,19 @@
 (def *AndSymbol (*Esymbol #{'&}))
 (def *XorSymbol (*Esymbol #{(symbol "^")}))
 (def *OrSymbol (*Esymbol #{'|}))
+(def *PowOtherSymbol (+map symbol (+str (+or (+seq (+char "/") (+char "/")) (+seq (+char "*") (+char "*"))))))
 
 (def *FSymbol (+map symbol (+str (+seqf cons (+char-not (str *spaces \u0000 (symbol "^") "xyzXYZ|&+-/*().1234567890")) (+star (+char-not (str *spaces "() \u0000")))))))
 (defn *listInfix [] (+seqn 1 (+char "(") *whitespaces (delay (*valueInfix)) *whitespaces (+char ")")))
 (defn *F [] (+map #(list (first %) (second %)) (+seq *FSymbol *whitespaces (+or (delay (*listInfix)) (delay (*F)) (delay *number) (delay *variables)))))
-(defn *divOther [] (*parse_many (+or (delay (*listInfix)) (delay (*F)) (delay *number) (delay *variables)) *divOtherSymbol))
-(defn *addOther [] (*parse_many (+or (delay (*divOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *plusOtherSymbol))
-(defn *and [] (*parse_many (+or (delay (*addOther)) (delay (*divOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *AndSymbol))
-(defn *or [] (*parse_many (+or (delay (*and)) (delay (*addOther)) (delay (*divOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *OrSymbol))
-(defn *xor [] (*parse_many (+or (delay (*or)) (delay (*and)) (delay (*addOther)) (delay (*divOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *XorSymbol))
+(defn *powOther [] (*parse_many_right (+or (delay (*listInfix)) (delay (*F)) *number *variables) *PowOtherSymbol))
+(defn *divOther [] (*parse_many (+or (delay (*powOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *divOtherSymbol))
+(defn *addOther [] (*parse_many (+or (delay (*divOther)) (delay (*powOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *plusOtherSymbol))
+(defn *and [] (*parse_many (+or (delay (*addOther)) (delay (*divOther)) (delay (*powOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *AndSymbol))
+(defn *or [] (*parse_many (+or (delay (*and)) (delay (*addOther)) (delay (*divOther)) (delay (*powOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *OrSymbol))
+(defn *xor [] (*parse_many (+or (delay (*or)) (delay (*and)) (delay (*addOther)) (delay (*divOther)) (delay (*powOther)) (delay (*listInfix)) (delay (*F)) *number *variables) *XorSymbol))
 
-(defn *valueInfix [] (+or (delay (*xor)) (delay (*or)) (delay (*and))(delay (*addOther)) (delay (*divOther)) (delay (*listInfix)) (delay (*F)) *number *variables))
+(defn *valueInfix [] (+or (delay (*xor)) (delay (*or)) (delay (*and))(delay (*addOther)) (delay (*divOther)) (delay (*powOther)) (delay (*listInfix)) (delay (*F)) *number *variables))
 
 (def parserObjectInfix (+parser (+seqn 0 *whitespaces (*valueInfix) *whitespaces)))
 (defn parseObjectInfix [str] (parseExpression (parserObjectInfix str)))
