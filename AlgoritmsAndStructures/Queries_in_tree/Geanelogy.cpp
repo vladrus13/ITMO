@@ -31,60 +31,82 @@ typedef int32_t int32;
 
 using namespace std;
 //#pragma comment (linker, "/STACK:5000000000")
+#define INF (int)2e9;
 #define MOD (int)1e9+7;
 
 //////////////////////////////////////////////////////////////////
 // SYSTEM STARTS
 
+//////////////////////////////////////////////////////////////////
+// UTILS
 
 /////////////////////////////////////////////////////////////////
 // MAIN
 
-vector <int> x, y, u, c, used;
-vector <vector <int> > g, rev;
-int answer = -1;
+const int MAXN = 100001;
 
-int dfs2(int x) {
-	c[x] = 0;
-	int y = used[x];
-	for (int i : g[x]) {
-		if (c[i] == 2) {
-			y += dfs2(i);
+int count_hits;
+int sizer[MAXN], h[MAXN], hmax[MAXN], inn[MAXN], ult[MAXN], ini[MAXN], s[MAXN], nshcch, sen[MAXN];
+
+vector<int> g[MAXN];
+
+struct HLDS {
+	int lz, s;
+}   tree[4 * MAXN];
+
+void dfs(int v) {
+	sizer[v] = 1;
+	if (sen[v] != -1)
+		h[v] = h[sen[v]] + 1;
+	for (int i = 0; i < g[v].size(); i++) {
+		int nxt = g[v][i];
+		dfs(nxt);
+		sizer[v] += sizer[nxt];
+	}
+}
+
+void update(int idx, int ll, int rr, int l, int r, int op) {
+	if (l > r || rr < l) return;
+	if (tree[idx].lz != 0) {
+		if (ll != rr) {
+			int op = tree[idx].lz;
+			int m = (ll + rr) / 2;
+			tree[idx * 2].lz = op;
+			tree[idx * 2 + 1].lz = op;
+		}
+		tree[idx].lz = 0;
+	}
+	if (ll >= l && rr <= r) {
+		tree[idx].s = (rr - ll + 1) * (op - 1);
+		tree[idx].lz = op;
+		return;
+	}
+	int m = (ll + rr) / 2;
+	update(idx * 2, ll, m, l, r, op);
+	update(idx * 2 + 1, m + 1, rr, l, r, op);
+	tree[idx].s = tree[idx * 2].s + tree[idx * 2 + 1].s;
+}
+
+void HLD(int v) {
+	s[count_hits] = v;
+	if (ini[nshcch] == -1) ini[nshcch] = count_hits;
+	count_hits++;
+	inn[v] = nshcch;
+	int maxi = -1;
+	int imaxi = 0;
+	for (int nxt : g[v]) {
+		if (maxi <= sizer[nxt]) {
+			maxi = sizer[nxt];
+			imaxi = nxt;
 		}
 	}
-	if (y == 0) {
-		answer++;
+	if (maxi != -1)
+		HLD(imaxi);
+	for (int nxt : g[v]) {
+		if (nxt == imaxi) continue;
+		nshcch++;
+		HLD(nxt);
 	}
-	return y;
-}
-
-int gett(int x) {
-	if (u[x] != x) {
-		u[x] = gett(u[x]);
-	}
-	return u[x];
-}
-
-void uni(int x, int i) {
-	u[gett(i)] = gett(x);
-}
-
-void dfs(int x) {
-	c[x] = 1;
-	for (int i : g[x]) {
-		if (c[i] > 0) continue;
-		dfs(i);
-		uni(x, i);
-	}
-	for (int i : rev[x]) {
-		if (c[y[i]] == 2) {
-			int z = gett(y[i]);
-			used[z] -= 2;
-			used[y[i]]++;
-			used[x]++;
-		}
-	}
-	c[x] = 2;
 }
 
 int main() {
@@ -101,60 +123,40 @@ int main() {
 	cout.tie(NULL);
 	int n;
 	cin >> n;
-	g.resize(n);
-	x.resize(n - 1);
-	y.resize(n - 1);
-	vector <int> temp(n);
-	for (int i = 0; i < n - 1; i++) {
-		cin >> x[i] >> y[i];
-		x[i]--, y[i]--;
-		temp[x[i]]++;
-		temp[y[i]]++;
+	for (int i = 0; i < MAXN; i++) ini[i] = -1;
+	int raiz = 0;
+	for (int a = 1; a <= n; a++) {
+		cin >> sen[a];
+		if (sen[a] == -1)
+			raiz = a;
+		else
+			g[sen[a]].push_back(a);
 	}
-	for (int i = 0; i < n; i++) {
-		g[i].resize(temp[i]);
-		temp[i] = 0;
-	}
-	for (int i = 0; i < n - 1; i++) {
-		g[x[i]][temp[x[i]]++] = y[i];
-		g[y[i]][temp[y[i]]++] = x[i];
-	}
+	for (int i = 0; i < MAXN; i++) ult[i] = -1;
+	count_hits = 1;
+	dfs(raiz);
+	HLD(raiz);
+	update(1, 1, count_hits - 1, 1, count_hits - 1, 2);
 	int m;
 	cin >> m;
-	x.clear();
-	y.clear();
-	x.resize(m + m, 0);
-	y.resize(m + m, 0);
-	for (int i = 0; i < m; i++) {
-		cin >> x[2 * i] >> y[2 * i];
-		x[2 * i]--, y[2 * i]--;
-		x[2 * i + 1] = y[2 * i];
-		y[2 * i + 1] = x[2 * i];
+	for (int a = 0; a < m; a++) {
+		int res = 0;
+		int t;
+		cin >> t;
+		for (int tt = 1; tt <= t; tt++) {
+			int v;
+			cin >> v;
+			while (v != -1) {
+				int cab = s[ini[inn[v]]];
+				if (ult[cab] < a)
+					hmax[cab] = h[cab];
+				ult[cab] = a;
+				res += max(0, h[v] - hmax[cab] + 1);
+				hmax[cab] = max(hmax[cab], h[v] + 1);
+				v = sen[cab];
+			}
+		}
+		cout << res << endl;
 	}
-	rev.clear();
-	rev.resize(n);
-	c.resize(n, 0);
-	for (int i = 0; i < 2 * m; i++) {
-		c[x[i]]++;
-	}
-	for (int i = 0; i < n; i++) {
-		rev[i].resize(c[i]);
-		c[i] = 0;
-	}
-	for (int i = 0; i < 2 * m; i++) {
-		rev[x[i]][c[x[i]]++] = i;
-	}
-	u.clear();
-	u.resize(n);
-	for (int i = 0; i < n; i++) {
-		u[i] = i;
-	}
-	c.clear();
-	used.clear();
-	c.resize(n, 0);
-	used.resize(n, 0);
-	dfs(0);
-	dfs2(0);
-	cout << answer << '\n';
 	return 0;
 }
