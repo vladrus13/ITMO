@@ -1,0 +1,9 @@
+#!/bin/bash
+if [[ "$HOME" == "$PWD" ]]
+then echo "$HOME"
+exit 0
+fi
+if [[ "$HOME" != "$PWD" ]]
+then echo "Что то пошло не так"
+exit 1
+fi

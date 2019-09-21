@@ -1,0 +1,16 @@
+#!/bin/bash
+read -p "Choose: \n 1 - Nano \n 2 - vi \n 3 - links \n4 0 - exit" a
+case $a in
+1 )
+/bin/nano
+;;
+2 )
+/bin/vim
+;;
+3 )
+/bin/links
+;;
+4 )
+exit 0
+;;
+esac

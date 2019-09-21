@@ -1,0 +1,9 @@
+#!/bin/bash
+while [[ "$a" != "q" ]]; do 
+	read a
+	sum=$sum$a
+	if [[ "$a" == "q" ]]
+	then break
+	fi
+done
+echo $sum

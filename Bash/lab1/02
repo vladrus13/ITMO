@@ -1,0 +1,9 @@
+#!/bin/bash
+a=$1
+if [[ $2 > $1 ]];
+then a=$2;
+fi;
+if [[ $3 > $a ]];
+then a=$3;
+fi;
+echo $a;
