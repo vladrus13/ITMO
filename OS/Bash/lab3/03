@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "" > 03.log
+for i in $(ls /proc/ | grep "[0-9]\+")
+do
+	echo $i | readlink /proc/$i/exe | grep "^/sbin" | echo $i >> 03.log
+done

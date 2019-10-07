@@ -1,0 +1,99 @@
+1664:/lib/systemd/systemd --user
+1665:(sd-pam)
+1678:/usr/bin/gnome-keyring-daemon --daemonize --login
+1682:/usr/lib/gdm3/gdm-x-session --run-script env GNOME_SHELL_SESSION_MODE=ubuntu gnome-session --session=ubuntu
+1684:/usr/lib/xorg/Xorg vt2 -displayfd 3 -auth /run/user/1000/gdm/Xauthority -background none -noreset -keeptty -verbose 3
+1840:/usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+1843:/usr/lib/gnome-session/gnome-session-binary --session=ubuntu
+1921:/usr/bin/ssh-agent /usr/bin/im-launch env GNOME_SHELL_SESSION_MODE=ubuntu gnome-session --session=ubuntu
+1924:/usr/lib/at-spi2-core/at-spi-bus-launcher
+1929:/usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 3
+1931:/usr/lib/at-spi2-core/at-spi2-registryd --use-gnome-session
+1949:/usr/bin/gnome-shell
+1956:/usr/lib/gvfs/gvfsd
+1961:/usr/lib/gvfs/gvfsd-fuse /run/user/1000/gvfs -f -o big_writes
+1972:/usr/bin/pulseaudio --start --log-target=syslog
+1989:ibus-daemon --xim --panel disable
+1991:/usr/libexec/xdg-permission-store
+1999:/usr/lib/ibus/ibus-dconf
+2001:/usr/lib/ibus/ibus-x11 --kill-daemon
+2004:/usr/lib/ibus/ibus-portal
+2010:/usr/lib/gnome-shell/gnome-shell-calendar-server
+2022:/usr/lib/gvfs/gvfs-udisks2-volume-monitor
+2026:/usr/lib/evolution/evolution-source-registry
+2033:/usr/lib/gvfs/gvfs-goa-volume-monitor
+2037:/usr/lib/gnome-online-accounts/goa-daemon
+2040:/usr/lib/dconf/dconf-service
+2043:/usr/lib/gvfs/gvfsd-metadata
+2056:/usr/lib/gnome-online-accounts/goa-identity-service
+2061:/usr/lib/gvfs/gvfs-afc-volume-monitor
+2066:/usr/lib/gvfs/gvfs-mtp-volume-monitor
+2071:/usr/lib/gvfs/gvfs-gphoto2-volume-monitor
+2075:/usr/lib/gnome-settings-daemon/gsd-mouse
+2077:/usr/lib/gnome-settings-daemon/gsd-keyboard
+2078:/usr/lib/gnome-settings-daemon/gsd-power
+2082:/usr/lib/gnome-settings-daemon/gsd-print-notifications
+2084:/usr/lib/gnome-settings-daemon/gsd-rfkill
+2086:/usr/lib/gnome-settings-daemon/gsd-screensaver-proxy
+2093:/usr/lib/gnome-settings-daemon/gsd-sharing
+2098:/usr/lib/gnome-settings-daemon/gsd-smartcard
+2101:/usr/lib/gnome-settings-daemon/gsd-sound
+2103:/usr/lib/gnome-settings-daemon/gsd-wacom
+2106:/usr/lib/gnome-settings-daemon/gsd-xsettings
+2121:/usr/lib/gnome-settings-daemon/gsd-a11y-settings
+2126:/usr/lib/gnome-settings-daemon/gsd-datetime
+2127:/usr/lib/gnome-settings-daemon/gsd-color
+2128:/usr/lib/gnome-settings-daemon/gsd-housekeeping
+2129:/usr/lib/gnome-settings-daemon/gsd-clipboard
+2130:/usr/lib/gnome-settings-daemon/gsd-media-keys
+2167:/usr/lib/gnome-settings-daemon/gsd-printer
+2177:/usr/lib/gnome-disk-utility/gsd-disk-utility-notify
+2182:nautilus-desktop
+2199:/usr/lib/evolution/evolution-calendar-factory
+2212:/usr/lib/ibus/ibus-engine-simple
+2221:/usr/lib/gvfs/gvfsd-trash --spawner :1.22 /org/gtk/gvfs/exec_spaw/0
+2252:/usr/lib/evolution/evolution-calendar-factory-subprocess --factory all --bus-name org.gnome.evolution.dataserver.Subprocess.Backend.Calendarx2199x2 --own-path /org/gnome/evolution/dataserver/Subprocess/Backend/Calendar/2199/2
+2269:/usr/lib/evolution/evolution-addressbook-factory
+2282:/usr/lib/evolution/evolution-addressbook-factory-subprocess --factory all --bus-name org.gnome.evolution.dataserver.Subprocess.Backend.AddressBookx2269x2 --own-path /org/gnome/evolution/dataserver/Subprocess/Backend/AddressBook/2269/2
+2315:/opt/yandex/browser-beta/yandex_browser
+2322:cat
+2323:cat
+2326:/opt/yandex/browser-beta/yandex_browser --type=zygote --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta
+2327:/opt/yandex/browser-beta/nacl_helper
+2330:/opt/yandex/browser-beta/yandex_browser --type=zygote --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta
+2351:/opt/yandex/browser-beta/yandex_browser --type=gpu-process --field-trial-handle=6346737020554664789,11187195649802683442,131072 --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --gpu-preferences=KAAAAAAAAAAgAAAgAQAAAAAAAAAAAGAAAAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --service-request-channel-token=7683252321296433464
+2422:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=13040581563307976627 --renderer-client-id=9 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+2528:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --extension-process --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=8901760093621333259 --renderer-client-id=3 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+2662:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --extension-process --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=732978492023127224 --renderer-client-id=5 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+2668:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --extension-process --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=12576049331553109259 --renderer-client-id=6 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+3050:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=13501426716634163756 --renderer-client-id=37 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+3067:update-notifier
+3068:/usr/bin/gnome-software --gapplication-service
+3216:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=16132355979841851483 --renderer-client-id=13 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+3390:/usr/lib/deja-dup/deja-dup-monitor
+5951:/usr/bin/zeitgeist-daemon
+5959:/usr/lib/zeitgeist/zeitgeist/zeitgeist-fts
+7409:Telegram --
+7432:/usr/libexec/xdg-document-portal
+7565:/usr/bin/snap userd
+7598:/usr/lib/gvfs/gvfsd-http --spawner :1.22 /org/gtk/gvfs/exec_spaw/1
+15734:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=15685476966869916425 --renderer-client-id=345 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+15798:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=4828190877872691699 --renderer-client-id=113 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+15900:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=9987964009923967996 --renderer-client-id=12 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+15925:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=13648614788040827313 --renderer-client-id=15 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+16038:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=15271282398059649837 --renderer-client-id=14 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+19201:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=1386383499637126401 --renderer-client-id=389 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+19247:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=15188727265251358140 --renderer-client-id=391 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+23021:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=551197062842566688 --renderer-client-id=437 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+24011:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --extension-process --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=973883143404839753 --renderer-client-id=441 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+24579:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=5437901479773092370 --renderer-client-id=454 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+24689:/usr/bin/nautilus --gapplication-service
+24764:/usr/lib/gnome-terminal/gnome-terminal-server
+24773:bash
+24783:evince /home/vladkuznetsov/lab3/?аб3.pdf
+24788:/usr/lib/evince/evinced
+24799:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=4683596467012158280 --renderer-client-id=458 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+24818:/opt/yandex/browser-beta/yandex_browser --type=renderer --field-trial-handle=6346737020554664789,11187195649802683442,131072 --lang=ru --user-id=2493871c-4faa-49e8-bf97-e4f915a48799 --brand-id=yandex --partner-id=beta-public --enable-crash-reporter=1c458edb-8255-40b0-9291-70a5b91fa80d,beta --help-url=https://api.browser.yandex.ru/redirect/help-beta/ --user-agent-info=beta --translate-security-origin=https://yastatic.net --enable-offline-auto-reload --enable-offline-auto-reload-visible-only --enable-instaserp --num-raster-threads=4 --enable-main-frame-before-activation --service-request-channel-token=6586545044981689578 --renderer-client-id=459 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101
+27661:/usr/lib/evolution/evolution-alarm-notify
+27862:/usr/lib/gvfs/gvfsd-network --spawner :1.22 /org/gtk/gvfs/exec_spaw/5
+27957:/usr/lib/gvfs/gvfsd-dnssd --spawner :1.22 /org/gtk/gvfs/exec_spaw/22

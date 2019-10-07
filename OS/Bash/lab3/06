@@ -1,0 +1,25 @@
+#!/bin/bash
+temp=""
+ppid=0
+sleepavg=0
+count=1
+while read line
+do
+	newppid=$(echo $line | grep -E -h -s -i -o "Parent_ProcessID=[0-9]+" | sed -E "s/.+([0-9]+).*/\1/")
+	newsleepavg=$(echo $line | grep -E -h -s -i -o "Average_Sleeping_Time=[0-9]+" | sed -E "s/[a-zA-Z=_]+([0-9]+)/\1/")
+	if [[ $ppid == $newppid ]];
+	then
+ 		let sleepavg=$sleepavg\+$newsleepavg
+		let count=$count\+1
+	else
+  		sleepavg=$sleepavg/$count
+  		temp=$temp$'\n'"Average_Sleeping_Children_of_ParentID=$ppid is $sleepavg"
+  		sleepavg=$newsleepavg
+  		ppid=$newppid
+  		count=1
+ 	fi
+ 	temp=$temp$'\n'$line
+done < "05.log"
+let sleepavg=$sleepavg/$count
+temp=$temp$'\n'"Average_Sleeping_Children_of_ParentID=$ppid is $sleepavg"
+echo "$temp" > "06.log"

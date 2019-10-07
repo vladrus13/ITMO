@@ -1,0 +1,3 @@
+#!/bin/bash
+ps -A -o pid | tail -n +2 | awk '{stat="/proc/"$1"/statm"; getline f<stat; close (stat); split(f, a); print $1, ":", (a[2]-a[3])/1024}' | tr -d " " | sort -r -n -t ":" -k2 | awk '{print $1, "Kb"}' > 04.log
+# modifed for KB modif
