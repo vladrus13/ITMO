@@ -1,0 +1,3 @@
+#!/bin/bash
+grep -E -r -h "*ACPI.*" /var/log/ > errors.log
+grep ".*[[:alnum:]]\.?[[:alpha:]]*" /home/vladkuznetsov/lab2/errors.log

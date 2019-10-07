@@ -1,0 +1,2 @@
+#!/bin/bash
+find /var/log | grep ".log" | xargs cat 2>/dev/null | wc -l

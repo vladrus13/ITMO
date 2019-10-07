@@ -1,0 +1,6 @@
+#!/bin/bash
+informmarker="\\(II\\)"
+warningmarker="\\(WW\\)"
+grep $warningmarker var/log/Xorg.0.log | sed "s/$warningmarker/Warning: /" > full.log
+grep $informmarker var/log/Xorg.0.log | sed "s/$informmarker/Information: /" >> full.log
+cat full.log

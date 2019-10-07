@@ -1,0 +1,351 @@
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Started ACPI event daemon.
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.862202] ACPI: EC: interrupt blocked
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.905244] ACPI: Preparing to enter system sleep state S3
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.906637] ACPI: EC: event blocked
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.906639] ACPI: EC: EC stopped
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.922842] ACPI: Low-level resume complete
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.922926] ACPI: EC: EC started
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.940445] ACPI: Waking up from system sleep state S3
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.967896] ACPI: EC: interrupt unblocked
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222565.046788] ACPI: EC: event unblocked
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.559341] ACPI: EC: interrupt blocked
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.602590] ACPI: Preparing to enter system sleep state S3
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.603953] ACPI: EC: event blocked
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.603955] ACPI: EC: EC stopped
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.629086] ACPI: Low-level resume complete
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.629170] ACPI: EC: EC started
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.646597] ACPI: Waking up from system sleep state S3
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.673772] ACPI: EC: interrupt unblocked
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.753605] ACPI: EC: event unblocked
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.418864] ACPI: EC: interrupt blocked
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.465484] ACPI: Preparing to enter system sleep state S3
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.466871] ACPI: EC: event blocked
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.466873] ACPI: EC: EC stopped
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.490136] ACPI: Low-level resume complete
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.490221] ACPI: EC: EC started
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.507813] ACPI: Waking up from system sleep state S3
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.532683] ACPI: EC: interrupt unblocked
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.611300] ACPI: EC: event unblocked
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.356185] ACPI: EC: interrupt blocked
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.399492] ACPI: Preparing to enter system sleep state S3
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.400855] ACPI: EC: event blocked
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.400856] ACPI: EC: EC stopped
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.424892] ACPI: Low-level resume complete
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.424976] ACPI: EC: EC started
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.442448] ACPI: Waking up from system sleep state S3
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.470485] ACPI: EC: interrupt unblocked
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.549667] ACPI: EC: event unblocked
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.423553] ACPI: EC: interrupt blocked
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.466662] ACPI: Preparing to enter system sleep state S3
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.468038] ACPI: EC: event blocked
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.468039] ACPI: EC: EC stopped
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.485816] ACPI: Low-level resume complete
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.485900] ACPI: EC: EC started
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.503356] ACPI: Waking up from system sleep state S3
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.525159] ACPI: EC: interrupt unblocked
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.605059] ACPI: EC: event unblocked
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.566221] ACPI: EC: interrupt blocked
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.609402] ACPI: Preparing to enter system sleep state S3
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.610667] ACPI: EC: event blocked
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.610668] ACPI: EC: EC stopped
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.633015] ACPI: Low-level resume complete
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.633100] ACPI: EC: EC started
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.650525] ACPI: Waking up from system sleep state S3
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.676626] ACPI: EC: interrupt unblocked
+Sep 22 17:22:36 vladkuznetsov-M3137ITMO kernel: [101502.756587] ACPI: EC: event unblocked
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108217.914663] ACPI: EC: interrupt blocked
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108217.957910] ACPI: Preparing to enter system sleep state S3
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108217.959333] ACPI: EC: event blocked
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108217.959335] ACPI: EC: EC stopped
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108217.984622] ACPI: Low-level resume complete
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108217.984705] ACPI: EC: EC started
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108218.002153] ACPI: Waking up from system sleep state S3
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108218.025113] ACPI: EC: interrupt unblocked
+Sep 22 19:31:23 vladkuznetsov-M3137ITMO kernel: [108218.103859] ACPI: EC: event unblocked
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.710436] ACPI: EC: interrupt blocked
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.754075] ACPI: Preparing to enter system sleep state S3
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.755431] ACPI: EC: event blocked
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.755432] ACPI: EC: EC stopped
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.778419] ACPI: Low-level resume complete
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.778502] ACPI: EC: EC started
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.796038] ACPI: Waking up from system sleep state S3
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.817266] ACPI: EC: interrupt unblocked
+Sep 22 22:41:49 vladkuznetsov-M3137ITMO kernel: [118297.896601] ACPI: EC: event unblocked
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.781558] ACPI: EC: interrupt blocked
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.824562] ACPI: Preparing to enter system sleep state S3
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.825918] ACPI: EC: event blocked
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.825920] ACPI: EC: EC stopped
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.845557] ACPI: Low-level resume complete
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.845643] ACPI: EC: EC started
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.863101] ACPI: Waking up from system sleep state S3
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.891075] ACPI: EC: interrupt unblocked
+Sep 23 13:36:17 vladkuznetsov-M3137ITMO kernel: [120924.970901] ACPI: EC: event unblocked
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126494.936789] ACPI: EC: interrupt blocked
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126494.980103] ACPI: Preparing to enter system sleep state S3
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126494.981469] ACPI: EC: event blocked
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126494.981470] ACPI: EC: EC stopped
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126495.004693] ACPI: Low-level resume complete
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126495.004777] ACPI: EC: EC started
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126495.022203] ACPI: Waking up from system sleep state S3
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126495.047064] ACPI: EC: interrupt unblocked
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126495.127058] ACPI: EC: event unblocked
+Sep 23 15:09:07 vladkuznetsov-M3137ITMO kernel: [126495.127732] ACPI: button: The lid device is not compliant to SW_LID.
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.684098] ACPI: EC: interrupt blocked
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.727430] ACPI: Preparing to enter system sleep state S3
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.728784] ACPI: EC: event blocked
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.728786] ACPI: EC: EC stopped
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.751663] ACPI: Low-level resume complete
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.751746] ACPI: EC: EC started
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.769395] ACPI: Waking up from system sleep state S3
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.794576] ACPI: EC: interrupt unblocked
+Sep 23 20:35:10 vladkuznetsov-M3137ITMO kernel: [126525.873059] ACPI: EC: event unblocked
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137802.822316] ACPI: EC: interrupt blocked
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137802.865509] ACPI: Preparing to enter system sleep state S3
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137802.866414] ACPI: EC: event blocked
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137802.866415] ACPI: EC: EC stopped
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137802.880860] ACPI: Low-level resume complete
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137802.880944] ACPI: EC: EC started
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137802.898480] ACPI: Waking up from system sleep state S3
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137802.924052] ACPI: EC: interrupt unblocked
+Sep 24 19:51:34 vladkuznetsov-M3137ITMO kernel: [137803.003344] ACPI: EC: event unblocked
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.389052] ACPI: EC: interrupt blocked
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.432330] ACPI: Preparing to enter system sleep state S3
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.433707] ACPI: EC: event blocked
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.433709] ACPI: EC: EC stopped
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.452162] ACPI: Low-level resume complete
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.452247] ACPI: EC: EC started
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.469783] ACPI: Waking up from system sleep state S3
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.490942] ACPI: EC: interrupt unblocked
+Sep 25 11:36:11 vladkuznetsov-M3137ITMO kernel: [141709.570563] ACPI: EC: event unblocked
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.710687] ACPI: EC: interrupt blocked
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.753835] ACPI: Preparing to enter system sleep state S3
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.755064] ACPI: EC: event blocked
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.755065] ACPI: EC: EC stopped
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.770105] ACPI: Low-level resume complete
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.770190] ACPI: EC: EC started
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.787600] ACPI: Waking up from system sleep state S3
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.808745] ACPI: EC: interrupt unblocked
+Sep 25 18:21:30 vladkuznetsov-M3137ITMO kernel: [146877.888263] ACPI: EC: event unblocked
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.278980] ACPI: EC: interrupt blocked
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.329840] ACPI: Preparing to enter system sleep state S3
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.331198] ACPI: EC: event blocked
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.331199] ACPI: EC: EC stopped
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.350944] ACPI: Low-level resume complete
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.351027] ACPI: EC: EC started
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.368619] ACPI: Waking up from system sleep state S3
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.396549] ACPI: EC: interrupt unblocked
+Sep 26 18:58:18 vladkuznetsov-M3137ITMO kernel: [166855.475984] ACPI: EC: event unblocked
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.623791] ACPI: EC: interrupt blocked
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.666881] ACPI: Preparing to enter system sleep state S3
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.668242] ACPI: EC: event blocked
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.668244] ACPI: EC: EC stopped
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.688021] ACPI: Low-level resume complete
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.688105] ACPI: EC: EC started
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.705658] ACPI: Waking up from system sleep state S3
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.733579] ACPI: EC: interrupt unblocked
+Sep 27 09:57:14 vladkuznetsov-M3137ITMO kernel: [180460.813117] ACPI: EC: event unblocked
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.632218] ACPI: EC: interrupt blocked
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.675730] ACPI: Preparing to enter system sleep state S3
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.677086] ACPI: EC: event blocked
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.677087] ACPI: EC: EC stopped
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.701053] ACPI: Low-level resume complete
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.701138] ACPI: EC: EC started
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.718698] ACPI: Waking up from system sleep state S3
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.746882] ACPI: EC: interrupt unblocked
+Sep 27 11:30:43 vladkuznetsov-M3137ITMO kernel: [184951.826511] ACPI: EC: event unblocked
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184982.910180] ACPI: EC: interrupt blocked
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184982.953674] ACPI: Preparing to enter system sleep state S3
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184982.955039] ACPI: EC: event blocked
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184982.955040] ACPI: EC: EC stopped
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184982.970487] ACPI: Low-level resume complete
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184982.970570] ACPI: EC: EC started
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184982.988123] ACPI: Waking up from system sleep state S3
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184983.012152] ACPI: EC: interrupt unblocked
+Sep 27 11:42:46 vladkuznetsov-M3137ITMO kernel: [184983.091646] ACPI: EC: event unblocked
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.761652] ACPI: EC: interrupt blocked
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.804494] ACPI: Preparing to enter system sleep state S3
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.805728] ACPI: EC: event blocked
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.805729] ACPI: EC: EC stopped
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.827494] ACPI: Low-level resume complete
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.827582] ACPI: EC: EC started
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.845047] ACPI: Waking up from system sleep state S3
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.867957] ACPI: EC: interrupt unblocked
+Sep 27 13:13:50 vladkuznetsov-M3137ITMO kernel: [190158.947531] ACPI: EC: event unblocked
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.310363] ACPI: EC: interrupt blocked
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.353599] ACPI: Preparing to enter system sleep state S3
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.354993] ACPI: EC: event blocked
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.354995] ACPI: EC: EC stopped
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.375462] ACPI: Low-level resume complete
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.375547] ACPI: EC: EC started
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.392977] ACPI: Waking up from system sleep state S3
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.416240] ACPI: EC: interrupt unblocked
+Sep 27 13:38:51 vladkuznetsov-M3137ITMO kernel: [191147.495537] ACPI: EC: event unblocked
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193148.837081] ACPI: EC: interrupt blocked
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193148.880519] ACPI: Preparing to enter system sleep state S3
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193148.881900] ACPI: EC: event blocked
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193148.881902] ACPI: EC: EC stopped
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193148.898021] ACPI: Low-level resume complete
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193148.898105] ACPI: EC: EC started
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193148.915525] ACPI: Waking up from system sleep state S3
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193148.939005] ACPI: EC: interrupt unblocked
+Sep 27 14:16:40 vladkuznetsov-M3137ITMO kernel: [193149.018830] ACPI: EC: event unblocked
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.120177] ACPI: EC: interrupt blocked
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.163701] ACPI: Preparing to enter system sleep state S3
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.165093] ACPI: EC: event blocked
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.165095] ACPI: EC: EC stopped
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.188264] ACPI: Low-level resume complete
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.188348] ACPI: EC: EC started
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.205821] ACPI: Waking up from system sleep state S3
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.230664] ACPI: EC: interrupt unblocked
+Sep 27 15:49:43 vladkuznetsov-M3137ITMO kernel: [195634.309633] ACPI: EC: event unblocked
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.613798] ACPI: EC: interrupt blocked
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.657230] ACPI: Preparing to enter system sleep state S3
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.658605] ACPI: EC: event blocked
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.658606] ACPI: EC: EC stopped
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.683134] ACPI: Low-level resume complete
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.683218] ACPI: EC: EC started
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.700724] ACPI: Waking up from system sleep state S3
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.724278] ACPI: EC: interrupt unblocked
+Sep 27 21:11:34 vladkuznetsov-M3137ITMO kernel: [199055.802803] ACPI: EC: event unblocked
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199185.821806] ACPI: EC: interrupt blocked
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199185.865012] ACPI: Preparing to enter system sleep state S3
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199185.866378] ACPI: EC: event blocked
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199185.866379] ACPI: EC: EC stopped
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199185.890287] ACPI: Low-level resume complete
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199185.890370] ACPI: EC: EC started
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199185.907949] ACPI: Waking up from system sleep state S3
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199185.936015] ACPI: EC: interrupt unblocked
+Sep 27 23:06:48 vladkuznetsov-M3137ITMO kernel: [199186.015246] ACPI: EC: event unblocked
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.862202] ACPI: EC: interrupt blocked
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.905244] ACPI: Preparing to enter system sleep state S3
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.906637] ACPI: EC: event blocked
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.906639] ACPI: EC: EC stopped
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.922842] ACPI: Low-level resume complete
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.922926] ACPI: EC: EC started
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.940445] ACPI: Waking up from system sleep state S3
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222564.967896] ACPI: EC: interrupt unblocked
+Sep 28 13:48:04 vladkuznetsov-M3137ITMO kernel: [222565.046788] ACPI: EC: event unblocked
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.559341] ACPI: EC: interrupt blocked
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.602590] ACPI: Preparing to enter system sleep state S3
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.603953] ACPI: EC: event blocked
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.603955] ACPI: EC: EC stopped
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.629086] ACPI: Low-level resume complete
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.629170] ACPI: EC: EC started
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.646597] ACPI: Waking up from system sleep state S3
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.673772] ACPI: EC: interrupt unblocked
+Sep 28 19:35:35 vladkuznetsov-M3137ITMO kernel: [242266.753605] ACPI: EC: event unblocked
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.418864] ACPI: EC: interrupt blocked
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.465484] ACPI: Preparing to enter system sleep state S3
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.466871] ACPI: EC: event blocked
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.466873] ACPI: EC: EC stopped
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.490136] ACPI: Low-level resume complete
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.490221] ACPI: EC: EC started
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.507813] ACPI: Waking up from system sleep state S3
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.532683] ACPI: EC: interrupt unblocked
+Sep 28 20:56:38 vladkuznetsov-M3137ITMO kernel: [242395.611300] ACPI: EC: event unblocked
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.356185] ACPI: EC: interrupt blocked
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.399492] ACPI: Preparing to enter system sleep state S3
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.400855] ACPI: EC: event blocked
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.400856] ACPI: EC: EC stopped
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.424892] ACPI: Low-level resume complete
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.424976] ACPI: EC: EC started
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.442448] ACPI: Waking up from system sleep state S3
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.470485] ACPI: EC: interrupt unblocked
+Sep 29 17:57:07 vladkuznetsov-M3137ITMO kernel: [253284.549667] ACPI: EC: event unblocked
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@000591e263b5021f-c08656e063c3c070.journal~ совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@e6ae9d583b6147aea94af623ca782d50-0000000000000001-00058f3638b0f181.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@bb5b9cc2630345df8248242205ffbd4d-0000000000000001-00059055476cec9a.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@e6ae9d583b6147aea94af623ca782d50-0000000000005ce0-00058fc5570ed710.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@bb5b9cc2630345df8248242205ffbd4d-00000000000d837a-000591420c58ac2a.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@e6ae9d583b6147aea94af623ca782d50-0000000000008a8a-00058fd1df543544.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@000592d003910a27-32d7058d8ba577be.journal~ совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@000590554787b6d2-e0fa112cac4d8f39.journal~ совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@000591a54c9694d4-d8e9b19f89b98de0.journal~ совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@bb5b9cc2630345df8248242205ffbd4d-00000000000d2b00-0005910aa21ae696.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@bb5b9cc2630345df8248242205ffbd4d-00000000000cca90-000590ba0d65b36c.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@b0f9d80286014b96a3a85ae076460d95-0000000000000001-000591e263a79149.journal совпадает
+Двоичный файл /var/log/journal/0ae9a575e90c4f6db30ec829f2c4d24b/system@bb5b9cc2630345df8248242205ffbd4d-00000000000d180b-000590ea8bf7f157.journal совпадает
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.423553] ACPI: EC: interrupt blocked
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.466662] ACPI: Preparing to enter system sleep state S3
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.468038] ACPI: EC: event blocked
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.468039] ACPI: EC: EC stopped
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.485816] ACPI: Low-level resume complete
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.485900] ACPI: EC: EC started
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.503356] ACPI: Waking up from system sleep state S3
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.525159] ACPI: EC: interrupt unblocked
+Sep 29 19:48:49 vladkuznetsov-M3137ITMO kernel: [258474.605059] ACPI: EC: event unblocked

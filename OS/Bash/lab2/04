@@ -1,0 +1,2 @@
+#!/bin/bash
+grep -oarh "^#! *[a-zA-Z0-9\.\/]\+" "/bin" | sed "s/#! */#!/" | sort | uniq -c | sort -rn
