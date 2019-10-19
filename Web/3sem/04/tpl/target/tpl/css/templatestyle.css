@@ -1,0 +1,132 @@
+:root {
+    --border-color: rgb(185, 185, 185);
+    --border-radius: 6px;
+    --black-color: #333;
+    --caption-color: #3B5998;
+    --light-border-color: #e1e1e1;
+    color: var(--black-color);
+    font-family: Verdana, sans-serif;
+    font-size: 16px;
+}
+
+.info-user {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 0.29rem 0.29rem 1.8rem;
+}
+
+.info-user .left {
+    display: inline-block;
+}
+
+.info-user .left .link {
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.info-user .left li {
+    margin: 0.1rem 0.1rem 0.1rem 0.951rem;
+}
+
+.info-user .right {
+    float: right;
+}
+
+.arrows {
+    font-size: 2rem;
+}
+.left-arrow {
+    display: inline;
+}
+
+.right-arrow {
+    display: inline;
+}
+
+.post .title {
+    color: var(--caption-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem;
+}
+
+.post .information {
+    color: darkgrey;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+.post .body {
+    margin: 0.5rem;
+    border-left: 4px solid var(--border-color);
+    padding-left: 1rem;
+    list-style-type: none;
+}
+
+.post .footer {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 0.2rem;
+}
+
+.post .footer .right {
+    float: right;
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 0.3rem;
+    padding-top: 0.1rem;
+    font-size: 0.9rem;
+    height: 27px;
+}
+
+.post .footer .right img {
+    vertical-align: middle;
+}
+
+.post .footer .left {
+    display: inline-block;
+    color: darkgreen;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.post .footer .left img {
+    vertical-align: middle;
+}
+
+.datatableusers table tbody tr:nth-child(2n-1) {
+    background: #f8f8f8;
+}
+
+.datatableusers .caption {
+    background: var(--light-border-color);
+    border: 1px solid var(--light-border-color);
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    padding: 0.3rem;
+    font-size: 0.95rem;
+}
+
+.datatableusers table tbody tr td {
+    border: 1px solid var(--light-border-color);
+    border-collapse: collapse;
+    padding: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.datatableusers table thead tr th {
+    padding: 0.3rem;
+    border: 1px solid var(--light-border-color);
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.datatableusers table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.datatableusers table tbody tr td {
+    text-align: center;
+}

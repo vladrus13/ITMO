@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="tpl:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>tpl</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="tpl.war">
+      <element id="artifact" artifact-name="tpl:war exploded" />
+    </root>
+  </artifact>
+</component>
