@@ -1,0 +1,4 @@
+#!/bin/bash
+nice -n 0 ./04.1 &
+cpulimit --limit 10 /home/vladkuznetsov/lab4/04.1 &
+nice -n 0 ./04.1 &

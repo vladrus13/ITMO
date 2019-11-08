@@ -1,0 +1,15 @@
+#!/bin/bash
+echo $$ > operations06
+cnt=0
+running=0
+toucher() 
+{ 
+running=1
+}
+trap 'toucher' SIGTERM
+while (( running != 1 )) ; do
+        ((cnt=$cnt+1))
+        sleep 1
+        echo $cnt
+done
+echo "Stopped by SIGTERM signal"

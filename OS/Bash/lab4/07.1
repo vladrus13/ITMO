@@ -1,0 +1,33 @@
+#!/bin/bash
+echo $$ > operations07
+cur=1
+mode="+"
+sigterm()
+{
+    echo "Stopped by SIGTERM signal"
+    exit 0
+}
+sum()
+{
+    mode="+"
+}
+prod()
+{
+    mode="*"
+}
+trap 'sigterm' SIGTERM
+trap 'sum' USR1
+trap 'prod' USR2
+while true;
+do
+    case "$mode" in
+        +)
+            cur=$(($cur + 2))
+            ;;
+        [*])
+            cur=$(($cur * 2))
+            ;;
+    esac
+    sleep 1
+    echo "$cur"
+done

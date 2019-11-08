@@ -1,0 +1,45 @@
+#!/bin/bash
+touch operations05
+> operations05
+
+num=1
+mode="+"
+
+tail -n 0 -f operations05 |
+while true
+do
+    read line
+    case $line in
+        "+")
+            mode="+"
+            echo "Adding ON!"
+            ;;
+        "*")
+            mode="*"
+            echo "Multiplying ON"
+            ;;
+        "QUIT")
+            echo "QUIT ON!!!"
+            exit 0
+            ;;
+        [0-9]*)
+            case $mode in
+                "+")
+                    echo $num " + " $line						
+                    num=$(($num + $line))
+                    echo " = " $num
+                    ;;
+                "*")
+                    echo $num " * " $line						
+                    num=$(($num * $line))
+                    echo " = " $num
+                    ;;
+            esac
+            ;;
+        *) 
+			echo "NotANumberException: input isnt correct"
+			killall tail
+            exit 1
+            ;;
+    esac
+done

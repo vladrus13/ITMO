@@ -1,0 +1,18 @@
+#!/bin/bash
+while true 
+do 
+	read line
+	echo "$line" >> operations05
+	
+	if [[ "$line" == "QUIT" ]]
+	then 
+		echo "Exit, ... .... .... ...... ... .. . . . . .. . . ... ... . .. .... .... . ... "
+		exit 0
+	fi
+
+	if [[ ! "$line" =~ [0-9]+ && "$line" != "+" && "$line" != "*" ]] 
+	then 
+		echo "NotANumberException: input isnt correct"
+		exit 1
+	fi
+done
