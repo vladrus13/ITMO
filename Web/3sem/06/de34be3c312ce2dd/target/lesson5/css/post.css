@@ -1,0 +1,55 @@
+.post {
+    margin-bottom: 2rem;
+}
+
+.post .title {
+    color: var(--caption-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem;
+}
+
+.post .information {
+    color: darkgrey;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+.post .body {
+    margin: 0.5rem;
+    border-left: 4px solid var(--border-color);
+    padding-left: 1rem;
+    list-style-type: none;
+}
+
+.post .footer {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 0.2rem;
+}
+
+.post .footer .right {
+    float: right;
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 0.3rem;
+    padding-top: 0.1rem;
+    font-size: 0.9rem;
+    height: 27px;
+}
+
+.post .footer .right img {
+    vertical-align: middle;
+}
+
+.post .footer .left {
+    display: inline-block;
+    color: darkgreen;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.post .footer .left img {
+    vertical-align: middle;
+}
