@@ -1,0 +1,12 @@
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/form/UserCredentials.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/controller/EnterPage.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/WpApplication.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/form/validator/UserCredentialsEnterValidator.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/form/validator/UserCredentialsRegisterValidator.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/controller/Page.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/repository/UserRepository.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/controller/IndexPage.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/controller/RegisterPage.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/controller/UsersPage.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/domain/User.java
+/home/vladkuznetsov/Vl/Projects/Web/07/96fb44125943cac7/src/main/java/ru/itmo/wp/service/UserService.java
