@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9ed290fe-a4e6-4935-b14a-f69bd6906f03" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Vue Single File Component" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1UTpPqAgkSSXYyPjrlUZJdlIp4z" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/public/css" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/css" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/components/middle" />
+    </key>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9ed290fe-a4e6-4935-b14a-f69bd6906f03" name="Default Changelist" comment="" />
+      <created>1575390418271</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1575390418271</updated>
+      <workItem from="1575390422740" duration="19652000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="258" y="121" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1575390530407">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="258" y="121" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1600.873@0.27.1600.873" timestamp="1575390530407" />
+    <state width="1377" height="203" key="GridCell.Tab.0.bottom" timestamp="1575449813479">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1377" height="203" key="GridCell.Tab.0.bottom/0.27.1600.873@0.27.1600.873" timestamp="1575449813479" />
+    <state width="1377" height="203" key="GridCell.Tab.0.center" timestamp="1575449813479">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1377" height="203" key="GridCell.Tab.0.center/0.27.1600.873@0.27.1600.873" timestamp="1575449813479" />
+    <state width="1377" height="203" key="GridCell.Tab.0.left" timestamp="1575449813478">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1377" height="203" key="GridCell.Tab.0.left/0.27.1600.873@0.27.1600.873" timestamp="1575449813478" />
+    <state width="1377" height="203" key="GridCell.Tab.0.right" timestamp="1575449813479">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1377" height="203" key="GridCell.Tab.0.right/0.27.1600.873@0.27.1600.873" timestamp="1575449813479" />
+    <state x="448" y="67" width="704" height="792" key="find.popup" timestamp="1575412156959">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="448" y="67" width="704" height="792" key="find.popup/0.27.1600.873@0.27.1600.873" timestamp="1575412156959" />
+  </component>
+</project>

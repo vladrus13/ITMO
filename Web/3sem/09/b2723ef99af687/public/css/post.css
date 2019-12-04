@@ -1,0 +1,51 @@
+/* post */
+.post {
+    margin-bottom: 2em;
+}
+
+.post .title {
+    color: var(--caption-color);
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.post .information {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.post .body {
+    border-left: 4px solid var(--border-color);
+    padding-left: 0.75rem;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.post .body p:last-child {
+    margin: 0;
+}
+
+.post .attachment {
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+}
+
+.comment .information {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.comment {
+    margin-bottom: 2em;
+}
+
+.comment .body {
+    border-left: 4px solid var(--border-color);
+    padding-left: 0.75rem;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.comment .body p:last-child {
+    margin: 0;
+}
