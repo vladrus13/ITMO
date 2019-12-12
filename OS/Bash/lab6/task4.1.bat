@@ -1,0 +1,1 @@
+driverquery /FO table /NH > drivers.txt

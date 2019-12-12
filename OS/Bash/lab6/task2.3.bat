@@ -1,0 +1,1 @@
+schtasks /create /F /K /SC minute /DU 00:02 /TN schCopyOs /TR task2.2.bat

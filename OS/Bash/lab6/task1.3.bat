@@ -1,0 +1,1 @@
+copy .\ .\copy.txt

@@ -1,0 +1,1 @@
+fc /A services.txt services_new.txt > services_diff.txt

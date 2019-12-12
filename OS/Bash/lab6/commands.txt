@@ -1,0 +1,7 @@
+ver > ver.txt
+chcp 1251
+systeminfo | find "Доступная физическая память" > 1_1_systeminfo.txt
+systeminfo | find "Полный объем физической памяти" >> 1_1_systeminfo.txt
+wmic LOGICALDISK GET DeviceId, VolumeName, Description, Size > 1_1_wmic.txt
+pausemd TEST
+copy .\ .\TESTcopy .\ .\copy.txtdel 1_1_systeminfo.txt 1_1_ver.txt 1_1_wmic.txtcopy .\task1*.bat commands.txt

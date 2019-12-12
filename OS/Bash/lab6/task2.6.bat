@@ -1,0 +1,1 @@
+robocopy /Z "C:\cd" "C:\lab6\temp" /min:2097152

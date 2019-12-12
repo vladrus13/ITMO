@@ -1,0 +1,1 @@
+del 1_1_systeminfo.txt 1_1_ver.txt 1_1_wmic.txt

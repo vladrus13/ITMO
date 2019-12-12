@@ -1,0 +1,2 @@
+md TEST
+copy .\ .\TEST
