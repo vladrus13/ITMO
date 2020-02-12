@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c079cf7b-6fd3-4a36-b559-3f49989d36f1" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1XWXTFxStYduFeisUWNVHrvje83" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/ru/ifmo/rain/kuznetsov/walk" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/ru/ifmo/rain/kuznetsov/walk" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.Run01">
+    <configuration name="Run01" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Walk" />
+      <module name="HW" />
+      <option name="PROGRAM_PARAMETERS" value="__Test__Walk__/test01_oneEmptyFile.in __Test__Walk__/test01_oneEmptyFile.out" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/ru/ifmo/rain/kuznetsov/walk" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="com.soywiz.korge.intellij.UpdateResourceBeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration name="Run05" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Walk" />
+      <module name="HW" />
+      <option name="PROGRAM_PARAMETERS" value="__Test__Walk__/test05_smallRandomFiles.in __Test__Walk__/test05_smallRandomFiles.out" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/ru/ifmo/rain/kuznetsov/walk" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="com.soywiz.korge.intellij.UpdateResourceBeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration name="Run31" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Walk" />
+      <module name="HW" />
+      <option name="PROGRAM_PARAMETERS" value="__Test__Walk__/test31_singleRecursion.in __Test__Walk__/test31_singleRecursion.out" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/ru/ifmo/rain/kuznetsov/walk" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="com.soywiz.korge.intellij.UpdateResourceBeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Run01" />
+      <item itemvalue="Application.Run05" />
+      <item itemvalue="Application.Run31" />
+    </list>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c079cf7b-6fd3-4a36-b559-3f49989d36f1" name="Default Changelist" comment="" />
+      <created>1581162830591</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1581162830591</updated>
+      <workItem from="1581162842316" duration="12954000" />
+      <workItem from="1581357537765" duration="2940000" />
+      <workItem from="1581444241641" duration="3282000" />
+      <workItem from="1581499971925" duration="7000" />
+      <workItem from="1581505624846" duration="4722000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="349" y="216" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1581177718789">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="349" y="216" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1600.873@0.27.1600.873" timestamp="1581177718789" />
+    <state x="444" y="268" width="783" height="404" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1581171551999">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="444" y="268" width="783" height="404" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1600.873@0.27.1600.873" timestamp="1581171551999" />
+    <state x="608" y="176" width="374" height="582" key="#com.intellij.ide.util.MemberChooser" timestamp="1581168428032">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="608" y="176" width="374" height="582" key="#com.intellij.ide.util.MemberChooser/0.27.1600.873@0.27.1600.873" timestamp="1581168428032" />
+    <state x="532" y="249" width="525" height="435" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1581171317489">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="532" y="249" width="525" height="435" key="#com.intellij.ide.util.TreeClassChooserDialog/0.27.1600.873@0.27.1600.873" timestamp="1581171317489" />
+    <state x="583" y="221" width="424" height="491" key="FileChooserDialogImpl" timestamp="1581175779938">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="583" y="221" width="424" height="491" key="FileChooserDialogImpl/0.27.1600.873@0.27.1600.873" timestamp="1581175779938" />
+    <state width="1554" height="216" key="GridCell.Tab.0.bottom" timestamp="1581444468191">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1554" height="216" key="GridCell.Tab.0.bottom/0.27.1600.873@0.27.1600.873" timestamp="1581444468191" />
+    <state width="1554" height="216" key="GridCell.Tab.0.center" timestamp="1581444468190">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1554" height="216" key="GridCell.Tab.0.center/0.27.1600.873@0.27.1600.873" timestamp="1581444468190" />
+    <state width="1554" height="216" key="GridCell.Tab.0.left" timestamp="1581444468190">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1554" height="216" key="GridCell.Tab.0.left/0.27.1600.873@0.27.1600.873" timestamp="1581444468190" />
+    <state width="1554" height="216" key="GridCell.Tab.0.right" timestamp="1581444468191">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1554" height="216" key="GridCell.Tab.0.right/0.27.1600.873@0.27.1600.873" timestamp="1581444468191" />
+    <state width="1554" height="268" key="GridCell.Tab.1.bottom" timestamp="1581178279104">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1554" height="268" key="GridCell.Tab.1.bottom/0.27.1600.873@0.27.1600.873" timestamp="1581178279104" />
+    <state width="1554" height="268" key="GridCell.Tab.1.center" timestamp="1581178279104">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1554" height="268" key="GridCell.Tab.1.center/0.27.1600.873@0.27.1600.873" timestamp="1581178279104" />
+    <state width="1554" height="268" key="GridCell.Tab.1.left" timestamp="1581178279103">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1554" height="268" key="GridCell.Tab.1.left/0.27.1600.873@0.27.1600.873" timestamp="1581178279103" />
+    <state width="1554" height="268" key="GridCell.Tab.1.right" timestamp="1581178279104">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="1554" height="268" key="GridCell.Tab.1.right/0.27.1600.873@0.27.1600.873" timestamp="1581178279104" />
+    <state x="456" y="291" key="com.intellij.ide.util.TipDialog" timestamp="1581505651995">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="456" y="291" key="com.intellij.ide.util.TipDialog/0.27.1600.873@0.27.1600.873" timestamp="1581505651995" />
+    <state x="464" y="207" key="run.anything.popup" timestamp="1581444678741">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="464" y="207" key="run.anything.popup/0.27.1600.873@0.27.1600.873" timestamp="1581444678741" />
+  </component>
+</project>

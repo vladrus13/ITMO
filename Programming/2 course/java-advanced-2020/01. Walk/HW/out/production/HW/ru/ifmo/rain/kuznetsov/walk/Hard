@@ -1,0 +1,2 @@
+javac Walk.java
+java -cp . -p . -m info.kgeorgiy.java.advanced.walk RecursiveWalk Walk
