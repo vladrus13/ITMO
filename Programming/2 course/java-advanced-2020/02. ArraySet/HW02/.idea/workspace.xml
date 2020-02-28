@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d3950a15-0e87-4b47-8cd3-bdf7f1a31b21" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1XsyLPtMQhFaC5sva5tsQtEcU3u" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Run" type="ShConfigurationType">
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/src/RunTests.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d3950a15-0e87-4b47-8cd3-bdf7f1a31b21" name="Default Changelist" comment="" />
+      <created>1581849043672</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1581849043672</updated>
+      <workItem from="1581849060404" duration="13979000" />
+      <workItem from="1582039883300" duration="5774000" />
+      <workItem from="1582214252213" duration="154000" />
+      <workItem from="1582227531759" duration="4333000" />
+      <workItem from="1582621007528" duration="2173000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="258" y="121" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1581849784519">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="258" y="121" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1600.873@0.27.1600.873" timestamp="1581849784519" />
+    <state x="608" y="176" width="374" height="582" key="#com.intellij.ide.util.MemberChooser" timestamp="1582041586699">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="608" y="176" width="374" height="582" key="#com.intellij.ide.util.MemberChooser/0.27.1600.873@0.27.1600.873" timestamp="1582041586699" />
+    <state x="331" y="27" width="928" height="873" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1582622867763">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="331" y="27" width="928" height="873" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.27.1600.873@0.27.1600.873" timestamp="1582622867763" />
+    <state x="422" y="210" width="735" height="520" key="FileChooserDialogImpl" timestamp="1581849739172">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="422" y="210" width="735" height="520" key="FileChooserDialogImpl/0.27.1600.873@0.27.1600.873" timestamp="1581849739172" />
+    <state x="283" y="41" width="1024" height="852" key="SettingsEditor" timestamp="1581849506864">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="283" y="41" width="1024" height="852" key="SettingsEditor/0.27.1600.873@0.27.1600.873" timestamp="1581849506864" />
+    <state x="456" y="291" key="com.intellij.ide.util.TipDialog" timestamp="1582227531539">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="456" y="291" key="com.intellij.ide.util.TipDialog/0.27.1600.873@0.27.1600.873" timestamp="1582227531539" />
+  </component>
+</project>
