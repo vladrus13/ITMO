@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="2p">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/prolog/lib/2p.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
