@@ -117,6 +117,7 @@
       <workItem from="1583757223499" duration="987000" />
       <workItem from="1583859645088" duration="5239000" />
       <workItem from="1584170115657" duration="8781000" />
+      <workItem from="1584208326179" duration="85000" />
     </task>
     <servers />
   </component>
@@ -148,11 +149,11 @@
       <screen x="0" y="27" width="1600" height="873" />
     </state>
     <state width="466" height="540" key="DebuggerActiveHint/0.27.1600.873@0.27.1600.873" timestamp="1583595252749" />
-    <state x="506" y="248" width="735" height="520" key="FileChooserDialogImpl" timestamp="1584172828684">
+    <state x="506" y="248" width="424" height="520" key="FileChooserDialogImpl" timestamp="1584208401922">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="422" y="210" width="735" height="520" key="FileChooserDialogImpl/0.27.1600.873@0.27.1600.873" timestamp="1583865272739" />
-    <state x="506" y="248" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1584172828684" />
+    <state x="506" y="248" width="424" height="520" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1584208401922" />
     <state width="1554" height="216" key="GridCell.Tab.0.bottom" timestamp="1583678156588">
       <screen x="0" y="27" width="1600" height="873" />
     </state>
@@ -189,14 +190,16 @@
       <screen x="0" y="27" width="1600" height="873" />
     </state>
     <state x="283" y="41" width="1024" height="852" key="SettingsEditor/0.27.1600.873@0.27.1600.873" timestamp="1583865293236" />
-    <state x="456" y="291" key="com.intellij.ide.util.TipDialog" timestamp="1584170117783">
-      <screen x="0" y="27" width="1600" height="873" />
+    <state x="547" y="345" key="com.intellij.ide.util.TipDialog" timestamp="1584208326349">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="456" y="291" key="com.intellij.ide.util.TipDialog/0.27.1600.873@0.27.1600.873" timestamp="1584170117783" />
-    <state x="104" y="67" width="1372" height="806" key="new project wizard" timestamp="1583865289476">
-      <screen x="0" y="27" width="1600" height="873" />
+    <state x="547" y="345" key="com.intellij.ide.util.TipDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1584208326349" />
+    <state x="125" y="75" width="1372" height="806" key="new project wizard" timestamp="1584208410833">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="104" y="67" width="1372" height="806" key="new project wizard/0.27.1600.873@0.27.1600.873" timestamp="1583865289476" />
+    <state x="125" y="75" key="new project wizard/0.27.1920.1053@0.27.1920.1053" timestamp="1584208410833" />
     <state x="463" y="214" width="672" height="678" key="search.everywhere.popup" timestamp="1583673122649">
       <screen x="0" y="27" width="1600" height="873" />
     </state>
