@@ -1,0 +1,2 @@
+javac -cp .:info.kgeorgiy.java.advanced.base.jar:info.kgeorgiy.java.advanced.concurrent.jar ru/ifmo/rain/kuznetsov/concurrent/Concurrent.java
+java -cp . -p . -m info.kgeorgiy.java.advanced.concurrent scalar ru.ifmo.rain.kuznetsov.concurrent.Concurrent
