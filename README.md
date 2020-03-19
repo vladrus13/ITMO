@@ -11,7 +11,6 @@
   2. [Сортировки](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/1%20course/Sort)
   3. [DSU и приоритетная очередь](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/1%20course/DSU_PriorQueue)
   4. [Динамическое программирование](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/1%20course/DinamicProgramming)
-  * ---
   1. [Дерево отрезков](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/1%20course/SegmentTree)
   2. [Запросы на деревьях](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/1%20course/Queries_in_tree)
   3. [Деревья поиска](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/1%20course/FindingTrees)
