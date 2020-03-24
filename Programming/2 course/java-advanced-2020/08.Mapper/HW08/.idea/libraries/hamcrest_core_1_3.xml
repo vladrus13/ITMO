@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="hamcrest-core-1.3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/hamcrest-core-1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/info.kgeorgiy.java.advanced.base.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/info.kgeorgiy.java.advanced.concurrent.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/jsoup-1.8.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/junit-4.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/quickcheck-0.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/info.kgeorgiy.java.advanced.mapper.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/src/quickcheck-0.6.jar!/" />
+    </SOURCES>
+  </library>
+</component>

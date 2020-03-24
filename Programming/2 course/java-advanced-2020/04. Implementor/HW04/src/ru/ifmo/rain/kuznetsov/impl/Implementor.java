@@ -10,6 +10,7 @@ import java.lang.reflect.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Implementor implements Impler {
@@ -183,7 +184,7 @@ public class Implementor implements Impler {
             throw new ImplerException("Private token-class");
         }
         return generatePackage(token) + "public class " + generateClassName(token) + " " + (token.isInterface() ? "implements " : "extends ")
-                + token.getName().replace('$', '.') + " {" + generateLineSeparator();
+                + token.getCanonicalName() + " {" + generateLineSeparator();
     }
 
     private void generateConstructors(Class<?> token, Writer writer) throws IOException, ImplerException {
@@ -196,20 +197,23 @@ public class Implementor implements Impler {
         }
     }
 
-    private void addAbstractMethods(Method[] methods, Set<UniqMethod> set) {
+    private void addMethods(Method[] methods, Set<UniqMethod> set, Predicate<Method> predicate) {
         Arrays.stream(methods).
-                filter(method -> Modifier.isAbstract(method.getModifiers())).
+                filter(predicate).
                 map(UniqMethod::new).
                 collect(Collectors.toCollection(() -> set));
     }
 
     private void generateAbstractMethods(Class<?> token, Writer writer) throws IOException {
         Set<UniqMethod> methods = new HashSet<>();
-        addAbstractMethods(token.getMethods(), methods);
+        Set<UniqMethod> finalMethods = new HashSet<>();
+        addMethods(token.getMethods(), methods, method -> Modifier.isAbstract(method.getModifiers()));
+        addMethods(token.getDeclaredMethods(), finalMethods, method -> Modifier.isFinal(method.getModifiers()));
         while (token != null) {
-            addAbstractMethods(token.getDeclaredMethods(), methods);
+            addMethods(token.getDeclaredMethods(), methods, method -> Modifier.isAbstract(method.getModifiers()));
             token = token.getSuperclass();
         }
+        methods.removeAll(finalMethods);
         for (UniqMethod method : methods) {
             writer.write(generateExucutable(method.getMethod()));
         }

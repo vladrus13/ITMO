@@ -25,7 +25,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../03. StudentGroupQuery/HW03" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -45,9 +45,9 @@
       <recent name="$PROJECT_DIR$/src/ru/ifmo/rain/kuznetsov/impl" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Test">
+  <component name="RunManager" selected="Shell Script.compile-javadoc.sh">
     <configuration name="Test" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="ru.ifmo.rain.kuznetsov.impl.Implementor" />
+      <option name="MAIN_CLASS_NAME" value="ru.ifmo.rain.kuznetsov.impl.JarImplementor" />
       <module name="HW05" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -78,6 +78,14 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="compile-javadoc.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/compile-javadoc.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="generateJar.sh" type="ShConfigurationType" temporary="true">
       <option name="SCRIPT_PATH" value="$PROJECT_DIR$/src/generateJar.sh" />
       <option name="SCRIPT_OPTIONS" value="" />
@@ -92,9 +100,11 @@
       <item itemvalue="Shell Script.HRun" />
       <item itemvalue="Shell Script.BRun" />
       <item itemvalue="Shell Script.generateJar.sh" />
+      <item itemvalue="Shell Script.compile-javadoc.sh" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Shell Script.compile-javadoc.sh" />
         <item itemvalue="Shell Script.generateJar.sh" />
       </list>
     </recent_temporary>
@@ -118,6 +128,8 @@
       <workItem from="1583859645088" duration="5239000" />
       <workItem from="1584170115657" duration="8781000" />
       <workItem from="1584208326179" duration="85000" />
+      <workItem from="1584383739843" duration="879000" />
+      <workItem from="1584386484008" duration="5241000" />
     </task>
     <servers />
   </component>
@@ -145,15 +157,19 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="579" y="229" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1584170255315" />
+    <state x="427" y="27" width="1056" height="1053" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1584383819111">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="427" y="27" width="1056" height="1053" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1584383819111" />
     <state width="466" height="540" key="DebuggerActiveHint" timestamp="1583595252749">
       <screen x="0" y="27" width="1600" height="873" />
     </state>
     <state width="466" height="540" key="DebuggerActiveHint/0.27.1600.873@0.27.1600.873" timestamp="1583595252749" />
-    <state x="506" y="248" width="424" height="520" key="FileChooserDialogImpl" timestamp="1584208401922">
+    <state x="506" y="248" width="424" height="520" key="FileChooserDialogImpl" timestamp="1584384687212">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="422" y="210" width="735" height="520" key="FileChooserDialogImpl/0.27.1600.873@0.27.1600.873" timestamp="1583865272739" />
-    <state x="506" y="248" width="424" height="520" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1584208401922" />
+    <state x="506" y="248" width="424" height="520" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1584384687212" />
     <state width="1554" height="216" key="GridCell.Tab.0.bottom" timestamp="1583678156588">
       <screen x="0" y="27" width="1600" height="873" />
     </state>

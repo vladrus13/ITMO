@@ -24,7 +24,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -33,6 +33,16 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="HRun.sh" type="ShConfigurationType">
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/src/HRun.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -45,6 +55,8 @@
       <option name="presentableId" value="Default" />
       <updated>1584208410922</updated>
       <workItem from="1584208414908" duration="5098000" />
+      <workItem from="1584384698362" duration="1671000" />
+      <workItem from="1584811680581" duration="705000" />
     </task>
     <servers />
   </component>
@@ -56,17 +68,26 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="555" y="215" width="800" height="684" key="#Project_Structure/0.27.1920.1053@0.27.1920.1053" timestamp="1584208466629" />
+    <state x="418" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584385079706">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="418" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1584385079706" />
     <state x="768" y="266" width="374" height="582" key="#com.intellij.ide.util.MemberChooser" timestamp="1584208802500">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="768" y="266" width="374" height="582" key="#com.intellij.ide.util.MemberChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1584208802500" />
-    <state x="582" y="300" width="735" height="520" key="FileChooserDialogImpl" timestamp="1584208782517">
+    <state x="582" y="300" width="735" height="520" key="FileChooserDialogImpl" timestamp="1584812340961">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="582" y="300" width="735" height="520" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1584208782517" />
+    <state x="582" y="300" key="FileChooserDialogImpl/0.27.1920.1053/1920.0.1024.768@0.27.1920.1053" timestamp="1584812340961" />
+    <state x="582" y="300" width="735" height="520" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1584386476655" />
     <state x="443" y="131" width="1024" height="852" key="SettingsEditor" timestamp="1584208788717">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="443" y="131" width="1024" height="852" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1584208788717" />
+    <state x="269" y="154" width="1372" height="805" key="new project wizard" timestamp="1584812370478">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="269" y="154" width="1372" height="805" key="new project wizard/0.27.1920.1053/1920.0.1024.768@0.27.1920.1053" timestamp="1584812370478" />
   </component>
 </project>
