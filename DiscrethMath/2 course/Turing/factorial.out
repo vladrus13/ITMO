@@ -1,0 +1,232 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+GENERATING_PRODUCING _ -> GENERATING_PRODUCING _ ^
+
+s 0 -> ac 0 ^
+s 1 -> check_from_start_on_one 1 ^
+
+check_from_start_on_one 1 -> to_end 1 >
+check_from_start_on_one 0 -> check_from_start_on_one 0 >
+check_from_start_on_one 11 -> to_end 1 >
+check_from_start_on_one 00 -> check_from_start_on_one 0 >
+check_from_start_on_one _ -> delele_from_last_null _ <
+
+delele_from_last_null 0 -> delele_from_last_null _ <
+delele_from_last_null 1 -> delele_from_last_null _ <
+delele_from_last_null 00 -> delele_from_last_null _ <
+delele_from_last_null 11 -> delele_from_last_null _ <
+delele_from_last_null * -> ready_to_factorial _ <
+
+to_end 1 -> to_end 1 >
+to_end 0 -> to_end 0 >
+to_end 11 -> to_end 1 >
+to_end 00 -> to_end 0 >
+to_end _ -> go_to_first_and_copy_digit * <
+
+go_to_first_and_copy_digit * -> copy_digit * >
+go_to_first_and_copy_digit 00 -> copy_digit 00 >
+go_to_first_and_copy_digit 11 -> copy_digit 11 >
+go_to_first_and_copy_digit _ -> copy_digit _ >
+go_to_first_and_copy_digit 1 -> go_to_first_and_copy_digit 1 <
+go_to_first_and_copy_digit 0 -> go_to_first_and_copy_digit 0 <
+
+copy_digit 1 -> insert_1_to_end 11 >
+copy_digit 0 -> insert_0_to_end 00 >
+copy_digit * -> to_end_and_decrease * >
+
+insert_1_to_end * -> insert_1_to_end * >
+insert_1_to_end 1 -> insert_1_to_end 1 >
+insert_1_to_end 0 -> insert_1_to_end 0 >
+insert_1_to_end _ -> until_not_*_go_left 1 <
+
+insert_0_to_end * -> insert_0_to_end * >
+insert_0_to_end 1 -> insert_0_to_end 1 >
+insert_0_to_end 0 -> insert_0_to_end 0 >
+insert_0_to_end _ -> until_not_*_go_left 0 <
+
+until_not_*_go_left * -> go_to_first_and_copy_digit * <
+until_not_*_go_left 0 -> until_not_*_go_left 0 <
+until_not_*_go_left 1 -> until_not_*_go_left 1 <
+
+to_end_and_decrease 1 -> to_end_and_decrease 1 >
+to_end_and_decrease 0 -> to_end_and_decrease 0 >
+to_end_and_decrease _ -> decrease _ <
+
+decrease 0 -> decrease 1 <
+decrease * -> check_from_start_on_one * >
+decrease 1 -> to_start 0 <
+
+to_start 0 -> to_start 0 <
+to_start 1 -> to_start 1 <
+to_start * -> check_from_start_on_one * >
+to_start _ -> check_from_start_on_one _ >
+
+ready_to_factorial 00 -> ready_to_factorial 0 <
+ready_to_factorial 11 -> ready_to_factorial 1 <
+ready_to_factorial * -> ready_to_factorial * <
+ready_to_factorial _ -> insert_= _ ^
+
+
+
+
+CALCULATE_FACTORIAL _ -> CALCULATE_FACTORIAL _ ^
+
+insert_= _ -> start_producing = >
+
+start_producing 1 -> start_producing 1 >
+start_producing 0 -> start_producing 0 >
+start_producing 11 -> start_producing 1 >
+start_producing 00 -> start_producing 0 >
+start_producing N -> start_producing N >
+start_producing O -> start_producing O >
+start_producing = -> start_producing = >
+start_producing * -> start_producing_second_number * >
+start_producing _ -> its_time_to_finish _ <
+
+start_producing_second_number 1 -> start_producing_second_number 1 >
+start_producing_second_number 0 -> start_producing_second_number 0 >
+start_producing_second_number 11 -> start_producing_second_number 1 >
+start_producing_second_number 00 -> start_producing_second_number 0 >
+start_producing_second_number R -> producing R <
+start_producing_second_number * -> producing * <
+start_producing_second_number _ -> producing _ <
+
+producing 0 -> next_bit R <
+producing 1 -> add_new R <
+producing * -> split_main_command * ^
+
+next_bit 0 -> next_bit 0 <
+next_bit 1 -> next_bit 1 <
+next_bit * -> next_bit * <
+next_bit = -> next_bit_after_= = <
+
+next_bit_after_= N -> next_bit_after_= N <
+next_bit_after_= O -> next_bit_after_= O <
+next_bit_after_= 00 -> from_equals_fixed N <
+next_bit_after_= 11 -> from_equals_fixed O <
+next_bit_after_= 0 -> from_equals_fixed N <
+next_bit_after_= 1 -> from_equals_fixed O <
+next_bit_after_= _ -> from_equals_fixed N <
+
+from_equals_fixed 00 -> from_equals_fixed 0 <
+from_equals_fixed 11 -> from_equals_fixed 1 <
+from_equals_fixed 0 -> from_equals_fixed 0 <
+from_equals_fixed 1 -> from_equals_fixed 1 <
+from_equals_fixed _ -> start_producing _ >
+
+add_new 0 -> add_new 0 <
+add_new 1 -> add_new 1 <
+add_new * -> adding * <
+
+adding 1 -> add_one 11 <
+adding 0 -> add_null 00 <
+adding = -> next_bit_after_= = <
+
+add_one 0 -> add_one 0 <
+add_one 1 -> add_one 1 <
+add_one = -> add_one_after_= = <
+
+add_null 0 -> add_null 0 <
+add_null 1 -> add_null 1 <
+add_null = -> add_null_after_= = <
+
+add_one_after_= 00 -> add_one_after_= 00 <
+add_one_after_= 11 -> add_one_after_= 11 <
+add_one_after_= N -> add_one_after_= N <
+add_one_after_= O -> add_one_after_= O <
+add_one_after_= 0 -> go_to_adding 11 >
+add_one_after_= 1 -> just_add_one 00 <
+add_one_after_= _ -> go_to_adding 11 >
+
+add_null_after_= 00 -> add_null_after_= 00 <
+add_null_after_= 11 -> add_null_after_= 11 <
+add_null_after_= O -> add_null_after_= O <
+add_null_after_= N -> add_null_after_= N <
+add_null_after_= 0 -> go_to_adding 00 >
+add_null_after_= 1 -> go_to_adding 11 >
+add_null_after_= _ -> go_to_adding 00 >
+
+just_add_one 0 -> go_to_adding 1 >
+just_add_one 1 -> just_add_one 0 <
+just_add_one _ -> go_to_adding 1 >
+
+to_=_for_next_bit 1 -> to_=_for_next_bit 1 >
+to_=_for_next_bit 0 -> to_=_for_next_bit 0 >
+to_=_for_next_bit 00 -> to_=_for_next_bit 00 >
+to_=_for_next_bit 11 -> to_=_for_next_bit 11 >
+to_=_for_next_bit N -> to_=_for_next_bit N >
+to_=_for_next_bit O -> to_=_for_next_bit O >
+to_=_for_next_bit = -> next_bit = ^
+
+go_to_adding 1 -> go_to_adding 1 >
+go_to_adding 0 -> go_to_adding 0 >
+go_to_adding 00 -> go_to_adding 00 >
+go_to_adding 11 -> go_to_adding 11 >
+go_to_adding N -> go_to_adding N >
+go_to_adding O -> go_to_adding O >
+go_to_adding = -> from_eq_to_adding = >
+
+from_eq_to_adding 1 -> from_eq_to_adding 1 >
+from_eq_to_adding 0 -> from_eq_to_adding 0 >
+from_eq_to_adding 11 -> adding 11 <
+from_eq_to_adding 00 -> adding 00 <
+
+
+
+SPLIT_NUMBERS _ -> SPLIT_NUMBERS _ ^
+
+split_main_command * -> delete_all_on_equals_to_multi E <
+
+delete_all_on_equals_to_multi 0 -> delete_all_on_equals_to_multi E <
+delete_all_on_equals_to_multi 1 -> delete_all_on_equals_to_multi E <
+delete_all_on_equals_to_multi = -> move_number E <
+
+move_number N -> move_number_0 E >
+move_number O -> move_number_1 E >
+move_number 1 -> move_number_1 E >
+move_number 0 -> move_number_0 E >
+
+move_number_0 E -> move_number_0 E >
+move_number_0 R -> move_number_0 R >
+move_number_0 1 -> set_number_0 1 <
+move_number_0 0 -> set_number_0 0 <
+move_number_0 * -> set_number_0 * <
+move_number_0 _ -> set_number_0 _ <
+
+move_number_1 E -> move_number_1 E >
+move_number_1 R -> move_number_1 R >
+move_number_1 1 -> set_number_1 1 <
+move_number_1 0 -> set_number_1 0 <
+move_number_1 * -> set_number_1 * <
+move_number_1 _ -> set_number_1 _ <
+
+set_number_0 R -> go_for_new_number 0 <
+set_number_0 E -> go_for_new_number 0 <
+
+set_number_1 R -> go_for_new_number 1 <
+set_number_1 E -> go_for_new_number 1 <
+
+go_for_new_number E -> go_for_new_number E <
+go_for_new_number R -> go_for_new_number R <
+go_for_new_number N -> move_number N ^
+go_for_new_number O -> move_number O ^
+go_for_new_number 1 -> move_number 1 ^
+go_for_new_number 0 -> move_number 0 ^
+go_for_new_number _ -> go_to_new_iteration _ >
+
+go_to_new_iteration E -> go_to_new_iteration _ >
+go_to_new_iteration R -> go_to_new_iteration _ >
+go_to_new_iteration 0 -> insert_= 0 <
+go_to_new_iteration 1 -> insert_= 1 <
+
+
+
+
+FINISH _ -> FINISH _ ^
+
+its_time_to_finish 0 -> its_time_to_finish 0 <
+its_time_to_finish 1 -> its_time_to_finish 1 <
+its_time_to_finish = -> ac _ >

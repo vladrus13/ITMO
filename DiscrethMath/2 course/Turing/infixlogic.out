@@ -1,0 +1,52 @@
+2
+
+S 0 _ -> S _ > 0 >
+S 1 _ -> S _ > 1 >
+S o _ -> S _ > o >
+S a _ -> add_operation_and _ > a >
+S _ _ -> add_operation_bracket _ ^ _ <
+S ( _ -> S _ > ( >
+S ) _ -> add_operation_bracket _ ^ _ <
+
+add_operation_and 0 _ -> and_operation 0 ^ _ <
+add_operation_and 1 _ -> and_operation 1 ^ _ <
+add_operation_and ( _ -> S _ > ( >
+
+add_operation_and_with_first_0 _ o -> put_second_0 _ ^ o >
+add_operation_and_with_first_0 _ a -> add_operation_and_with_first_0 _ ^ _ <
+add_operation_and_with_first_0 _ 0 -> S _ > 0 >
+add_operation_and_with_first_0 _ 1 -> S _ > 0 >
+add_operation_and_with_first_0 _ _ -> put_second_0 _ ^ _ >
+add_operation_and_with_first_0 _ ( -> put_second_0 _ ^ ( >
+
+add_operation_and_with_first_1 _ o -> put_second_1 _ ^ o >
+add_operation_and_with_first_1 _ a -> add_operation_and_with_first_1 _ ^ _ <
+add_operation_and_with_first_1 _ 0 -> S _ > 0 >
+add_operation_and_with_first_1 _ 1 -> S _ > 1 >
+add_operation_and_with_first_1 _ _ -> put_second_1 _ ^ _ >
+add_operation_and_with_first_1 _ ( -> put_second_1 _ ^ ( >
+
+and_operation 0 a -> and_operation 0 ^ _ <
+and_operation 1 a -> and_operation 1 ^ _ <
+and_operation 0 0 -> S _ > 0 >
+and_operation 0 1 -> S _ > 0 >
+and_operation 1 0 -> S _ > 0 >
+and_operation 1 1 -> S _ > 1 >
+
+put_second_0 _ _ -> S _ > 0 >
+put_second_1 _ _ -> S _ > 1 >
+
+add_operation_bracket _ 0 -> add_operation_bracket_in_null _ ^ _ <
+add_operation_bracket _ 1 -> add_operation_bracket_in_one _ ^ _ <
+
+add_operation_bracket_in_null _ o -> add_operation_bracket_in_null _ ^ _ <
+add_operation_bracket_in_null _ 0 -> add_operation_bracket_in_null _ ^ _ <
+add_operation_bracket_in_null _ 1 -> add_operation_bracket_in_one _ ^ _ <
+add_operation_bracket_in_null _ _ -> AC 0 ^ _ <
+add_operation_bracket_in_null _ ( -> add_operation_and_with_first_0 _ ^ _ <
+
+add_operation_bracket_in_one _ o -> add_operation_bracket_in_one _ ^ _ <
+add_operation_bracket_in_one _ 0 -> add_operation_bracket_in_one _ ^ _ <
+add_operation_bracket_in_one _ 1 -> add_operation_bracket_in_one _ ^ _ <
+add_operation_bracket_in_one _ _ -> AC 1 ^ _ <
+add_operation_bracket_in_one _ ( -> add_operation_and_with_first_1 _ ^ _ <

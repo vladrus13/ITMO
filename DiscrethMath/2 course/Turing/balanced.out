@@ -1,0 +1,28 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s ( -> find_pair ( >
+s ) -> rj ) ^
+s _ -> ac _ ^
+
+to_start ( -> to_start ( <
+to_start ) -> to_start ) <
+to_start _ -> find_open _ >
+to_start d -> to_start d <
+
+find_open ( -> find_pair ( >
+find_open d -> find_open d >
+find_open ) -> rj _ ^
+find_open _ -> ac _ >
+
+find_pair ( -> find_pair ( >
+find_pair d -> find_pair d >
+find_pair ) -> delete_pair d <
+find_pair _ -> rj _ ^
+
+delete_pair ( -> to_start d <
+delete_pair d -> delete_pair d <
+delete_pair ) -> rj ) ^
+delete_pair _ -> rj _ ^

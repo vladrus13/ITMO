@@ -1,0 +1,42 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> set_# 0 <
+s 1 -> set_# 1 <
+s 2 -> set_# 2 <
+
+set_# _ -> add_0 # <
+
+add_0 _ -> go_to_end 0 >
+
+go_to_end 0 -> go_to_end 0 >
+go_to_end 1 -> go_to_end 1 >
+go_to_end 2 -> go_to_end 2 >
+go_to_end # -> go_to_end # >
+go_to_end _ -> subtruct _ <
+
+subtruct 0 -> subtruct 2 <
+subtruct 1 -> to_back 0 <
+subtruct 2 -> to_back 1 <
+subtruct # -> i_delete # >
+
+to_back 0 -> to_back 0 <
+to_back 1 -> to_back 1 <
+to_back 2 -> to_back 2 <
+to_back # -> add # <
+
+add 0 -> go_to_end 1 >
+add 1 -> add 0 <
+add _ -> go_to_end 1 >
+
+i_delete 2 -> i_delete 2 >
+i_delete _ -> delete _ <
+
+delete 2 -> delete _ <
+delete # -> finish _ <
+
+finish 0 -> finish 0 <
+finish 1 -> finish 1 <
+finish _ -> ac _ >

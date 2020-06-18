@@ -1,0 +1,35 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+s 0 -> s 0 >
+s 1 -> s 1 >
+s + -> read_second + >
+
+read_second 0 -> read_second 0 >
+read_second 1 -> read_second 1 >
+read_second _ -> subtruct _ <
+
+subtruct 0 -> subtruct 1 <
+subtruct 1 -> return_to_first_and_add 0 <
+subtruct + -> delete_last + >
+
+return_to_first_and_add 0 -> return_to_first_and_add 0 <
+return_to_first_and_add 1 -> return_to_first_and_add 1 <
+return_to_first_and_add + -> add_to_first + <
+
+add_to_first 0 -> s 1 >
+add_to_first 1 -> add_to_first 0 <
+add_to_first _ -> s 1 >
+
+delete_last 0 -> delete_last 0 >
+delete_last 1 -> delete_last 1 >
+delete_last _ -> delete _ <
+
+delete 0 -> delete _ <
+delete 1 -> delete _ <
+delete + -> to_first _ < 
+
+to_first 1 -> to_first 1 <
+to_first 0 -> to_first 0 <
+to_first _ -> ac _ >

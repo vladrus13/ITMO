@@ -1,0 +1,28 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 1 -> s 1 >
+s 0 -> s 0 >
+s _ -> mirror _ <
+
+mirror 0 -> go_to_end_and_add_null $ >
+mirror 1 -> go_to_end_and_add_one $ >
+mirror _ -> ac _ >
+
+go_to_end_and_add_one 1 -> go_to_end_and_add_one 1 >
+go_to_end_and_add_one 0 -> go_to_end_and_add_one 0 >
+go_to_end_and_add_one _ -> go_to_start_with_one 1 <
+
+go_to_end_and_add_null 1 -> go_to_end_and_add_null 1 >
+go_to_end_and_add_null 0 -> go_to_end_and_add_null 0 >
+go_to_end_and_add_null _ -> go_to_start_with_null 0 <
+
+go_to_start_with_one 1 -> go_to_start_with_one 1 <
+go_to_start_with_one 0 -> go_to_start_with_one 0 <
+go_to_start_with_one $ -> mirror 1 <
+
+go_to_start_with_null 1 -> go_to_start_with_null 1 <
+go_to_start_with_null 0 -> go_to_start_with_null 0 <
+go_to_start_with_null $ -> mirror 0 <

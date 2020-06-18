@@ -1,0 +1,79 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> turn_on_double 00 >
+s 1 -> turn_on_double 11 >
+
+turn_on_double 0 -> turn_on_double 00 >
+turn_on_double 1 -> turn_on_double 11 >
+turn_on_double < -> turn_on_double < >
+turn_on_double _ -> to_start_checking _ <
+
+to_start_checking 00 -> to_start_checking 00 <
+to_start_checking 11 -> to_start_checking 11 <
+to_start_checking < -> check_first < <
+
+go_to_first_check 11 -> go_to_first_check 11 <
+go_to_first_check 00 -> go_to_first_check 00 <
+go_to_first_check < -> check_first < <
+go_to_first_check 1 -> go_to_first_check 1 <
+go_to_first_check 0 -> go_to_first_check 0 <
+
+check_first 0 -> check_first 0 <
+check_first 1 -> check_first 1 <
+check_first 00 -> go_to_second_check 0 >
+check_first 11 -> go_to_second_check 1 >
+check_first _ -> check_second_len _ >
+
+go_to_second_check 0 -> go_to_second_check 0 >
+go_to_second_check 1 -> go_to_second_check 1 >
+go_to_second_check < -> check_second < >
+
+check_second 11 -> go_to_first_check 1 <
+check_second 00 -> go_to_first_check 0 <
+check_second 1 -> check_second 1 >
+check_second 0 -> check_second 0 >
+check_second _ -> rj < ^
+
+
+
+check_second_len 0 -> check_second_len 0 >
+check_second_len 1 -> check_second_len 1 >
+check_second_len 11 -> ac 11 ^
+check_second_len 00 -> ac 00 ^
+check_second_len _ -> to_start _ <
+check_second_len < -> check_second_len < >
+
+
+
+
+
+lets_compare 1 -> go_to_second_with_1 # >
+lets_compare 0 -> go_to_second_with_0 # >
+lets_compare # -> lets_compare # >
+lets_compare < -> rj < ^
+
+go_to_second_with_1 1 -> go_to_second_with_1 1 >
+go_to_second_with_1 0 -> go_to_second_with_1 0 >
+go_to_second_with_1 < -> go_with_1 < >
+
+go_to_second_with_0 1 -> go_to_second_with_0 1 >
+go_to_second_with_0 0 -> go_to_second_with_0 0 >
+go_to_second_with_0 < -> go_with_0 < >
+
+go_with_1 # -> go_with_1 # >
+go_with_1 1 -> to_start # <
+go_with_1 0 -> rj 0 ^
+
+go_with_0 # -> go_with_0 # >
+go_with_0 1 -> ac 1 <
+go_with_0 0 -> to_start # <
+
+to_start 0 -> to_start 0 <
+to_start 1 -> to_start 1 <
+to_start # -> to_start # <
+to_start _ -> lets_compare _ >
+to_start < -> to_start < <
+

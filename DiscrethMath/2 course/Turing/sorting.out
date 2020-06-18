@@ -1,0 +1,112 @@
+3
+S _ _ _ -> AC _ ^ _ ^ _ ^
+S 0 _ _ -> move_to_second_line 0 ^ _ ^ _ ^
+S 1 _ _ -> move_to_second_line 1 ^ _ ^ _ ^
+S | _ _ -> move_to_second_line | ^ _ ^ _ ^
+
+move_to_third_line_really 0 0 _ -> move_to_third_line_really S > S > 0 >
+move_to_third_line_really 1 0 _ -> move_to_third_line_really S > S > 1 >
+move_to_third_line_really | | _ -> fill_in_first_and_second_line | < | < | >
+move_to_third_line_really _ _ _ -> fill_in_first_and_second_line _ < _ < | >
+
+move_to_second_line 0 _ _ -> move_to_second_line 0 > 0 > _ ^
+move_to_second_line 1 _ _ -> move_to_second_line 1 > 1 > _ ^
+move_to_second_line | _ _ -> move_to_second_line | > | > _ ^
+move_to_second_line _ _ _ -> starting_sort_with_permission _ < _ < _ ^
+
+check_for_equals_in_first_and_second_line 0 0 _ -> check_for_equals_in_first_and_second_line 0 < 0 < _ ^
+check_for_equals_in_first_and_second_line 0 1 _ -> move_to_last_check_for_equals_in_first_and_second_line 0 > 1 > _ ^
+check_for_equals_in_first_and_second_line 1 0 _ -> check_for_equals_in_first_and_second_line 1 < 0 < _ ^
+check_for_equals_in_first_and_second_line 1 1 _ -> move_to_last_check_for_equals_in_first_and_second_line 1 > 1 > _ ^
+check_for_equals_in_first_and_second_line | | _ -> move_to_third_line_really | > | > _ ^
+check_for_equals_in_first_and_second_line S S _ -> skip_all_Sorted S < S < _ ^
+check_for_equals_in_first_and_second_line _ _ _ -> move_to_third_line_really _ > _ > _ ^
+
+move_to_third_line S S _ -> move_to_third_line S > S > _ ^
+move_to_third_line 0 0 _ -> move_to_third_line 0 > 0 > _ ^
+move_to_third_line 0 1 _ -> move_to_third_line 0 > 1 > _ ^
+move_to_third_line 1 0 _ -> move_to_third_line 1 > 0 > _ ^
+move_to_third_line 1 1 _ -> move_to_third_line 1 > 1 > _ ^
+move_to_third_line | | _ -> move_to_third_line | > | > _ ^
+move_to_third_line _ _ _ -> starting_sort_with_permission _ < _ < _ ^
+
+skip_all_Sorted S S _ -> skip_all_Sorted S < S < _ ^
+skip_all_Sorted | | _ -> check_for_equals_in_first_and_second_line | < | < _ ^
+skip_all_Sorted _ _ _ -> move_to_third_line _ > _ > _ ^
+
+move_to_last_check_for_equals_in_first_and_second_line 0 0 _ -> move_to_last_check_for_equals_in_first_and_second_line 0 > 0 > _ ^
+move_to_last_check_for_equals_in_first_and_second_line 0 1 _ -> move_to_last_check_for_equals_in_first_and_second_line 0 > 1 > _ ^
+move_to_last_check_for_equals_in_first_and_second_line 1 0 _ -> move_to_last_check_for_equals_in_first_and_second_line 1 > 0 > _ ^
+move_to_last_check_for_equals_in_first_and_second_line 1 1 _ -> move_to_last_check_for_equals_in_first_and_second_line 1 > 1 > _ ^
+move_to_last_check_for_equals_in_first_and_second_line _ _ _ -> start_move_to_first_check_for_equals_in_first_and_second_line _ < _ < _ ^
+move_to_last_check_for_equals_in_first_and_second_line | | _ -> start_move_to_first_check_for_equals_in_first_and_second_line | < | < _ ^
+
+move_to_end_line_on_both_lines S S _ -> move_to_end_line_on_both_lines S > S > _ ^
+move_to_end_line_on_both_lines 0 0 _ -> move_to_end_line_on_both_lines 0 > 0 > _ ^
+move_to_end_line_on_both_lines 0 1 _ -> move_to_end_line_on_both_lines 0 > 1 > _ ^
+move_to_end_line_on_both_lines 1 0 _ -> move_to_end_line_on_both_lines 1 > 0 > _ ^
+move_to_end_line_on_both_lines 1 1 _ -> move_to_end_line_on_both_lines 1 > 1 > _ ^
+move_to_end_line_on_both_lines | | _ -> move_to_end_line_on_both_lines | > | > _ ^
+move_to_end_line_on_both_lines _ _ _ -> check_for_equals_in_first_and_second_line _ < _ < _ ^
+
+fill_all_to_Sorted S _ _ -> fill_all_to_Sorted S > _ ^ _ ^
+fill_all_to_Sorted | _ _ -> fill_all_to_Sorted S > _ ^ _ ^
+fill_all_to_Sorted _ _ _ -> start_finish_move _ ^ _ ^ _ <
+
+start_move_to_first_check_for_equals_in_first_and_second_line 0 0 _ -> start_move_to_first_check_for_equals_in_first_and_second_line 0 < 1 < _ ^
+start_move_to_first_check_for_equals_in_first_and_second_line 0 1 _ -> move_to_first_check_for_equals_in_first_and_second_line 0 < 0 < _ ^
+start_move_to_first_check_for_equals_in_first_and_second_line 1 0 _ -> start_move_to_first_check_for_equals_in_first_and_second_line 1 < 1 < _ ^
+start_move_to_first_check_for_equals_in_first_and_second_line 1 1 _ -> move_to_first_check_for_equals_in_first_and_second_line 1 < 0 < _ ^
+
+move_to_first_check_for_equals_in_first_and_second_line 0 0 _ -> move_to_first_check_for_equals_in_first_and_second_line 0 < 0 < _ ^
+move_to_first_check_for_equals_in_first_and_second_line 0 1 _ -> move_to_first_check_for_equals_in_first_and_second_line 0 < 1 < _ ^
+move_to_first_check_for_equals_in_first_and_second_line 1 0 _ -> move_to_first_check_for_equals_in_first_and_second_line 1 < 0 < _ ^
+move_to_first_check_for_equals_in_first_and_second_line 1 1 _ -> move_to_first_check_for_equals_in_first_and_second_line 1 < 1 < _ ^
+move_to_first_check_for_equals_in_first_and_second_line | | _ -> check_for_equals_in_first_and_second_line | < | < _ ^
+move_to_first_check_for_equals_in_first_and_second_line _ _ _ -> move_to_third_line _ > _ > _ ^
+
+fill_in_first_and_second_line S S _ -> fill_in_first_and_second_line S < S < _ ^
+fill_in_first_and_second_line | | _ -> check_for_equals_in_first_and_second_line | < | < _ ^
+fill_in_first_and_second_line _ _ _ -> move_to_third_line _ > _ > _ ^
+
+starting_sort_with_permission 0 0 _ -> move_to_end_line_on_both_lines 0 > 0 > _ ^
+starting_sort_with_permission 0 1 _ -> move_to_end_line_on_both_lines 0 > 1 > _ ^
+starting_sort_with_permission 1 0 _ -> move_to_end_line_on_both_lines 1 > 0 > _ ^
+starting_sort_with_permission 1 1 _ -> move_to_end_line_on_both_lines 1 > 1 > _ ^
+starting_sort_with_permission S S _ -> starting_sort_with_permission S < S < _ ^
+starting_sort_with_permission | | _ -> starting_sort_with_permission | < | < _ ^
+starting_sort_with_permission _ _ _ -> fill_all_to_Sorted _ > _ ^ _ ^
+
+start_finish_move _ _ | -> finish_move _ < _ ^ _ <
+
+finish_move S _ 0 -> finish_move 0 < _ ^ 0 <
+finish_move S _ 1 -> finish_move 1 < _ ^ 1 <
+finish_move S _ | -> finish_move | < _ ^ | <
+finish_move _ _ _ -> execute_all_lines_without_first _ ^ _ > _ >
+
+execute_all_lines_without_first _ 0 0 -> execute_all_lines_without_first _ ^ _ > 0 ^
+execute_all_lines_without_first _ 0 1 -> execute_all_lines_without_first _ ^ _ > 1 ^
+execute_all_lines_without_first _ 0 S -> execute_all_lines_without_first _ ^ _ > S ^
+execute_all_lines_without_first _ 0 | -> execute_all_lines_without_first _ ^ _ > | ^
+execute_all_lines_without_first _ 1 0 -> execute_all_lines_without_first _ ^ _ > 0 ^
+execute_all_lines_without_first _ 1 1 -> execute_all_lines_without_first _ ^ _ > 1 ^
+execute_all_lines_without_first _ 1 S -> execute_all_lines_without_first _ ^ _ > S ^
+execute_all_lines_without_first _ 1 | -> execute_all_lines_without_first _ ^ _ > | ^
+execute_all_lines_without_first _ S 0 -> execute_all_lines_without_first _ ^ _ > 0 ^
+execute_all_lines_without_first _ S 1 -> execute_all_lines_without_first _ ^ _ > 1 ^
+execute_all_lines_without_first _ S S -> execute_all_lines_without_first _ ^ _ > S ^
+execute_all_lines_without_first _ S | -> execute_all_lines_without_first _ ^ _ > | ^
+execute_all_lines_without_first _ | 0 -> execute_all_lines_without_first _ ^ _ > 0 ^
+execute_all_lines_without_first _ | 1 -> execute_all_lines_without_first _ ^ _ > 1 ^
+execute_all_lines_without_first _ | S -> execute_all_lines_without_first _ ^ _ > S ^
+execute_all_lines_without_first _ | | -> execute_all_lines_without_first _ ^ _ > | ^
+execute_all_lines_without_first _ _ 0 -> execute_third_line _ ^ _ ^ 0 ^
+execute_all_lines_without_first _ _ 1 -> execute_third_line _ ^ _ ^ 1 ^
+execute_all_lines_without_first _ _ S -> execute_third_line _ ^ _ ^ S ^
+execute_all_lines_without_first _ _ | -> execute_third_line _ ^ _ ^ | ^
+
+execute_third_line _ _ 0 -> execute_third_line _ ^ _ ^ _ >
+execute_third_line _ _ 1 -> execute_third_line _ ^ _ ^ _ >
+execute_third_line _ _ S -> execute_third_line _ ^ _ ^ _ >
+execute_third_line _ _ | -> execute_third_line _ ^ _ ^ _ >
+execute_third_line _ _ _ -> AC _ > _ ^ _ ^

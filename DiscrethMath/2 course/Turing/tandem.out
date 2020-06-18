@@ -1,0 +1,59 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> go_to_end $ >
+s 1 -> go_to_end # >
+s $ -> go_to_replaces_symbol $ <
+s # -> go_to_replaces_symbol # <
+
+go_to_end 0 -> go_to_end 0 >
+go_to_end 1 -> go_to_end 1 >
+go_to_end $ -> go_to_this_and_took $ <
+go_to_end # -> go_to_this_and_took # <
+go_to_end _ -> go_to_this_and_took _ <
+
+go_to_this_and_took 0 -> go_to_left $ <
+go_to_this_and_took 1 -> go_to_left # <
+go_to_this_and_took $ -> rj _ ^
+go_to_this_and_took # -> rj _ ^
+
+go_to_left 0 -> go_to_left 0 <
+go_to_left 1 -> go_to_left 1 <
+go_to_left $ -> s $ >
+go_to_left # -> s # >
+go_to_left _ -> s _ >
+
+go_to_replaces_symbol 0 -> go_to_replaces_symbol 0 <
+go_to_replaces_symbol 1 -> go_to_replaces_symbol 1 <
+go_to_replaces_symbol $ -> check_in_right_it_0 0 >
+go_to_replaces_symbol # -> check_in_right_it_1 1 >
+go_to_replaces_symbol _ -> ac _ ^
+
+go_to_replaces_symbol_left 0 -> go_to_replaces_symbol 0 <
+go_to_replaces_symbol_left 1 -> go_to_replaces_symbol 1 <
+go_to_replaces_symbol_left $ -> go_to_replaces_symbol_left $ <
+go_to_replaces_symbol_left # -> go_to_replaces_symbol_left # <
+
+check_in_right_it_0 0 -> check_in_right_it_0 0 >
+check_in_right_it_0 1 -> check_in_right_it_0 1 >
+check_in_right_it_0 $ -> check_in_right_it_0 $ >
+check_in_right_it_0 # -> check_in_right_it_0 # >
+check_in_right_it_0 _ -> take0 _ <
+
+check_in_right_it_1 0 -> check_in_right_it_1 0 >
+check_in_right_it_1 1 -> check_in_right_it_1 1 >
+check_in_right_it_1 $ -> check_in_right_it_1 $ >
+check_in_right_it_1 # -> check_in_right_it_1 # >
+check_in_right_it_1 _ -> take1 _ <
+
+take0 0 -> rj _ ^
+take0 1 -> rj _ ^
+take0 $ -> go_to_replaces_symbol_left _ <
+take0 # -> rj _ ^
+
+take1 0 -> rj _ ^
+take1 1 -> rj _ ^
+take1 $ -> rj _ ^
+take1 # -> go_to_replaces_symbol_left _ <

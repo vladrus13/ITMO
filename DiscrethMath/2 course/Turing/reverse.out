@@ -1,0 +1,70 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> go_end_replace_0 0 >
+s 1 -> go_end_replace_1 1 >
+s _ -> make_end _ >
+s 00 -> make_end 00 ^
+s 11 -> make_end 11 ^
+
+go_end_replace_0 0 -> go_end_replace_0 0 >
+go_end_replace_0 1 -> go_end_replace_0 1 >
+go_end_replace_0 11 -> replace_0 11 <
+go_end_replace_0 00 -> replace_0 00 <
+go_end_replace_0 _ -> replace_0 _ <
+
+go_end_replace_1 0 -> go_end_replace_1 0 >
+go_end_replace_1 1 -> go_end_replace_1 1 >
+go_end_replace_1 11 -> replace_1 11 <
+go_end_replace_1 00 -> replace_1 00 <
+go_end_replace_1 _ -> replace_1 _ <
+
+replace_0 1 -> go_first_replace_1 00 <
+replace_0 0 -> go_first_replace_0 00 <
+replace_0 00 -> make_end 00 <
+replace_0 11 -> make_end 11 <
+
+replace_1 1 -> go_first_replace_1 11 <
+replace_1 0 -> go_first_replace_0 11 <
+replace_1 00 -> make_end 00 <
+replace_1 11 -> make_end 11 <
+
+go_first_replace_0 0 -> go_first_replace_0 0 <
+go_first_replace_0 1 -> go_first_replace_0 1 <
+go_first_replace_0 11 -> replace_f_0 11 >
+go_first_replace_0 00 -> replace_f_0 00 >
+go_first_replace_0 _ -> replace_f_0 _ >
+
+go_first_replace_1 0 -> go_first_replace_1 0 <
+go_first_replace_1 1 -> go_first_replace_1 1 <
+go_first_replace_1 11 -> replace_f_1 11 >
+go_first_replace_1 00 -> replace_f_1 00 >
+go_first_replace_1 _ -> replace_f_1 _ >
+
+replace_f_1 1 -> s 11 >
+replace_f_1 0 -> s 11 >
+replace_f_1 00 -> make_end 00 <
+replace_f_1 11 -> make_end 11 <
+
+replace_f_0 1 -> s 00 >
+replace_f_0 0 -> s 00 >
+replace_f_0 00 -> make_end 00 <
+replace_f_0 11 -> make_end 11 <
+
+make_end 0 -> make_end 0 <
+make_end 1 -> make_end 1 <
+make_end 00 -> make_end 00 <
+make_end 11 -> make_end 11 <
+make_end _ -> make_finish _ >
+
+make_finish 0 -> make_finish 0 >
+make_finish 1 -> make_finish 1 >
+make_finish 00 -> make_finish 0 >
+make_finish 11 -> make_finish 1 >
+make_finish _ -> to_start _ <
+
+to_start 0 -> to_start 0 <
+to_start 1 -> to_start 1 <
+to_start _ -> ac _ >

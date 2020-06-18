@@ -1,0 +1,127 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> s 0 <
+s 1 -> s 1 <
+s _ -> go_to_right # >
+
+choose_closed 0 -> go_to_left_and_set_0 _ <
+choose_closed 1 -> go_to_max_right _ <
+choose_closed * -> delete _ <
+
+choose_left_closed 0 -> to_go_add_0 2 <
+choose_left_closed 1 -> go_to_add_1 3 <
+choose_left_closed # -> go_to_left_back # <
+
+go_to_left_and_set_0 0 -> go_to_left_and_set_0 0 <
+go_to_left_and_set_0 1 -> go_to_left_and_set_0 1 <
+go_to_left_and_set_0 2 -> go_to_left_and_set_0 2 <
+go_to_left_and_set_0 3 -> go_to_left_and_set_0 3 <
+go_to_left_and_set_0 * -> go_to_left_and_set_0 * <
+go_to_left_and_set_0 # -> set_0 # <
+
+go_to_left 0 -> go_to_left 0 <
+go_to_left 1 -> go_to_left 1 <
+go_to_left 2 -> go_to_left 0 <
+go_to_left 3 -> go_to_left 1 <
+go_to_left _ -> ac _ >
+
+go_to_right 0 -> go_to_right 0 >
+go_to_right 1 -> go_to_right 1 >
+go_to_right 2 -> go_to_right 2 >
+go_to_right 3 -> go_to_right 3 >
+go_to_right # -> go_to_right # >
+go_to_right * -> go_to_right * >
+go_to_right _ -> choose_closed _ <
+
+set_0 0 -> go_to_right 2 >
+set_0 1 -> go_to_right 3 >
+set_0 2 -> set_0 2 <
+set_0 3 -> set_0 3 <
+set_0 _ -> go_to_right 2 >
+
+go_to_max_right 0 -> go_to_max_right 0 <
+go_to_max_right 1 -> go_to_max_right 1 <
+go_to_max_right 2 -> go_to_max_right 2 <
+go_to_max_right 3 -> go_to_max_right 3 <
+go_to_max_right * -> go_to_max_right * <
+go_to_max_right # -> go_to_max_right # <
+go_to_max_right _ -> add _ >
+
+add 0 -> add 0 >
+add 1 -> add 1 >
+add 2 -> add 2 >
+add 3 -> add 3 >
+add 4 -> add 4 >
+add 5 -> add 5 >
+add # -> find # >
+
+find 0 -> find 0 >
+find 1 -> find 1 >
+find 2 -> choose_left_closed 2 <
+find 3 -> choose_left_closed 3 <
+find * -> choose_left_closed * <
+
+go_to_left_back 0 -> go_to_left_back 0 <
+go_to_left_back 1 -> go_to_left_back 1 <
+go_to_left_back 2 -> go_to_left_back 2 <
+go_to_left_back 3 -> go_to_left_back 3 <
+go_to_left_back 4 -> go_to_left_back 0 <
+go_to_left_back 5 -> go_to_left_back 1 <
+go_to_left_back _ -> multiplication _ >
+
+multiplication 0 -> multiplication 0 >
+multiplication 1 -> multiplication 1 >
+multiplication 2 -> update 2 <
+multiplication 3 -> update 3 <
+multiplication # -> update # <
+
+update 0 -> up_get_back 2 >
+update 1 -> up_get_back 3 >
+update _ -> up_get_back 2 >
+
+get_back 2 -> get_back 0 >
+get_back 3 -> get_back 1 >
+get_back * -> go_to_right * >
+
+up_get_back 2 -> up_get_back 2 >
+up_get_back 3 -> up_get_back 3 >
+up_get_back # -> get_back # >
+
+go_to_add_1 0 -> go_to_add_1 0 <
+go_to_add_1 1 -> go_to_add_1 1 <
+go_to_add_1 2 -> go_to_add_1 2 <
+go_to_add_1 3 -> go_to_add_1 3 <
+go_to_add_1 # -> add_1 # <
+
+to_go_add_0 0 -> to_go_add_0 0 <
+to_go_add_0 1 -> to_go_add_0 1 <
+to_go_add_0 2 -> to_go_add_0 2 <
+to_go_add_0 3 -> to_go_add_0 3 <
+to_go_add_0 # -> add_0 # <
+
+add_0 0 -> add 4 >
+add_0 1 -> add 5 >
+add_0 2 -> add_0 2 <
+add_0 3 -> add_0 3 <
+add_0 4 -> add_0 4 <
+add_0 5 -> add_0 5 <
+add_0 _ -> add 4 >
+
+add_1 0 -> add 5 >
+add_1 1 -> get_right_back_temp 4 <
+add_1 2 -> add_1 2 <
+add_1 3 -> add_1 3 <
+add_1 4 -> add_1 4 <
+add_1 5 -> add_1 5 <
+add_1 _ -> add 5 >
+
+get_right_back_temp 0 -> add 1 >
+get_right_back_temp 1 -> get_right_back_temp 0 <
+get_right_back_temp _ -> add 1 >
+
+delete 0 -> delete _ <
+delete 1 -> delete _ <
+delete # -> go_to_left _ <
