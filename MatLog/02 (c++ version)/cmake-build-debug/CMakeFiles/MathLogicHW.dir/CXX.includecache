@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/Base.h
+string
+-
+unordered_set
+-
+
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/ExpressionParser.h
+string
+-
+unordered_map
+-
+Base.h
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/Base.h
+
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/SolveE.h
+iostream
+-
+vector
+-
+algorithm
+-
+ExpressionParser.h
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/ExpressionParser.h
+SolveStatus.cpp
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/SolveStatus.cpp
+
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/SolveStatus.cpp
+string
+-
+
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/main.cpp
+fstream
+-
+SolveE.h
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/03/SolveE.h
+

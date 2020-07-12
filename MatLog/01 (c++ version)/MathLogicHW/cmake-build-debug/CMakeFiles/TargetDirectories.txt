@@ -1,0 +1,3 @@
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/02/MathLogicHW/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/02/MathLogicHW/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/vladkuznetsov/Vl/Projects/C++/MathLog/02/MathLogicHW/cmake-build-debug/CMakeFiles/MathLogicHW.dir
