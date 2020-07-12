@@ -123,8 +123,7 @@
   
   #### Задачи:
   0. [Haskell Разбор выражений](https://github.com/vladrus13/ITMO/tree/master/MatLog/00%20(haskell%20version))
-  1. [Haskell Минимизация доказательства](https://github.com/vladrus13/ITMO/tree/master/MatLog/01%20(haskell%20version))
-  1. [С++ Минимизация доказательства](https://github.com/vladrus13/ITMO/tree/master/MatLog/01%20(c%2B%2B%20version))
+  1. [Haskell Минимизация доказательства](https://github.com/vladrus13/ITMO/tree/master/MatLog/01%20(haskell%20version)) и [С++ Минимизация доказательства](https://github.com/vladrus13/ITMO/tree/master/MatLog/01%20(c%2B%2B%20version))
   2. [C++ Формальная арифметика](https://github.com/vladrus13/ITMO/tree/master/MatLog/02%20(c%2B%2B%20version))
   
   ## МатСтат
