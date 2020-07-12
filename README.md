@@ -102,7 +102,7 @@
   09. [Vue-Js](https://github.com/vladrus13/ITMO/tree/master/Web/3sem/09)
   10. [VueJs + Servlet (backend + frontend)](https://github.com/vladrus13/ITMO/tree/master/Web/3sem/10)
   
-  ## C++
+  ## [C++](https://github.com/vladrus13/ITMO/tree/master/%D0%A1%2B%2B)
   Небольшие наработки по курсу плюсов
   1. [Uniquals](https://github.com/vladrus13/ITMO/tree/master/%D0%A1%2B%2B/00_test_uniq_template-vladrus13)
   2. [RandQueue](https://github.com/vladrus13/ITMO/tree/master/%D0%A1%2B%2B/02_radomized_queue_n_deque-vladrus13)
@@ -111,11 +111,21 @@
   
   ## Матан
   
+  ### Четвертый семестр
+  
   [Немного конспектов 4 сема](https://drive.google.com/open?id=1bkFUYV7jAa4ULyqXpFHZgvxhIFSEc0o8)
   
   ## МатЛог
   
+  ### Четвертый семестр
+  
   [Немного конспектов 4 сема](https://drive.google.com/drive/folders/1qC--wiRmMD1lo5838vAP4V4jin2q_oUp)
+  
+  #### Задачи:
+  0. [Haskell Разбор выражений](https://github.com/vladrus13/ITMO/tree/master/MatLog/00%20(haskell%20version))
+  1. [Haskell Минимизация доказательства](https://github.com/vladrus13/ITMO/tree/master/MatLog/01%20(haskell%20version))
+  1. [С++ Минимизация доказательства](https://github.com/vladrus13/ITMO/tree/master/MatLog/01%20(c%2B%2B%20version))
+  2. [C++ Формальная арифметика](https://github.com/vladrus13/ITMO/tree/master/MatLog/02%20(c%2B%2B%20version))
   
   ## МатСтат
   
