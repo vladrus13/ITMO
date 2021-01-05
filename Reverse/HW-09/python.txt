@@ -1,0 +1,25 @@
+pyi-archive_viewer your_file
+
+find normal name
+
+x normal name
+
+bin.bin
+
+q
+
+strings bin.bin | grep 'python'
+
+find version
+
+make python file with name temp.py version last
+
+launch python
+>> import temp.py
+>> exit
+
+dd if=__pycache__/temp.cpython-38.pyc of=real.pyc bs=1 count=16
+
+cat bin.bin >> real.pyc
+
+uncompyle6 real.pyc

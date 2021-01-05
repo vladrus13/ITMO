@@ -1,0 +1,51 @@
+numA dd 4.0
+numB dd 8.0
+numC dd 3.14
+result dd 0.0
+
+1) result = 2 * numC * numB + numA		; b
+2) result = numA + numC * numB * numB		; a
+3) result = (numB + numA) / numC		; c
+4) result = sin(numB + numA) * 2 * numC	; e
+5) result = sin(numC) * (numB + numA)		; d
+
+
+a) fld offset numC
+   fld offset numB
+   fld offset numB
+   fmulp
+   fmulp
+   fadd offset numA
+   fstp result
+   
+b) fld offset numC
+   fld offset numB
+   fld offset numB
+   faddp
+   fmulp
+   fadd offset numA
+   fstp result
+   
+c) fld offset numC
+   fld offset numB
+   fadd offset numA
+   fxch
+   fdivp
+   fstp result
+   
+d) fld offset numC
+   fld offset numB
+   fadd offset numA
+   fxch
+   fsin
+   fmulp
+   fstp result
+   
+e) fld offset numC
+   fld offset numB
+   fadd offset numA
+   fsin
+   fxch
+   fadd offset numC
+   fmulp
+   fstp result

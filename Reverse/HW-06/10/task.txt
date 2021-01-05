@@ -1,0 +1,6 @@
+mov eax, 1337	; eax = 1337
+mov ebx, 31337	; ebx = 31337
+add eax, ebx	; eax = 32674
+mov ecx, eax	; ecx = 32674
+imul ebx, ecx	; ebx = 31337 * 32674 = 1023905138
+xor eax, ebx	; eax = 32674 ^ 1023905138 = 1023931088 | 0x3d07f2d0

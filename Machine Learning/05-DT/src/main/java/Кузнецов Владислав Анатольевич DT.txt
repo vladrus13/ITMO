@@ -1,0 +1,639 @@
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/util/Splitter.java --
+package ru.DT.util;
+
+import ru.DT.bean.Pair;
+import ru.DT.bean.ResultPair;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
+public enum Splitter {
+    GINI {
+        @Override
+        public Optional<ResultPair> split(int k, ArrayList<Pair<ArrayList<Integer>, Integer>> beans, int feature) {
+            double bestScore = Double.MIN_VALUE;
+            Optional<ResultPair> bestSplit = Optional.empty();
+            for (int i = 0; i < feature; i++) {
+                int finalI = i;
+                beans.sort((o1, o2) -> o2.first.get(finalI) - o1.first.get(finalI));
+                if (beans.get(0).first.get(i).equals(beans.get(beans.size() - 1).first.get(i))) {
+                    continue;
+                }
+                ArrayList<Integer> left = new ArrayList<>();
+                ArrayList<Integer> right = new ArrayList<>();
+                IntStream.range(0, k + 1).forEach(x -> {
+                    left.add(0);
+                    right.add(0);
+                });
+                int leftSize = 0;
+                int rightSize = beans.size();
+                long leftSum = 0;
+                long rightSum = 0;
+                for (Pair<ArrayList<Integer>, Integer> bean : beans) {
+                    rightSum -= right.get(bean.second) * right.get(bean.second);
+                    right.set(bean.second, right.get(bean.second) + 1);
+                    rightSum += right.get(bean.second) * right.get(bean.second);
+                }
+                int previous = -1;
+                for (int j = 0; j < beans.size(); j++) {
+                    if (j != 0 && beans.get(j).first.get(i) != previous) {
+                        double score = 1.0 * leftSum / leftSize + 1.0 * rightSum / rightSize;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestSplit = Optional.of(new ResultPair(i, ((double) previous + beans.get(j).first.get(i)) / 2));
+                        }
+                    }
+                    rightSum -= right.get(beans.get(j).second) * right.get(beans.get(j).second);
+                    right.set(beans.get(j).second, right.get(beans.get(j).second) - 1);
+                    rightSum += right.get(beans.get(j).second) * right.get(beans.get(j).second);
+                    rightSize--;
+
+                    leftSum -= left.get(beans.get(j).second) * left.get(beans.get(j).second);
+                    left.set(beans.get(j).second, left.get(beans.get(j).second) + 1);
+                    leftSum += left.get(beans.get(j).second) * left.get(beans.get(j).second);
+                    leftSize++;
+
+                    previous = beans.get(j).first.get(i);
+                }
+            }
+            return bestSplit;
+        }
+    },
+    ENTROPY {
+        private double entropy(ArrayList<Integer> counts, int size) {
+            double sum = 0;
+            for (int i : counts) {
+                if (i != 0) {
+                    sum -= ((double) i / size) * Math.log((double) i / size);
+                }
+            }
+            return sum;
+        }
+
+        @Override
+        public Optional<ResultPair> split(int k, ArrayList<Pair<ArrayList<Integer>, Integer>> beans, int feature) {
+            double bestScore = Double.MAX_VALUE;
+            Optional<ResultPair> bestSplit = Optional.empty();
+            for (int i = 0; i < feature; i++) {
+                int finalI = i;
+                beans.sort((o1, o2) -> o2.first.get(finalI) - o1.first.get(finalI));
+                if (beans.get(0).first.get(i).equals(beans.get(beans.size() - 1).first.get(i))) {
+                    continue;
+                }
+                ArrayList<Integer> left = new ArrayList<>();
+                ArrayList<Integer> right = new ArrayList<>();
+                IntStream.range(0, k + 1).forEach(x -> {
+                    left.add(0);
+                    right.add(0);
+                });
+                int leftSize = 0;
+                int rightSize = beans.size();
+                for (Pair<ArrayList<Integer>, Integer> bean : beans) {
+                    right.set(bean.second, right.get(bean.second) + 1);
+                }
+                int previous = -1;
+                for (int j = 0; j < beans.size(); j++) {
+                    if (j != 0 && beans.get(j).first.get(i) != previous) {
+                        double score = entropy(left, leftSize) * leftSize + entropy(right, rightSize) * rightSize;
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestSplit = Optional.of(new ResultPair(i, ((double) previous + beans.get(j).first.get(i)) / 2));
+                        }
+                    }
+                    right.set(beans.get(j).second, right.get(beans.get(j).second) - 1);
+                    rightSize--;
+                    left.set(beans.get(j).second, left.get(beans.get(j).second) + 1);
+                    leftSize++;
+                    previous = beans.get(j).first.get(i);
+                }
+            }
+            return bestSplit;
+        }
+    };
+    public abstract Optional<ResultPair> split(int k, ArrayList<Pair<ArrayList<Integer>, Integer>> beans, int feature);
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/Launcher.java --
+package ru.DT;
+
+import ru.DT.bean.Pair;
+import ru.DT.bean.Point;
+import ru.DT.drawing.ImageCreator;
+import ru.DT.drawing.ImageSaver;
+import ru.DT.tree.DecisionTree;
+import ru.DT.util.Splitter;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
+public class Launcher {
+
+    private static ArrayList<Integer> parseInt(String s) {
+        String[] strings = s.split(" ");
+        ArrayList<Integer> returned = new ArrayList<>();
+        for (String str : strings) {
+            returned.add(Integer.parseInt(str));
+        }
+        return returned;
+    }
+
+    private static ArrayList<Pair<ArrayList<Integer>, Integer>> readReader(BufferedReader bufferedReader, int count) throws IOException {
+        ArrayList<Pair<ArrayList<Integer>, Integer>> result = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            ArrayList<Integer> parsed = parseInt(bufferedReader.readLine());
+            int c = parsed.get(parsed.size() - 1);
+            parsed.remove(parsed.size() - 1);
+            result.add(new Pair<>(parsed, c));
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        for (int i = 1; i <= 21; i++) {
+            System.out.println("\t--- Test" + i);
+            try (
+                    BufferedReader bufferedReaderTest = Files.newBufferedReader(Path.of("resources").resolve("DT_txt").resolve(String.format("%02d_test.txt", i)));
+                    BufferedReader bufferedReaderTrain = Files.newBufferedReader(Path.of("resources").resolve("DT_txt").resolve(String.format("%02d_train.txt", i)))
+            ) {
+                System.out.println("\t---Reading");
+                ArrayList<Integer> temp = parseInt(bufferedReaderTest.readLine());
+                int m = temp.get(0);
+                int k = temp.get(1);
+                int nTest = parseInt(bufferedReaderTest.readLine()).get(0);
+                temp = parseInt(bufferedReaderTrain.readLine());
+                if (temp.get(0) != m || temp.get(1) != k) {
+                    System.out.println("Failed. Different data");
+                    continue;
+                }
+                int nTrain = parseInt(bufferedReaderTrain.readLine()).get(0);
+                ArrayList<Pair<ArrayList<Integer>, Integer>> test = readReader(bufferedReaderTest, nTest);
+                ArrayList<Pair<ArrayList<Integer>, Integer>> train = readReader(bufferedReaderTrain, nTrain);
+                System.out.println("\t---Reading end");
+                ArrayList<Point> trainPoints = new ArrayList<>();
+                ArrayList<Point> testPoints = new ArrayList<>();
+                for (int maxDepth = 0; maxDepth < 40; maxDepth += 4) {
+                    DecisionTree decisionTree = new DecisionTree(k, maxDepth, Splitter.GINI);
+                    decisionTree.train(train);
+                    int trainMistakes = 0;
+                    int testMistakes = 0;
+                    for (var bean : test) {
+                        int precisionClass = decisionTree.precision(bean);
+                        if (precisionClass != bean.second) testMistakes++;
+                    }
+                    testPoints.add(new Point(maxDepth * 20, (testMistakes * 800 / test.size())));
+                    for (var bean : train) {
+                        int precisionClass = decisionTree.precision(bean);
+                        if (precisionClass != bean.second) trainMistakes++;
+                    }
+                    trainPoints.add(new Point(maxDepth * 20, (trainMistakes * 800 / train.size())));
+                    System.out.printf("Test - %02d. Depth - %d. Mistakes: %d / %d - test, %d / %d - train%n",
+                            i, maxDepth, testMistakes, test.size(), trainMistakes, train.size());
+                }
+                ImageSaver.save(ImageCreator.draw(String.valueOf(i), String.valueOf(i), testPoints, trainPoints), String.valueOf(i));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/drawing/ImageCreator.java --
+package ru.DT.drawing;
+
+import ru.DT.bean.Point;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+/**
+ * Image creator
+ */
+public class ImageCreator {
+
+    /**
+     * @param point point in (0, 0) on left-bottom
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormal(Point point) {
+        return new Point(point.x, 1000 - point.y);
+    }
+
+    /**
+     * @param point point on graphic
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormalOnGraphic(Point point) {
+        return makeNormal(new Point(point.x + 100, point.y + 100));
+    }
+
+    /**
+     * Draw line
+     *
+     * @param graphics {@link Graphics}
+     * @param start    start point
+     * @param finish   finish point
+     */
+    private static void lineOnGraphic(Graphics graphics, Point start, Point finish) {
+        start = makeNormalOnGraphic(start);
+        finish = makeNormalOnGraphic(finish);
+        graphics.drawLine(start.x, start.y, finish.x, finish.y);
+    }
+
+    /**
+     * Draw point
+     *
+     * @param graphics {@link Graphics}
+     * @param point    point
+     */
+    private static void pointOnGraphic(Graphics graphics, Point point) {
+        point = makeNormalOnGraphic(point);
+        graphics.fillOval(point.x - 4, point.y - 4, 8, 8);
+    }
+
+    public static BufferedImage draw(String file, String method, ArrayList<Point> test, ArrayList<Point> train) {
+        BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.createGraphics();
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(0, 0, 1000, 1000);
+        graphics.setColor(Color.BLACK);
+        lineOnGraphic(graphics, new Point(0, 0), new Point(800, 0));
+        lineOnGraphic(graphics, new Point(0, 0), new Point(0, 800));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, -10));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, 10));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(-10, 790));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(10, 790));
+        int size = test.size();
+        int perOne = 800 / size;
+        IntStream.range(0, size).forEach(element -> {
+                    lineOnGraphic(graphics, new Point(-10, element * perOne), new Point(10, element * perOne));
+                    lineOnGraphic(graphics, new Point(element * perOne, -10), new Point(element * perOne, 10));
+                    graphics.drawString((double) element / size * 100 + "%", 10, 1000 - (element * perOne + 100));
+                    graphics.drawString(String.valueOf(element * 4), 100 + element * perOne, 990);
+                }
+        );
+        graphics.drawString(String.format("File: %s, Method: %s", file, method), 10, 10);
+        graphics.drawString("Red - test, blue - train", 10, 30);
+        graphics.drawString("@vladrus13", 930, 980);
+        graphics.setColor(Color.RED);
+        for (Point point : test) {
+            pointOnGraphic(graphics, point);
+        }
+        graphics.setColor(Color.BLUE);
+        for (Point point : train) {
+            pointOnGraphic(graphics, point);
+        }
+        return image;
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/drawing/ImageSaver.java --
+package ru.DT.drawing;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * Image saver
+ */
+public class ImageSaver {
+    /**
+     * Save image
+     *
+     * @param image image
+     * @param type  type of network
+     */
+    public static void save(BufferedImage image, String type) {
+        File imageFile = new File(String.valueOf(Path.of("resources")
+                .resolve("images")
+                .resolve(type)
+                .resolve("image.png")));
+        if (!imageFile.getParentFile().exists()) {
+            try {
+                Files.createDirectories(Path.of(imageFile.getParentFile().getAbsolutePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            ImageIO.write(image, "PNG", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/tree/Leaf.java --
+package ru.DT.tree;
+
+public class Leaf extends Node {
+    private final int group;
+
+    public Leaf(int group, int id) {
+        this.group = group;
+        this.id = id;
+    }
+
+    public int getGroup() {
+        return group;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("C %d", group);
+    }
+
+    @Override
+    public StringBuilder toStringTree() {
+        return new StringBuilder(this.toString()).append("\n");
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/tree/DecisionTree.java --
+package ru.DT.tree;
+
+import ru.DT.bean.Pair;
+import ru.DT.bean.ResultPair;
+import ru.DT.util.Splitter;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
+public class DecisionTree {
+    private final int k;
+    private Node root;
+    private int id;
+    private final int max_depth;
+    private final Splitter splitter;
+
+    public DecisionTree(int k, int max_depth, Splitter splitter) {
+        this.k = k;
+        this.max_depth = max_depth;
+        this.splitter = splitter;
+        this.id = 0;
+        this.root = new Leaf(-1, -1);
+    }
+
+    private int dominantClass(ArrayList<Pair<ArrayList<Integer>, Integer>> beans) {
+        ArrayList<Integer> counts = new ArrayList<>();
+        IntStream.range(0, k + 1).forEach(element -> counts.add(0));
+        for (var bean : beans) {
+            counts.set(bean.second, counts.get(bean.second) + 1);
+        }
+        //noinspection OptionalGetWithoutIsPresent
+        int max = counts.stream().mapToInt(element -> element).max().getAsInt();
+        for (int i = 0; i < counts.size(); i++) {
+            if (counts.get(i) == max) {
+                return i;
+            }
+        }
+        throw new ArithmeticException("NO");
+    }
+
+    private Node train(ArrayList<Pair<ArrayList<Integer>, Integer>> beans, int depth) {
+        int nodeId = ++id;
+        int divider = beans.get(0).first.size();
+        if (depth == max_depth) {
+            return new Leaf(dominantClass(beans), nodeId);
+        }
+        int minima = Integer.MAX_VALUE;
+        int maxima = Integer.MIN_VALUE;
+        for (var bean : beans) {
+            minima = Math.min(minima, bean.second);
+            maxima = Math.max(maxima, bean.second);
+        }
+        if (minima == maxima) {
+            return new Leaf(beans.get(0).second, nodeId);
+        }
+        Optional<ResultPair> split = splitter.split(k, beans, divider);
+        if (split.isPresent()) {
+            ResultPair result = split.get();
+            EntireNode node = new EntireNode();
+            node.setDivider(result.divider);
+            node.setHold(result.hold);
+            ArrayList<Pair<ArrayList<Integer>, Integer>> left = new ArrayList<>();
+            ArrayList<Pair<ArrayList<Integer>, Integer>> right = new ArrayList<>();
+            for (var bean : beans) {
+                if (bean.first.get(result.divider) < result.hold) {
+                    left.add(bean);
+                } else {
+                    right.add(bean);
+                }
+            }
+            node.setLeft(train(left, depth + 1));
+            node.setRight(train(right, depth + 1));
+            node.id = nodeId;
+            return node;
+        } else {
+            return new Leaf(dominantClass(beans), nodeId);
+        }
+    }
+
+    private int precision(Node node, Pair<ArrayList<Integer>, Integer> bean) {
+        if (node instanceof Leaf) {
+            return ((Leaf) node).getGroup();
+        }
+        if (node instanceof EntireNode) {
+            if (bean.first.get(((EntireNode) node).getDivider()) > ((EntireNode) node).getHold()) {
+                return precision(((EntireNode) node).getRight(), bean);
+            } else {
+                return precision(((EntireNode) node).getLeft(), bean);
+            }
+        }
+        throw new IllegalArgumentException("Can't find type of node");
+    }
+
+    public int precision(Pair<ArrayList<Integer>, Integer> bean) {
+        return precision(root, bean);
+    }
+
+    public void train(ArrayList<Pair<ArrayList<Integer>, Integer>> beans) {
+        root = train(beans, 0);
+    }
+
+    public String toString() {
+        return (id + "\n")+ root.toStringTree();
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/tree/EntireNode.java --
+package ru.DT.tree;
+
+public class EntireNode extends Node {
+    private int divider;
+    private double hold;
+    private Node left;
+    private Node right;
+
+    @Override
+    public String toString() {
+        return String.format("Q %d %.10f %d %d", divider + 1, hold, left.getId(), right.getId());
+    }
+
+    @Override
+    public StringBuilder toStringTree() {
+        return new StringBuilder(this.toString()).append("\n").append(left.toStringTree()).append(right.toStringTree());
+    }
+
+    public void setDivider(int divider) {
+        this.divider = divider;
+    }
+
+    public void setHold(double hold) {
+        this.hold = hold;
+    }
+
+    public void setLeft(Node left) {
+        this.left = left;
+    }
+
+    public void setRight(Node right) {
+        this.right = right;
+    }
+
+    public int getDivider() {
+        return divider;
+    }
+
+    public double getHold() {
+        return hold;
+    }
+
+    public Node getLeft() {
+        return left;
+    }
+
+    public Node getRight() {
+        return right;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/tree/Node.java --
+package ru.DT.tree;
+
+public abstract class Node {
+    protected int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public abstract String toString();
+
+    public abstract StringBuilder toStringTree();
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/bean/ResultPair.java --
+package ru.DT.bean;
+
+public class ResultPair {
+    public int divider;
+    public double hold;
+
+    public ResultPair(int divider, double hold) {
+        this.divider = divider;
+        this.hold = hold;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/bean/Point.java --
+package ru.DT.bean;
+
+public class Point {
+    public int x, y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/bean/Pair.java --
+package ru.DT.bean;
+
+public class Pair<T, E> {
+    public T first;
+    public E second;
+
+    public Pair(T first, E second) {
+        this.first = first;
+        this.second = second;
+    }
+}

@@ -1,0 +1,83 @@
+name:                hw02
+version:             0.1.0.0
+github:              "githubuser/hw02"
+license:             BSD3
+author:              "Vladislav Kuznetsov"
+maintainer:          "example@example.com"
+copyright:           "2020 Author name here"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/hw02#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  ghc-options:
+    - -XLambdaCase
+  dependencies:
+    - mtl
+    - containers
+
+executables:
+  hw02-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hw02
+
+tests:
+  hw02-tests-block-01:
+    main:                Block01.hs
+    source-dirs:         test/Block01
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hw02
+    - HUnit
+    - random
+    - mtl
+    - containers
+  hw02-tests-block-02:
+    main:                Block02.hs
+    source-dirs:         test/Block02
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hw02
+    - HUnit
+    - random
+    - mtl
+    - containers
+  hw02-tests-block-03:
+    main:                Block03.hs
+    source-dirs:         test/Block03
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hw02
+    - HUnit
+    - random
+    - mtl
+    - containers

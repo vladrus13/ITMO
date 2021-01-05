@@ -1,0 +1,323 @@
+!program;
+
+#public String s = null;
+#public int depth = 0;
+
+Int         : 'int';
+LongLong    : 'long long';
+Auto        : 'auto';
+Bool        : 'bool';
+Double      : 'double';
+LongDouble  : 'long double';
+Void        : 'void';
+String      : 'string';
+Vector      : 'vector';
+
+PlusPlus                : '++';
+MinusMinus              : '--';
+
+Not             : '!' | 'not';
+
+PlusAssign      : '+=';
+MinusAssign     : '-=';
+MultiplyAssign  : '*=';
+DivAssign       : '/=';
+ModAssign       : '%=';
+XorAssign       : '^=';
+AndAssign       : '&=';
+OrAssign        : '|=';
+LeftShiftAssign : '<<=';
+RightShiftAssign : '>>=';
+
+Plus            : '+';
+Minus           : '-';
+Multiply        : '*';
+Div             : '/';
+Mod             : '%';
+Xor             : '^';
+And             : '&';
+Or              : '|';
+Equal           : '==';
+NotEqual        : '!=';
+LessEqual       : '<=';
+GreaterEqual    : '>=';
+AndAnd          : '&&' | 'and';
+OrOr            : '||' | 'or';
+LeftShift       : '<<';
+RightShift      : '>>';
+Assign          : '=';
+Less            : '<';
+Greater         : '>';
+
+Tilde           : '~';
+Comma           : ',';
+Semicolon       : ';';
+OpenBracket     : '(';
+CloseBracket    : ')';
+OpenFigureBracket : '{';
+CloseFigureBracket : '}';
+Point           : '.';
+Pointer         : '->';
+OpenSqBracket   : '[';
+CloseSqBracket  : ']';
+Child           : '::';
+Colon           : ':';
+Quotes          : '"';
+
+Break : 'break';
+Return : 'return';
+Continue : 'continue';
+Delete : 'delete';
+Include : '#include';
+For : 'for';
+While : 'while';
+Class : 'class';
+Struct : 'struct';
+If : 'if';
+Switch : 'switch';
+Case : 'case';
+Using : 'using';
+
+Digits : $'[0-9]+';
+True        : 'true';
+False       : 'false';
+
+Word : $'[a-zA-Z_]+';
+anyInQuotes : Quotes Word Quotes {[<s = "\"" + ((%typeTerminal)children.get(1)).getData() + "\"">]};
+
+WS : $'[ \t\n\r]+' *;
+
+program : headers blocks {[<depth = 0>][<s = children.get(0).s + "\n" + children.get(1).s>]};
+
+headers
+    : header headers {[<s = children.get(0).s + "\n" + children.get(1).s>]}
+    | {[<s = "">]};
+
+header : Include left_include {[<s = "#include " + children.get(1).s>]};
+
+left_include
+    : Less Word Greater {[<s = "<" + ((%typeTerminal)children.get(1)).getData() + ((%typeTerminal)children.get(2)).getData()>]}
+    | Quotes Word Quotes {[<s = "\"" + ((%typeTerminal)children.get(1)).getData() + "\"">]};
+
+blocks
+    : block blocks {[<s = children.get(0).s + "\n\n" + children.get(1).s>]}
+    | {[<s = "">]};
+
+block
+    : function {[<s = children.get(0).s>]}
+    | r_class {[<s = children.get(0).s>]}
+    | struct {[<s = children.get(0).s>]}
+    | using {[<s = children.get(0).s>]};
+
+function
+    : type Word OpenBracket arguments CloseBracket function_body
+        {[<depth = parent.depth + 1>][<s = children.get(0).s + " " + ((%typeTerminal)children.get(1)).getData() + "(" + children.get(3).s + ")" + children.get(5).s>]};
+
+function_body
+    : OpenFigureBracket body CloseFigureBracket
+        {[<depth = parent.depth>][<s = " {\n\t" + children.get(1).s.replace("\n", "\n\t") + "\n}">]}
+    | Semicolon
+        {[<s = ";">]};
+arguments
+    : argument arguments
+        {[<s = children.get(0).s + children.get(1).s>]}
+    |
+        {[<s = "">]};
+argument
+    : type references Word {[<s = children.get(0).s + children.get(1).s + " " + ((%typeTerminal)children.get(2)).getData()>]};
+references
+    : Multiply references
+        {[<s = "*" + children.get(1).s>]}
+    |
+        {[<s = "">]};
+
+r_class : Class Word OpenFigureBracket classOrStructBody CloseFigureBracket
+    {[<depth = parent.depth + 1>][<s = "class " + ((%typeTerminal)children.get(1)).getData() + "{\n\t" + children.get(3).s.replace("\n", "\n\t") + "\n}">]};
+struct : Struct Word OpenFigureBracket classOrStructBody CloseFigureBracket
+    {[<depth = parent.depth + 1>][<s = "struct " + ((%typeTerminal)children.get(1)).getData() + "{\n\t" + children.get(3).s.replace("\n", "\n\t") + "\n}">]};
+classOrStructBody
+    :
+        {[<s = "">]}
+    | classOrStructPart
+        {[<depth = parent.depth>][<s = children.get(0).s>]};
+classOrStructPart
+    : function
+        {[<s = children.get(0).s>]};
+field
+    : type expression Semicolon
+        {[<s = children.get(0).s + " " + children.get(1).s + ";">]};
+
+using : Using Word Word Semicolon
+    {[<s = "using " + ((%typeTerminal)children.get(1)).getData() + " " + ((%typeTerminal)children.get(2)).getData() + ";">]};
+
+body
+    : part_body body
+        {[<depth = parent.depth>][<s = children.get(0).s + (children.get(1).s.isEmpty() ? "" : "\n" + children.get(1).s)>]}
+    |
+        {[<s = "">]};
+part_body
+    : maybeExpression {[<depth = parent.depth>][<s = children.get(0).s>]}
+    | r_for {[<depth = parent.depth>][<s = children.get(0).s>]}
+    | r_while {[<depth = parent.depth>][<s = children.get(0).s>]}
+    | instruction {[<depth = parent.depth>][<s = children.get(0).s>]}
+    | r_if {[<depth = parent.depth>][<s = children.get(0).s>]}
+    | field {[<depth = parent.depth>][<s = children.get(0).s>]};
+
+r_for : For OpenBracket field maybeExpression expression CloseBracket OpenFigureBracket body CloseFigureBracket
+    {[<depth = parent.depth + 1>][<s = "for (" + children.get(2).s + " " + children.get(3).s + " " + children.get(4).s + ") {\n\t" + children.get(7).s.replace("\n", "\n\t") + "\n}">]};
+r_while : While OpenBracket expression CloseBracket OpenFigureBracket body CloseFigureBracket
+    {[<depth = parent.depth + 1>][<s = "while (" + children.get(2).s + ") {\n\t" + children.get(5).s.replace("\n", "\n\t") + "\n}">]};
+r_if : If OpenBracket expression CloseBracket OpenFigureBracket body CloseFigureBracket
+    {[<depth = parent.depth + 1>][<s = "if (" + children.get(2).s + ") {\n\t" + children.get(5).s.replace("\n", "\n\t") + "\n}">]};
+
+instruction : part_instruction Semicolon
+    {[<depth = parent.depth>][<s = children.get(0).s + ";">]};
+part_instruction
+    : Delete
+        {[<s = "delete">]}
+    | Continue
+        {[<s = "continue">]}
+    | Break
+        {[<s = "break">]}
+    | Return expression
+        {[<s = "return " + children.get(1).s>]};
+maybeExpression
+    : expression Semicolon
+        {[<s = children.get(0).s + ";">]}
+    | Semicolon
+        {[<s = ";">]};
+expression
+    : unaryOperation expression t_0
+        {[<s = children.get(0).s + " " + children.get(1).s + children.get(2).s>]}
+    | OpenBracket expression CloseBracket t_0
+        {[<s = "(" + children.get(1).s + ")">]}
+    | t_0
+        {[<s = children.get(0).s>]}
+    | value t_0
+        {[<s = children.get(0).s + children.get(1).s>]}
+    ;
+
+t_0
+    : binaryAssignOrNotOperator expression t_0
+        {[<s = " " + children.get(0).s + " " + children.get(1).s + children.get(2).s>]}
+    | maybeSingleAssignOperator
+        {[<s = children.get(0).s>]}
+    |
+        {[<s = "">]};
+
+maybeSingleAssignOperator
+    : singleAssignOperator
+        {[<s = children.get(0).s>]}
+    |
+        {[<s = "">]};
+
+binaryAssignOrNotOperator
+    : binaryAssignOperator
+        {[<s = children.get(0).s>]}
+    | binaryOperator
+        {[<s = children.get(0).s>]};
+
+boolean
+    : True
+        {[<s = "true">]}
+    | False
+        {[<s = "false">]};
+
+number
+    : Digits
+        {[<s = ((%typeTerminal)children.get(0)).getData()>]}
+    | boolean
+        {[<s = children.get(0).s>]};
+
+value
+    : anyInQuotes
+        {[<s = children.get(0).s>]}
+    | number
+        {[<s = children.get(0).s>]}
+    | Word
+        {[<s = ((%typeTerminal)children.get(0)).getData()>]};
+
+binaryAssignOperator
+    : Assign
+        {[<s = "=">]}
+    | PlusAssign
+        {[<s = "+=">]}
+    | MinusAssign
+        {[<s = "-=">]}
+    | MultiplyAssign
+        {[<s = "*=">]}
+    | DivAssign
+        {[<s = "/=">]}
+    | ModAssign
+        {[<s = "%=">]}
+    | XorAssign
+        {[<s = "^=">]}
+    | AndAssign
+        {[<s = "&=">]}
+    | OrAssign
+        {[<s = "|=">]}
+    | LeftShiftAssign
+        {[<s = "<<=">]}
+    | RightShiftAssign
+        {[<s = ((%typeTerminal)children.get(0)).getData()>]};
+type
+    : Int
+        {[<s = "int">]}
+    | LongLong
+        {[<s = "long long">]}
+    | Auto
+        {[<s = "auto">]}
+    | Bool
+        {[<s = "bool">]}
+    | Double
+        {[<s = "double">]}
+    | LongDouble
+        {[<s = "long double">]}
+    | Void
+        {[<s = "void">]}
+    | String
+        {[<s = "string">]}
+    | Vector Less type Greater
+        {[<s = "vector <" + children.get(2).s + ((%typeTerminal)children.get(3)).getData()>]};
+binaryOperator
+    : Plus
+        {[<s = "+">]}
+    | Minus
+        {[<s = "-">]}
+    | Multiply
+        {[<s = "*">]}
+    | Div
+        {[<s = "/">]}
+    | Mod
+        {[<s = "%">]}
+    | Xor
+        {[<s = "^">]}
+    | And
+        {[<s = "&">]}
+    | Or
+        {[<s = "|">]}
+    | Less
+        {[<s = "<">]}
+    | Greater
+        {[<s = ((%typeTerminal)children.get(0)).getData()>]}
+    | Equal
+        {[<s = "=">]}
+    | NotEqual
+        {[<s = "!=">]}
+    | LessEqual
+        {[<s = "<=">]}
+    | GreaterEqual
+        {[<s = ((%typeTerminal)children.get(0)).getData()>]}
+    | AndAnd
+        {[<s = "&&">]}
+    | OrOr
+        {[<s = "||">]}
+    | LeftShift
+        {[<s = ((%typeTerminal)children.get(0)).getData()>]}
+    | RightShift;
+unaryOperation : Not {[<s = ((%typeTerminal)children.get(0)).getData()>]};
+singleAssignOperator
+    : PlusPlus
+        {[<s = "++">]}
+    | MinusMinus
+        {[<s = "--">]};

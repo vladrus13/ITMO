@@ -1,0 +1,864 @@
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/distance/ExternalDistance.java --
+package ru.clust.distance;
+
+import ru.clust.bean.Cluster;
+import ru.clust.bean.Clusters;
+import ru.clust.bean.Pair;
+import ru.clust.util.Utils;
+
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+public enum ExternalDistance {
+    @Deprecated
+    RAND {
+        @Override
+        public double calculate(Clusters array) {
+            return 0;
+        }
+    },
+    @Deprecated
+    JACCARD {
+        @Override
+        public double calculate(Clusters array) {
+            return 0;
+        }
+    },
+    F {
+        @Override
+        public double calculate(Clusters array) {
+            ArrayList<ArrayList<Integer>> matrix = F.matrix(array);
+            int countClasses = array.getIn().stream()
+                    .mapToInt(cluster ->
+                            cluster.getCluster().stream()
+                                    .mapToInt(pair -> pair.second)
+                                    .max().orElseThrow())
+                    .max().orElseThrow() + 1;
+            ArrayList<Integer> classCounter = Utils.generate(countClasses, 0);
+            ArrayList<Integer> clusterCounter = Utils.generate(array.getCountClusters(), 0);
+            for (int i = 0; i < matrix.size(); i++) {
+                for (int j = 0; j < matrix.get(i).size(); j++) {
+                    classCounter.set(j, classCounter.get(j) + 1);
+                    clusterCounter.set(i, clusterCounter.get(i) + 1);
+                }
+            }
+            double F = 0.0;
+            for (int i = 0; i < array.getCountClusters(); i++) {
+                int finalI = i;
+                F += ((double) clusterCounter.get(i) / array.getCountElements()) *
+                        IntStream.range(0, countClasses)
+                                .mapToDouble(j ->
+                                        calc(matrix.get(finalI).get(j), clusterCounter.get(finalI), classCounter.get(j))).max().orElseThrow();
+            }
+            return F;
+        }
+    };
+
+    private ArrayList<ArrayList<Integer>> matrix(Clusters clusters) {
+        int countClusters = clusters.getCountClusters();
+        int countClasses = clusters.getIn().stream()
+                .mapToInt(cluster ->
+                        cluster.getCluster().stream()
+                                .mapToInt(pair -> pair.second)
+                                .max().orElseThrow())
+                .max().orElseThrow() + 1;
+        ArrayList<ArrayList<Integer>> matrix = Utils.generate(countClusters, countClasses, 0);
+        for (Cluster cluster : clusters.getIn()) {
+            for (Pair<ArrayList<Double>, Integer> pair : cluster.getCluster()) {
+                matrix.get(cluster.getId()).set(pair.second, matrix.get(cluster.getId()).get(pair.second) + 1);
+            }
+        }
+        return matrix;
+    }
+
+    /**
+     * Return metrix
+     * @param clusters clusters
+     * @return [TP, TN, FP, FN]
+     */
+    @Deprecated
+    private ArrayList<Double> pairs(Clusters clusters) {
+        return new ArrayList<>();
+    }
+
+    double calc(double matrix, double cluster, double classer) {
+        return 2 * check(check(Math.pow(matrix, 2), (classer * cluster)),
+                (check(matrix, classer) + check(matrix, cluster)));
+    }
+
+    double check(double a, double b) {
+        if (Math.abs(b) <= 1e-5) return 0;
+        else return a / b;
+    }
+
+    public abstract double calculate(Clusters array);
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/tsne/TSNE.java --
+package ru.clust.tsne;
+
+import com.jujutsu.tsne.*;
+import com.jujutsu.utils.TSneUtils;
+import ru.clust.bean.Pair;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public enum TSNE {
+    FASTTSNE {
+        @Override
+        double[][] realm(double[][] realm) {
+            TSne tSne = new FastTSne();
+            TSneConfiguration configuration = new TSneConfig(realm, 2, realm[0].length, FASTTSNE.perplexity, FASTTSNE.ITERATIONS, true, 0.5D, false, false);
+            return tSne.tsne(configuration);
+        }
+    },
+    BIASTSNE {
+        @Override
+        double[][] realm(double[][] realm) {
+            TSne tSne = new BlasTSne();
+            TSneConfiguration configuration = new TSneConfig(realm, 2, realm[0].length, BIASTSNE.perplexity, BIASTSNE.ITERATIONS, true, 0.5D, false, false);
+            return tSne.tsne(configuration);
+        }
+    },
+    SIMPLE {
+        @Override
+        double[][] realm(double[][] realm) {
+            TSne tSne = new BlasTSne();
+            TSneConfiguration configuration = new TSneConfig(realm, 2, realm[0].length, SIMPLE.perplexity, SIMPLE.ITERATIONS, true, 0.5D, false, false);
+            return tSne.tsne(configuration);
+        }
+    };
+
+    abstract double[][] realm(double[][] realm);
+
+    public ArrayList<Pair<Pair<Double, Double>, Integer>> tsne(ArrayList<Pair<ArrayList<Double>, Integer>> array) {
+        double[][] input = new double[array.size()][array.get(0).first.size()];
+        for (int i = 0; i < array.size(); i++) {
+            for (int j = 0; j < array.get(i).first.size(); j++) {
+                input[i][j] = array.get(i).first.get(j);
+            }
+        }
+        double[][] output = realm(input);
+        return IntStream.range(0, output.length)
+                .mapToObj(i -> new Pair<>(new Pair<>(output[i][0], output[i][1]), array.get(i).second))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private final int ITERATIONS = 200;
+    private final double perplexity = 50.0;
+
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/util/CSVReader.java --
+package ru.clust.util;
+
+import ru.clust.bean.Pair;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class CSVReader {
+
+    public static ArrayList<Pair<ArrayList<Double>, Integer>> read(String name) throws IOException {
+        Map<String, Integer> classes = new HashMap<>();
+        int countClasses = 0;
+        BufferedReader bufferedReader = Files.newBufferedReader(Path.of("resources").resolve(name + ".csv"), StandardCharsets.UTF_8);
+        bufferedReader.readLine();
+        ArrayList<Pair<ArrayList<Double>, Integer>> beans = new ArrayList<>();
+        String s;
+        while ((s = bufferedReader.readLine()) != null) {
+            String[] readen = s.split(",");
+            int c;
+            if (classes.containsKey(readen[0])) {
+                c = classes.get(readen[0]);
+            } else {
+                c = countClasses;
+                classes.put(readen[0], c);
+                countClasses++;
+            }
+            beans.add(new Pair<>(
+                    IntStream.range(1, readen.length)
+                            .mapToDouble(i -> Double.parseDouble(readen[i]))
+                            .boxed()
+                            .collect(Collectors.toCollection(ArrayList::new)),
+                    c
+            ));
+        }
+        return beans;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/util/Utils.java --
+package ru.clust.util;
+
+import com.jujutsu.tsne.TSne;
+import ru.clust.bean.Pair;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class Utils {
+    public static ArrayList<Pair<ArrayList<Double>, Integer>> normalize(ArrayList<Pair<ArrayList<Double>, Integer>> arrayList) {
+        int attributes = arrayList.get(0).first.size();
+        ArrayList<Double> max = IntStream
+                .range(0, attributes)
+                .mapToDouble(i -> arrayList.stream()
+                        .mapToDouble(bean -> bean.first.get(i))
+                        .max().orElseThrow())
+                .boxed()
+                .collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Double> min = IntStream
+                .range(0, attributes)
+                .mapToDouble(i -> arrayList.stream()
+                        .mapToDouble(bean -> bean.first.get(i))
+                        .min().orElseThrow())
+                .boxed()
+                .collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Pair<ArrayList<Double>, Integer>> beans = new ArrayList<>();
+        for (Pair<ArrayList<Double>, Integer> bean : arrayList) {
+            ArrayList<Double> temp =
+                    IntStream.range(0, attributes)
+                            .mapToDouble(i -> (bean.first.get(i) - min.get(i)) / (max.get(i) - min.get(i)))
+                            .boxed().collect(Collectors.toCollection(ArrayList::new));
+            beans.add(new Pair<>(temp, bean.second));
+        }
+        return beans;
+    }
+
+    public static ArrayList<ArrayList<Integer>> generate(int n, int m, int x) {
+        ArrayList<ArrayList<Integer>> returned = new ArrayList<>();
+        IntStream.range(0, n).forEach(i -> {
+            returned.add(new ArrayList<>());
+            IntStream.range(0, m).forEach(j ->
+                    returned.get(i).add(x));
+        });
+        return returned;
+    }
+
+    public static ArrayList<Integer> generate(int n, int x) {
+        ArrayList<Integer> returned = new ArrayList<>();
+        IntStream.range(0, n).forEach(i -> returned.add(x));
+        return returned;
+    }
+
+    public static Color generate() {
+        Random random = new Random(System.currentTimeMillis());
+        return new Color((int) (random.nextDouble() * 255), (int) (random.nextDouble() * 255), (int) (random.nextDouble() * 255));
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/Launcher.java --
+package ru.clust;
+
+import ru.clust.bean.Clusters;
+import ru.clust.bean.Pair;
+import ru.clust.cluster.Clusterer;
+import ru.clust.cluster.DBSCANClusterer;
+import ru.clust.distance.ExternalDistance;
+import ru.clust.drawing.ClusterDrawer;
+import ru.clust.drawing.ImageSaver;
+import ru.clust.util.CSVReader;
+import ru.clust.util.Utils;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Launcher {
+
+    private static final ArrayList<String> bases = new ArrayList<>(List.of("dataset_191_wine"));
+
+    public static void main(String[] args) throws IOException {
+        BufferedWriter bufferedWriter = Files.newBufferedWriter(Path.of("resources").resolve("result.txt"));
+        for (String dataset : bases) {
+            System.out.println("Test: " + dataset);
+            ArrayList<Pair<ArrayList<Double>, Integer>> data = Utils.normalize(CSVReader.read(dataset));
+            ImageSaver.save(ClusterDrawer.createImageCompose(dataset, "real", data), dataset, "real");
+            for (double radius = .01; radius < .3; radius += .01) {
+                for (int minSize = 1; minSize < 3; minSize++) {
+                    System.out.printf("\tOn radius = %f, minSize = %d%n", radius, minSize);
+                    Clusterer clusterer = new DBSCANClusterer(radius, minSize);
+                    Clusters clusters = clusterer.cluster(data);
+                    String name = String.format("r-%f-size-%d", radius, minSize);
+                    ImageSaver.save(ClusterDrawer.createImageCompose(dataset, name, clusters), dataset, name);
+                    bufferedWriter.write(String.format("r-%f-size-%d-f-%f\n", radius, minSize, ExternalDistance.F.calculate(clusters)));
+                }
+            }
+        }
+        bufferedWriter.close();
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/cluster/DBSCANClusterer.java --
+package ru.clust.cluster;
+
+import ru.clust.bean.Cluster;
+import ru.clust.bean.Clusters;
+import ru.clust.bean.Pair;
+
+import java.util.*;
+
+public class DBSCANClusterer implements Clusterer {
+
+    private final double radius;
+    private final int minimaCount;
+
+    private enum Status {
+        NOISE, CLUSTERING
+    }
+
+    public DBSCANClusterer(double radius, int minimaCount) {
+        this.radius = radius;
+        this.minimaCount = minimaCount;
+    }
+
+    @Override
+    public Clusters cluster(final Collection<Pair<ArrayList<Double>, Integer>> beans) {
+        ArrayList<Cluster> clusterArrayList = new ArrayList<>();
+        int count = 0;
+        Map<Pair<ArrayList<Double>, Integer>, Status> got = new HashMap<>();
+        for (Pair<ArrayList<Double>, Integer> bean : beans) {
+            if (got.containsKey(bean)) {
+                continue;
+            }
+            ArrayList<Pair<ArrayList<Double>, Integer>> neighbors = getNeighbors(bean, beans);
+            //if (neighbors.size() >= minimaCount) {
+                clusterArrayList.add(expand(new Cluster(count), bean, neighbors, beans, got));
+                count++;
+            //} else {
+                //got.put(bean, Status.NOISE);
+            //}
+        }
+        int countTaken = (int) got.entrySet().stream().filter(pa -> pa.getValue() == Status.CLUSTERING).count();
+        return new Clusters(clusterArrayList, countTaken);
+    }
+
+    private Cluster expand(Cluster cluster,
+                           final Pair<ArrayList<Double>, Integer> bean,
+                           final ArrayList<Pair<ArrayList<Double>, Integer>> neighbors,
+                           final Collection<Pair<ArrayList<Double>, Integer>> beans,
+                           final Map<Pair<ArrayList<Double>, Integer>, Status> got) {
+        cluster.add(bean);
+        got.put(bean, Status.CLUSTERING);
+        ArrayList<Pair<ArrayList<Double>, Integer>> copy = new ArrayList<>(neighbors);
+        for (int i = 0; i < copy.size(); i++) {
+            Pair<ArrayList<Double>, Integer> current = copy.get(i);
+            Status status = got.get(current);
+            if (status == null) {
+                ArrayList<Pair<ArrayList<Double>, Integer>> currentNeighbors = getNeighbors(current, beans);
+                if (currentNeighbors.size() >= minimaCount) {
+                    merge(copy, currentNeighbors);
+                }
+            }
+            if (status != Status.CLUSTERING) {
+                got.put(current, Status.CLUSTERING);
+                cluster.add(current);
+            }
+        }
+        return cluster;
+    }
+
+    private ArrayList<Pair<ArrayList<Double>, Integer>> merge(ArrayList<Pair<ArrayList<Double>, Integer>> a,
+                                                              ArrayList<Pair<ArrayList<Double>, Integer>> b) {
+        Set<Pair<ArrayList<Double>, Integer>> set = new HashSet<>(a);
+        for (Pair<ArrayList<Double>, Integer> p : b) {
+            if (!set.contains(p)) {
+                a.add(p);
+            }
+        }
+        return a;
+    }
+
+    private ArrayList<Pair<ArrayList<Double>, Integer>> getNeighbors(Pair<ArrayList<Double>, Integer> bean, Collection<Pair<ArrayList<Double>, Integer>> beans) {
+        ArrayList<Pair<ArrayList<Double>, Integer>> returned = new ArrayList<>();
+        for (Pair<ArrayList<Double>, Integer> point : beans) {
+            if (point != bean && ClusterUtils.distance(bean.first, point.first) <= radius) {
+                returned.add(point);
+            }
+        }
+        return returned;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/cluster/ClusterUtils.java --
+package ru.clust.cluster;
+
+import ru.clust.bean.Cluster;
+import ru.clust.bean.Clusters;
+import ru.clust.bean.Pair;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class ClusterUtils {
+    public static Clusters clusterization(ArrayList<Pair<ArrayList<Double>, Integer>> array) {
+        int countClusters = array.stream().mapToInt(i -> i.second).max().orElseThrow();
+        ArrayList<Cluster> clusters = IntStream
+                .range(0, countClusters)
+                .mapToObj(Cluster::new)
+                .collect(Collectors.toCollection(ArrayList::new));
+        for (Pair<ArrayList<Double>, Integer> bean : array) {
+            clusters.get(bean.second).add(bean);
+        }
+        return new Clusters(clusters, array.size());
+    }
+
+    public static double distance(ArrayList<Double> a, ArrayList<Double> b) {
+        double d = 0.0;
+        for (int i = 0; i < a.size(); i++) {
+            d += Math.pow(a.get(i) - b.get(i), 2);
+        }
+        return d;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/cluster/Clusterer.java --
+package ru.clust.cluster;
+
+import ru.clust.bean.Clusters;
+import ru.clust.bean.Pair;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+public interface Clusterer {
+
+    Clusters cluster(final Collection<Pair<ArrayList<Double>, Integer>> beans);
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/drawing/ImageCreator.java --
+package ru.clust.drawing;
+
+import ru.clust.bean.Point;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+/**
+ * Image creator
+ */
+public class ImageCreator {
+
+    /**
+     * @param point point in (0, 0) on left-bottom
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormal(Point point) {
+        return new Point(point.x, 1000 - point.y);
+    }
+
+    /**
+     * @param point point on graphic
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormalOnGraphic(Point point) {
+        return makeNormal(new Point(point.x + 100, point.y + 100));
+    }
+
+    /**
+     * Draw line
+     *
+     * @param graphics {@link Graphics}
+     * @param start    start point
+     * @param finish   finish point
+     */
+    private static void lineOnGraphic(Graphics graphics, Point start, Point finish) {
+        start = makeNormalOnGraphic(start);
+        finish = makeNormalOnGraphic(finish);
+        graphics.drawLine(start.x, start.y, finish.x, finish.y);
+    }
+
+    /**
+     * Draw point
+     *
+     * @param graphics {@link Graphics}
+     * @param point    point
+     */
+    private static void pointOnGraphic(Graphics graphics, Point point) {
+        point = makeNormalOnGraphic(point);
+        graphics.fillOval(point.x - 4, point.y - 4, 8, 8);
+    }
+
+    private static void squareOnGraphic(Graphics graphics, Point start, Point size, Color color) {
+        start = makeNormalOnGraphic(start);
+        start = new Point(start.x, start.y - size.y);
+        graphics.setColor(color);
+        graphics.fillRect(start.x, start.y, size.x, size.y);
+    }
+
+    public static BufferedImage empty(String file, String method) {
+        BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.createGraphics();
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(0, 0, 1000, 1000);
+        graphics.setColor(Color.BLACK);
+        lineOnGraphic(graphics, new Point(0, 0), new Point(800, 0));
+        lineOnGraphic(graphics, new Point(0, 0), new Point(0, 800));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, -10));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, 10));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(-10, 790));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(10, 790));
+        graphics.drawString(String.format("File: %s, Method: %s", file, method), 10, 10);
+        graphics.drawString("@vladrus13", 930, 980);
+        return image;
+    }
+
+    public static void addMatrix(BufferedImage image, ArrayList<ArrayList<Integer>> matrix) {
+        Graphics graphics = image.getGraphics();
+        int xSize = 800 / matrix.get(0).size();
+        int ySize = 800 / matrix.size();
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < matrix.get(i).size(); j++) {
+                int value = matrix.get(i).get(j);
+                squareOnGraphic(graphics, new Point(xSize * i, ySize * j),
+                        new Point(xSize, ySize), new Color(value * 127, (1 - value) * 127, 0, 127));
+            }
+        }
+    }
+
+    public static void addPoints(BufferedImage image, ArrayList<Point> points, Color color) {
+        Graphics graphics = image.getGraphics();
+        graphics.setColor(color);
+        for (Point point : points) {
+            pointOnGraphic(graphics, point);
+        }
+    }
+
+    public static void addValues(BufferedImage image, ArrayList<String> x, ArrayList<String> y) {
+        Graphics graphics = image.getGraphics();
+        graphics.setColor(Color.BLACK);
+        int xSize = 800 / x.size();
+        int ySize = 800 / y.size();
+        for (int i = 0; i < x.size(); i++) {
+            lineOnGraphic(graphics, new Point(i * xSize, -10), new Point(i * xSize, 10));
+            Point point = makeNormalOnGraphic(new Point(i * xSize, -25));
+            graphics.drawString(x.get(i), point.x, point.y);
+        }
+        for (int i = 0; i < y.size(); i++) {
+            lineOnGraphic(graphics, new Point(-10, i * ySize), new Point(10, i * ySize));
+            Point point = makeNormalOnGraphic(new Point(-25, i * ySize));
+            graphics.drawString(y.get(i), point.x, point.y);
+        }
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/drawing/ImageSaver.java --
+package ru.clust.drawing;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * Image saver
+ */
+public class ImageSaver {
+    /**
+     * Save image
+     *
+     * @param image image
+     * @param type  type of network
+     */
+    public static void save(BufferedImage image, String type, String step) {
+        File imageFile = new File(String.valueOf(Path.of("resources")
+                .resolve("images")
+                .resolve(type)
+                .resolve(step)
+                .resolve("image.png")));
+        if (!imageFile.getParentFile().exists()) {
+            try {
+                Files.createDirectories(Path.of(imageFile.getParentFile().getAbsolutePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            ImageIO.write(image, "PNG", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/drawing/ClusterDrawer.java --
+package ru.clust.drawing;
+
+import ru.clust.bean.Cluster;
+import ru.clust.bean.Clusters;
+import ru.clust.bean.Pair;
+import ru.clust.bean.Point;
+import ru.clust.tsne.TSNE;
+import ru.clust.util.Utils;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ClusterDrawer {
+    private static final TSNE tsne = TSNE.FASTTSNE;
+    private static final ArrayList<Color> colors = new ArrayList<>(List.of(Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE));
+
+    public static BufferedImage createImageCompose(String name, String data, ArrayList<Pair<ArrayList<Double>, Integer>> arrayList) {
+        return createImage(name, data, tsne.tsne(arrayList));
+    }
+
+    public static BufferedImage createImage(String name, String data, ArrayList<Pair<Pair<Double, Double>, Integer>> arrayList) {
+        int countClasses = arrayList.stream().mapToInt(i -> i.second).max().orElseThrow() + 1;
+        double maxX = arrayList.stream().mapToDouble(i -> i.first.first).max().orElseThrow();
+        double minX = arrayList.stream().mapToDouble(i -> i.first.first).min().orElseThrow();
+        double maxY = arrayList.stream().mapToDouble(i -> i.first.second).max().orElseThrow();
+        double minY = arrayList.stream().mapToDouble(i -> i.first.second).min().orElseThrow();
+        BufferedImage image = ImageCreator.empty(name, data);
+        ArrayList<String> x = new ArrayList<>();
+        ArrayList<String> y = new ArrayList<>();
+        for (double xx = minX; xx < maxX; xx += (maxX - minX) / 10) {
+            x.add(String.valueOf(xx));
+        }
+        for (double yy = minY; yy < maxY; yy += (maxY - minY) / 10) {
+            y.add(String.valueOf(yy));
+        }
+        ImageCreator.addValues(image, x, y);
+        for (int i = 0; i < countClasses; i++) {
+            ArrayList<Point> points = new ArrayList<>();
+            for (Pair<Pair<Double, Double>, Integer> bean : arrayList) {
+                if (bean.second == i) {
+                    points.add(new Point(
+                            (int) ((bean.first.first - minX) * 800 / (maxX - minX)),
+                            (int) ((bean.first.second - minY) * 800 / (maxY - minY))
+                    ));
+                }
+            }
+            if (i >= colors.size()) {
+                ImageCreator.addPoints(image, points, Utils.generate());
+            } else {
+                ImageCreator.addPoints(image, points, colors.get(i));
+            }
+        }
+        return image;
+    }
+
+    public static BufferedImage createImageCompose(String name, String data, Clusters clusters) {
+        ArrayList<Pair<ArrayList<Double>, Integer>> result = new ArrayList<>();
+        for (int i = 0; i < clusters.getCountClusters(); i++) {
+            for (Pair<ArrayList<Double>, Integer> in : clusters.getIn().get(i).getCluster()) {
+                result.add(new Pair<>(in.first, i));
+            }
+        }
+        return createImageCompose(name, data, result);
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/bean/Clusters.java --
+package ru.clust.bean;
+
+import java.util.ArrayList;
+
+public class Clusters {
+    private final ArrayList<Cluster> in;
+    private final int countClusters;
+    private final int countElements;
+
+    public Clusters(ArrayList<Cluster> in, int countElements) {
+        this.in = in;
+        this.countClusters = in.size();
+        this.countElements = countElements;
+    }
+
+    public ArrayList<Cluster> getIn() {
+        return in;
+    }
+
+    public int getCountClusters() {
+        return countClusters;
+    }
+
+    public int getCountElements() {
+        return countElements;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/bean/Cluster.java --
+package ru.clust.bean;
+
+import java.util.ArrayList;
+
+public class Cluster {
+    private final int id;
+    private final ArrayList<Pair<ArrayList<Double>, Integer>> cluster;
+
+    public Cluster(int id, ArrayList<Pair<ArrayList<Double>, Integer>> cluster) {
+        this.id = id;
+        this.cluster = cluster;
+    }
+
+    public Cluster(int id) {
+        this.id = id;
+        this.cluster = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public ArrayList<Pair<ArrayList<Double>, Integer>> getCluster() {
+        return cluster;
+    }
+
+    public void add(final Pair<ArrayList<Double>, Integer> added) {
+        cluster.add(added);
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/bean/Point.java --
+package ru.clust.bean;
+
+public class Point {
+    public final int x;
+    public final int y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/clust/bean/Pair.java --
+package ru.clust.bean;
+
+import java.util.Objects;
+
+public class Pair<T, E> {
+    public final T first;
+    public final E second;
+
+    public Pair(T first, E second) {
+        this.first = first;
+        this.second = second;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return first.equals(pair.first) && second.equals(pair.second);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(first, second);
+    }
+}

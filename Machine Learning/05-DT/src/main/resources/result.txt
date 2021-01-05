@@ -1,0 +1,273 @@
+	--- Test1
+	---Reading
+	---Reading end
+Test - 01. Depth - 0. Mistakes: 2347 / 3891 - test, 2448 / 3891 - train
+Test - 01. Depth - 4. Mistakes: 6 / 3891 - test, 203 / 3891 - train
+Test - 01. Depth - 8. Mistakes: 46 / 3891 - test, 174 / 3891 - train
+Test - 01. Depth - 12. Mistakes: 108 / 3891 - test, 126 / 3891 - train
+Test - 01. Depth - 16. Mistakes: 169 / 3891 - test, 73 / 3891 - train
+Test - 01. Depth - 20. Mistakes: 233 / 3891 - test, 23 / 3891 - train
+Test - 01. Depth - 24. Mistakes: 267 / 3891 - test, 0 / 3891 - train
+Test - 01. Depth - 28. Mistakes: 267 / 3891 - test, 0 / 3891 - train
+Test - 01. Depth - 32. Mistakes: 267 / 3891 - test, 0 / 3891 - train
+Test - 01. Depth - 36. Mistakes: 267 / 3891 - test, 0 / 3891 - train
+	--- Test2
+	---Reading
+	---Reading end
+Test - 02. Depth - 0. Mistakes: 3226 / 3930 - test, 3247 / 3930 - train
+Test - 02. Depth - 4. Mistakes: 1958 / 3930 - test, 2003 / 3930 - train
+Test - 02. Depth - 8. Mistakes: 1449 / 3930 - test, 940 / 3930 - train
+Test - 02. Depth - 12. Mistakes: 1467 / 3930 - test, 150 / 3930 - train
+Test - 02. Depth - 16. Mistakes: 1477 / 3930 - test, 34 / 3930 - train
+Test - 02. Depth - 20. Mistakes: 1495 / 3930 - test, 21 / 3930 - train
+Test - 02. Depth - 24. Mistakes: 1500 / 3930 - test, 12 / 3930 - train
+Test - 02. Depth - 28. Mistakes: 1510 / 3930 - test, 8 / 3930 - train
+Test - 02. Depth - 32. Mistakes: 1514 / 3930 - test, 3 / 3930 - train
+Test - 02. Depth - 36. Mistakes: 1520 / 3930 - test, 0 / 3930 - train
+	--- Test3
+	---Reading
+	---Reading end
+Test - 03. Depth - 0. Mistakes: 278 / 2074 - test, 375 / 2074 - train
+Test - 03. Depth - 4. Mistakes: 16 / 2074 - test, 90 / 2074 - train
+Test - 03. Depth - 8. Mistakes: 21 / 2074 - test, 82 / 2074 - train
+Test - 03. Depth - 12. Mistakes: 30 / 2074 - test, 73 / 2074 - train
+Test - 03. Depth - 16. Mistakes: 48 / 2074 - test, 57 / 2074 - train
+Test - 03. Depth - 20. Mistakes: 48 / 2074 - test, 51 / 2074 - train
+Test - 03. Depth - 24. Mistakes: 68 / 2074 - test, 41 / 2074 - train
+Test - 03. Depth - 28. Mistakes: 72 / 2074 - test, 27 / 2074 - train
+Test - 03. Depth - 32. Mistakes: 89 / 2074 - test, 17 / 2074 - train
+Test - 03. Depth - 36. Mistakes: 103 / 2074 - test, 9 / 2074 - train
+	--- Test4
+	---Reading
+	---Reading end
+Test - 04. Depth - 0. Mistakes: 1415 / 2875 - test, 1443 / 2875 - train
+Test - 04. Depth - 4. Mistakes: 108 / 2875 - test, 185 / 2875 - train
+Test - 04. Depth - 8. Mistakes: 64 / 2875 - test, 69 / 2875 - train
+Test - 04. Depth - 12. Mistakes: 81 / 2875 - test, 56 / 2875 - train
+Test - 04. Depth - 16. Mistakes: 103 / 2875 - test, 43 / 2875 - train
+Test - 04. Depth - 20. Mistakes: 109 / 2875 - test, 24 / 2875 - train
+Test - 04. Depth - 24. Mistakes: 128 / 2875 - test, 14 / 2875 - train
+Test - 04. Depth - 28. Mistakes: 140 / 2875 - test, 6 / 2875 - train
+Test - 04. Depth - 32. Mistakes: 146 / 2875 - test, 0 / 2875 - train
+Test - 04. Depth - 36. Mistakes: 146 / 2875 - test, 0 / 2875 - train
+	--- Test5
+	---Reading
+	---Reading end
+Test - 05. Depth - 0. Mistakes: 36 / 462 - test, 46 / 462 - train
+Test - 05. Depth - 4. Mistakes: 3 / 462 - test, 10 / 462 - train
+Test - 05. Depth - 8. Mistakes: 10 / 462 - test, 5 / 462 - train
+Test - 05. Depth - 12. Mistakes: 16 / 462 - test, 0 / 462 - train
+Test - 05. Depth - 16. Mistakes: 16 / 462 - test, 0 / 462 - train
+Test - 05. Depth - 20. Mistakes: 16 / 462 - test, 0 / 462 - train
+Test - 05. Depth - 24. Mistakes: 16 / 462 - test, 0 / 462 - train
+Test - 05. Depth - 28. Mistakes: 16 / 462 - test, 0 / 462 - train
+Test - 05. Depth - 32. Mistakes: 16 / 462 - test, 0 / 462 - train
+Test - 05. Depth - 36. Mistakes: 16 / 462 - test, 0 / 462 - train
+	--- Test6
+	---Reading
+	---Reading end
+Test - 06. Depth - 0. Mistakes: 742 / 1812 - test, 753 / 1812 - train
+Test - 06. Depth - 4. Mistakes: 17 / 1812 - test, 57 / 1812 - train
+Test - 06. Depth - 8. Mistakes: 42 / 1812 - test, 38 / 1812 - train
+Test - 06. Depth - 12. Mistakes: 53 / 1812 - test, 27 / 1812 - train
+Test - 06. Depth - 16. Mistakes: 66 / 1812 - test, 17 / 1812 - train
+Test - 06. Depth - 20. Mistakes: 82 / 1812 - test, 10 / 1812 - train
+Test - 06. Depth - 24. Mistakes: 102 / 1812 - test, 0 / 1812 - train
+Test - 06. Depth - 28. Mistakes: 102 / 1812 - test, 0 / 1812 - train
+Test - 06. Depth - 32. Mistakes: 102 / 1812 - test, 0 / 1812 - train
+Test - 06. Depth - 36. Mistakes: 102 / 1812 - test, 0 / 1812 - train
+	--- Test7
+	---Reading
+	---Reading end
+Test - 07. Depth - 0. Mistakes: 1322 / 2150 - test, 1376 / 2150 - train
+Test - 07. Depth - 4. Mistakes: 18 / 2150 - test, 94 / 2150 - train
+Test - 07. Depth - 8. Mistakes: 52 / 2150 - test, 71 / 2150 - train
+Test - 07. Depth - 12. Mistakes: 82 / 2150 - test, 50 / 2150 - train
+Test - 07. Depth - 16. Mistakes: 120 / 2150 - test, 26 / 2150 - train
+Test - 07. Depth - 20. Mistakes: 140 / 2150 - test, 8 / 2150 - train
+Test - 07. Depth - 24. Mistakes: 144 / 2150 - test, 2 / 2150 - train
+Test - 07. Depth - 28. Mistakes: 144 / 2150 - test, 0 / 2150 - train
+Test - 07. Depth - 32. Mistakes: 144 / 2150 - test, 0 / 2150 - train
+Test - 07. Depth - 36. Mistakes: 144 / 2150 - test, 0 / 2150 - train
+	--- Test8
+	---Reading
+	---Reading end
+Test - 08. Depth - 0. Mistakes: 14 / 481 - test, 27 / 481 - train
+Test - 08. Depth - 4. Mistakes: 2 / 481 - test, 6 / 481 - train
+Test - 08. Depth - 8. Mistakes: 4 / 481 - test, 3 / 481 - train
+Test - 08. Depth - 12. Mistakes: 10 / 481 - test, 0 / 481 - train
+Test - 08. Depth - 16. Mistakes: 10 / 481 - test, 0 / 481 - train
+Test - 08. Depth - 20. Mistakes: 10 / 481 - test, 0 / 481 - train
+Test - 08. Depth - 24. Mistakes: 10 / 481 - test, 0 / 481 - train
+Test - 08. Depth - 28. Mistakes: 10 / 481 - test, 0 / 481 - train
+Test - 08. Depth - 32. Mistakes: 10 / 481 - test, 0 / 481 - train
+Test - 08. Depth - 36. Mistakes: 10 / 481 - test, 0 / 481 - train
+	--- Test9
+	---Reading
+	---Reading end
+Test - 09. Depth - 0. Mistakes: 366 / 510 - test, 371 / 510 - train
+Test - 09. Depth - 4. Mistakes: 95 / 510 - test, 99 / 510 - train
+Test - 09. Depth - 8. Mistakes: 109 / 510 - test, 8 / 510 - train
+Test - 09. Depth - 12. Mistakes: 111 / 510 - test, 0 / 510 - train
+Test - 09. Depth - 16. Mistakes: 111 / 510 - test, 0 / 510 - train
+Test - 09. Depth - 20. Mistakes: 111 / 510 - test, 0 / 510 - train
+Test - 09. Depth - 24. Mistakes: 111 / 510 - test, 0 / 510 - train
+Test - 09. Depth - 28. Mistakes: 111 / 510 - test, 0 / 510 - train
+Test - 09. Depth - 32. Mistakes: 111 / 510 - test, 0 / 510 - train
+Test - 09. Depth - 36. Mistakes: 111 / 510 - test, 0 / 510 - train
+	--- Test10
+	---Reading
+	---Reading end
+Test - 10. Depth - 0. Mistakes: 1958 / 2485 - test, 1966 / 2485 - train
+Test - 10. Depth - 4. Mistakes: 16 / 2485 - test, 137 / 2485 - train
+Test - 10. Depth - 8. Mistakes: 60 / 2485 - test, 100 / 2485 - train
+Test - 10. Depth - 12. Mistakes: 128 / 2485 - test, 37 / 2485 - train
+Test - 10. Depth - 16. Mistakes: 169 / 2485 - test, 8 / 2485 - train
+Test - 10. Depth - 20. Mistakes: 175 / 2485 - test, 2 / 2485 - train
+Test - 10. Depth - 24. Mistakes: 175 / 2485 - test, 0 / 2485 - train
+Test - 10. Depth - 28. Mistakes: 175 / 2485 - test, 0 / 2485 - train
+Test - 10. Depth - 32. Mistakes: 175 / 2485 - test, 0 / 2485 - train
+Test - 10. Depth - 36. Mistakes: 175 / 2485 - test, 0 / 2485 - train
+	--- Test11
+	---Reading
+	---Reading end
+Test - 11. Depth - 0. Mistakes: 540 / 2485 - test, 677 / 2485 - train
+Test - 11. Depth - 4. Mistakes: 7 / 2485 - test, 110 / 2485 - train
+Test - 11. Depth - 8. Mistakes: 36 / 2485 - test, 93 / 2485 - train
+Test - 11. Depth - 12. Mistakes: 61 / 2485 - test, 69 / 2485 - train
+Test - 11. Depth - 16. Mistakes: 82 / 2485 - test, 51 / 2485 - train
+Test - 11. Depth - 20. Mistakes: 104 / 2485 - test, 39 / 2485 - train
+Test - 11. Depth - 24. Mistakes: 151 / 2485 - test, 16 / 2485 - train
+Test - 11. Depth - 28. Mistakes: 169 / 2485 - test, 2 / 2485 - train
+Test - 11. Depth - 32. Mistakes: 169 / 2485 - test, 0 / 2485 - train
+Test - 11. Depth - 36. Mistakes: 169 / 2485 - test, 0 / 2485 - train
+	--- Test12
+	---Reading
+	---Reading end
+Test - 12. Depth - 0. Mistakes: 2430 / 3563 - test, 2431 / 3563 - train
+Test - 12. Depth - 4. Mistakes: 982 / 3563 - test, 949 / 3563 - train
+Test - 12. Depth - 8. Mistakes: 483 / 3563 - test, 277 / 3563 - train
+Test - 12. Depth - 12. Mistakes: 501 / 3563 - test, 60 / 3563 - train
+Test - 12. Depth - 16. Mistakes: 531 / 3563 - test, 12 / 3563 - train
+Test - 12. Depth - 20. Mistakes: 540 / 3563 - test, 0 / 3563 - train
+Test - 12. Depth - 24. Mistakes: 540 / 3563 - test, 0 / 3563 - train
+Test - 12. Depth - 28. Mistakes: 540 / 3563 - test, 0 / 3563 - train
+Test - 12. Depth - 32. Mistakes: 540 / 3563 - test, 0 / 3563 - train
+Test - 12. Depth - 36. Mistakes: 540 / 3563 - test, 0 / 3563 - train
+	--- Test13
+	---Reading
+	---Reading end
+Test - 13. Depth - 0. Mistakes: 762 / 1090 - test, 754 / 1090 - train
+Test - 13. Depth - 4. Mistakes: 540 / 1090 - test, 495 / 1090 - train
+Test - 13. Depth - 8. Mistakes: 437 / 1090 - test, 94 / 1090 - train
+Test - 13. Depth - 12. Mistakes: 451 / 1090 - test, 5 / 1090 - train
+Test - 13. Depth - 16. Mistakes: 459 / 1090 - test, 0 / 1090 - train
+Test - 13. Depth - 20. Mistakes: 459 / 1090 - test, 0 / 1090 - train
+Test - 13. Depth - 24. Mistakes: 459 / 1090 - test, 0 / 1090 - train
+Test - 13. Depth - 28. Mistakes: 459 / 1090 - test, 0 / 1090 - train
+Test - 13. Depth - 32. Mistakes: 459 / 1090 - test, 0 / 1090 - train
+Test - 13. Depth - 36. Mistakes: 459 / 1090 - test, 0 / 1090 - train
+	--- Test14
+	---Reading
+	---Reading end
+Test - 14. Depth - 0. Mistakes: 1913 / 2591 - test, 1918 / 2591 - train
+Test - 14. Depth - 4. Mistakes: 227 / 2591 - test, 325 / 2591 - train
+Test - 14. Depth - 8. Mistakes: 139 / 2591 - test, 69 / 2591 - train
+Test - 14. Depth - 12. Mistakes: 167 / 2591 - test, 47 / 2591 - train
+Test - 14. Depth - 16. Mistakes: 184 / 2591 - test, 31 / 2591 - train
+Test - 14. Depth - 20. Mistakes: 209 / 2591 - test, 13 / 2591 - train
+Test - 14. Depth - 24. Mistakes: 218 / 2591 - test, 3 / 2591 - train
+Test - 14. Depth - 28. Mistakes: 224 / 2591 - test, 0 / 2591 - train
+Test - 14. Depth - 32. Mistakes: 224 / 2591 - test, 0 / 2591 - train
+Test - 14. Depth - 36. Mistakes: 224 / 2591 - test, 0 / 2591 - train
+	--- Test15
+	---Reading
+	---Reading end
+Test - 15. Depth - 0. Mistakes: 83 / 1665 - test, 183 / 1665 - train
+Test - 15. Depth - 4. Mistakes: 5 / 1665 - test, 85 / 1665 - train
+Test - 15. Depth - 8. Mistakes: 16 / 1665 - test, 78 / 1665 - train
+Test - 15. Depth - 12. Mistakes: 22 / 1665 - test, 72 / 1665 - train
+Test - 15. Depth - 16. Mistakes: 47 / 1665 - test, 56 / 1665 - train
+Test - 15. Depth - 20. Mistakes: 69 / 1665 - test, 43 / 1665 - train
+Test - 15. Depth - 24. Mistakes: 83 / 1665 - test, 34 / 1665 - train
+Test - 15. Depth - 28. Mistakes: 87 / 1665 - test, 29 / 1665 - train
+Test - 15. Depth - 32. Mistakes: 101 / 1665 - test, 11 / 1665 - train
+Test - 15. Depth - 36. Mistakes: 107 / 1665 - test, 5 / 1665 - train
+	--- Test16
+	---Reading
+	---Reading end
+Test - 16. Depth - 0. Mistakes: 1584 / 3210 - test, 1651 / 3210 - train
+Test - 16. Depth - 4. Mistakes: 9 / 3210 - test, 149 / 3210 - train
+Test - 16. Depth - 8. Mistakes: 21 / 3210 - test, 142 / 3210 - train
+Test - 16. Depth - 12. Mistakes: 36 / 3210 - test, 130 / 3210 - train
+Test - 16. Depth - 16. Mistakes: 61 / 3210 - test, 116 / 3210 - train
+Test - 16. Depth - 20. Mistakes: 80 / 3210 - test, 104 / 3210 - train
+Test - 16. Depth - 24. Mistakes: 103 / 3210 - test, 81 / 3210 - train
+Test - 16. Depth - 28. Mistakes: 122 / 3210 - test, 65 / 3210 - train
+Test - 16. Depth - 32. Mistakes: 140 / 3210 - test, 48 / 3210 - train
+Test - 16. Depth - 36. Mistakes: 163 / 3210 - test, 28 / 3210 - train
+	--- Test17
+	---Reading
+	---Reading end
+Test - 17. Depth - 0. Mistakes: 1418 / 1791 - test, 1431 / 1791 - train
+Test - 17. Depth - 4. Mistakes: 557 / 1791 - test, 594 / 1791 - train
+Test - 17. Depth - 8. Mistakes: 363 / 1791 - test, 104 / 1791 - train
+Test - 17. Depth - 12. Mistakes: 400 / 1791 - test, 4 / 1791 - train
+Test - 17. Depth - 16. Mistakes: 406 / 1791 - test, 0 / 1791 - train
+Test - 17. Depth - 20. Mistakes: 406 / 1791 - test, 0 / 1791 - train
+Test - 17. Depth - 24. Mistakes: 406 / 1791 - test, 0 / 1791 - train
+Test - 17. Depth - 28. Mistakes: 406 / 1791 - test, 0 / 1791 - train
+Test - 17. Depth - 32. Mistakes: 406 / 1791 - test, 0 / 1791 - train
+Test - 17. Depth - 36. Mistakes: 406 / 1791 - test, 0 / 1791 - train
+	--- Test18
+	---Reading
+	---Reading end
+Test - 18. Depth - 0. Mistakes: 609 / 1343 - test, 623 / 1343 - train
+Test - 18. Depth - 4. Mistakes: 165 / 1343 - test, 165 / 1343 - train
+Test - 18. Depth - 8. Mistakes: 141 / 1343 - test, 27 / 1343 - train
+Test - 18. Depth - 12. Mistakes: 156 / 1343 - test, 10 / 1343 - train
+Test - 18. Depth - 16. Mistakes: 158 / 1343 - test, 6 / 1343 - train
+Test - 18. Depth - 20. Mistakes: 166 / 1343 - test, 0 / 1343 - train
+Test - 18. Depth - 24. Mistakes: 166 / 1343 - test, 0 / 1343 - train
+Test - 18. Depth - 28. Mistakes: 166 / 1343 - test, 0 / 1343 - train
+Test - 18. Depth - 32. Mistakes: 166 / 1343 - test, 0 / 1343 - train
+Test - 18. Depth - 36. Mistakes: 166 / 1343 - test, 0 / 1343 - train
+	--- Test19
+	---Reading
+	---Reading end
+Test - 19. Depth - 0. Mistakes: 1024 / 1333 - test, 1042 / 1333 - train
+Test - 19. Depth - 4. Mistakes: 415 / 1333 - test, 447 / 1333 - train
+Test - 19. Depth - 8. Mistakes: 256 / 1333 - test, 103 / 1333 - train
+Test - 19. Depth - 12. Mistakes: 286 / 1333 - test, 13 / 1333 - train
+Test - 19. Depth - 16. Mistakes: 307 / 1333 - test, 0 / 1333 - train
+Test - 19. Depth - 20. Mistakes: 307 / 1333 - test, 0 / 1333 - train
+Test - 19. Depth - 24. Mistakes: 307 / 1333 - test, 0 / 1333 - train
+Test - 19. Depth - 28. Mistakes: 307 / 1333 - test, 0 / 1333 - train
+Test - 19. Depth - 32. Mistakes: 307 / 1333 - test, 0 / 1333 - train
+Test - 19. Depth - 36. Mistakes: 307 / 1333 - test, 0 / 1333 - train
+	--- Test20
+	---Reading
+	---Reading end
+Test - 20. Depth - 0. Mistakes: 1566 / 2524 - test, 1621 / 2524 - train
+Test - 20. Depth - 4. Mistakes: 243 / 2524 - test, 367 / 2524 - train
+Test - 20. Depth - 8. Mistakes: 109 / 2524 - test, 100 / 2524 - train
+Test - 20. Depth - 12. Mistakes: 131 / 2524 - test, 49 / 2524 - train
+Test - 20. Depth - 16. Mistakes: 153 / 2524 - test, 23 / 2524 - train
+Test - 20. Depth - 20. Mistakes: 179 / 2524 - test, 5 / 2524 - train
+Test - 20. Depth - 24. Mistakes: 182 / 2524 - test, 0 / 2524 - train
+Test - 20. Depth - 28. Mistakes: 182 / 2524 - test, 0 / 2524 - train
+Test - 20. Depth - 32. Mistakes: 182 / 2524 - test, 0 / 2524 - train
+Test - 20. Depth - 36. Mistakes: 182 / 2524 - test, 0 / 2524 - train
+	--- Test21
+	---Reading
+	---Reading end
+Test - 21. Depth - 0. Mistakes: 1281 / 1577 - test, 1253 / 1577 - train
+Test - 21. Depth - 4. Mistakes: 741 / 1577 - test, 749 / 1577 - train
+Test - 21. Depth - 8. Mistakes: 348 / 1577 - test, 169 / 1577 - train
+Test - 21. Depth - 12. Mistakes: 340 / 1577 - test, 7 / 1577 - train
+Test - 21. Depth - 16. Mistakes: 342 / 1577 - test, 0 / 1577 - train
+Test - 21. Depth - 20. Mistakes: 342 / 1577 - test, 0 / 1577 - train
+Test - 21. Depth - 24. Mistakes: 342 / 1577 - test, 0 / 1577 - train
+Test - 21. Depth - 28. Mistakes: 342 / 1577 - test, 0 / 1577 - train
+Test - 21. Depth - 32. Mistakes: 342 / 1577 - test, 0 / 1577 - train
+Test - 21. Depth - 36. Mistakes: 342 / 1577 - test, 0 / 1577 - train

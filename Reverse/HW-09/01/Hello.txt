@@ -1,0 +1,12 @@
+
+ # # # # # # # # # # # # # # # # # # # # # #
+ # o         #   #   #                   # #
+ #   #   # # #   #   #   # # #   # # #   # #
+ #   # #                           #   # # #
+ #   #       # # # # #   #   # # #   # # # #
+ #   #   #             # #       #       # #
+ #   #   # # # # # #   # # # # # # # # # # #
+ #       #                         #     x #
+ #   # # #   #   # # # # # # # # # #   # # #
+ #       #   #                           # #
+ # # # # # # # # # # # # # # # # # # # # # #spbctf{that's_so_amazing_android_is_easy} DDDDDDRRUUURRDRRRRRDDLLLDDRRRRRRRRRRRUURR

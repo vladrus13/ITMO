@@ -1,0 +1,628 @@
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/files/BeanReader.java --
+package ru.vladrus13.files;
+
+import ru.vladrus13.bean.Bean;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+public class BeanReader {
+
+    private static final ArrayList<Bean> train = new ArrayList<>();
+    private static final ArrayList<Bean> test = new ArrayList<>();
+
+    public static void readBeans(int file) throws IOException {
+        BufferedReader bufferedReader = Files.newBufferedReader(Path.of("resources/LR/" + file + ".txt"));
+        int m = Integer.parseInt(bufferedReader.readLine());
+        int n = Integer.parseInt(bufferedReader.readLine());
+        readModel(bufferedReader, m, n, train);
+        n = Integer.parseInt(bufferedReader.readLine());
+        readModel(bufferedReader, m, n, test);
+    }
+
+    private static void readModel(BufferedReader bufferedReader, int m, int n, ArrayList<Bean> train) throws IOException {
+        for (int i = 0; i < n; i++) {
+            train.add(new Bean(Arrays.stream(bufferedReader.readLine().split(" "))
+                    .map(Double::parseDouble).collect(Collectors.toCollection(ArrayList::new))));
+            assert train.get(i).getAttributes().size() == m;
+        }
+    }
+
+    public static ArrayList<Bean> getTrain() {
+        return train;
+    }
+
+    public static ArrayList<Bean> getTest() {
+        return test;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/Launcher.java --
+package ru.vladrus13;
+
+import ru.vladrus13.bean.Bean;
+import ru.vladrus13.bean.Point;
+import ru.vladrus13.drawing.ImageCreator;
+import ru.vladrus13.drawing.ImageSaver;
+import ru.vladrus13.files.BeanReader;
+import ru.vladrus13.methods.Generic;
+import ru.vladrus13.methods.Gradient;
+import ru.vladrus13.methods.MMS;
+import ru.vladrus13.methods.Method;
+import ru.vladrus13.utils.NRMSE;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Launcher {
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public static void main(String[] args) throws IOException {
+        for (int file = 10; file <= 6; file++) {
+            System.out.println("File: " + file);
+            BeanReader.readBeans(file);
+            ArrayList<Bean> train = BeanReader.getTrain();
+            ArrayList<Bean> test = BeanReader.getTest();
+            Map<String, ArrayList<Point>> testCalc = new HashMap<>();
+            Map<String, ArrayList<Point>> trainCalc = new HashMap<>();
+            ArrayList<String> names = new ArrayList<>(List.of("Generic", "Gradient", "MMS"));
+            for (String name : names) {
+                testCalc.put(name, new ArrayList<>());
+                trainCalc.put(name, new ArrayList<>());
+            }
+            for (int kk = 1; kk <= 10; kk++) {
+                System.out.println("\tK = " + kk);
+                double k = kk / 10.0;
+                ArrayList<Method> methods = new ArrayList<>(List.of(
+                        new Generic(train),
+                        new Gradient(train, kk),
+                        new MMS(train, k)));
+                for (Method method : methods) {
+                    double testTest = NRMSE.calculate(test, method.getAnswer());
+                    double trainTest = NRMSE.calculate(train, method.getAnswer());
+                    testCalc.get(method.getName()).add(new Point(kk * 80, (long) testTest));
+                    trainCalc.get(method.getName()).add(new Point(kk * 80, (long) trainTest));
+                }
+            }
+            for (String name : names) {
+                ArrayList<Point> testArray = testCalc.get(name);
+                long maxima = testArray.stream().mapToLong(element -> element.y).max().getAsLong() / 800;
+                for (int i = 0; i < 10; i++) {
+                    testArray.set(i, new Point((i + 1) * 80, testArray.get(i).y / maxima));
+                }
+                ArrayList<Point> trainArray = trainCalc.get(name);
+                maxima = trainArray.stream().mapToLong(element -> element.y).max().getAsLong() / 800;
+                for (int i = 0; i < 10; i++) {
+                    trainArray.set(i, new Point((i + 1) * 80, trainArray.get(i).y / maxima));
+                }
+                ImageSaver.save(ImageCreator.draw(String.valueOf(file), name, testArray, trainArray), String.valueOf(file), name);
+            }
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/drawing/ImageCreator.java --
+package ru.vladrus13.drawing;
+
+import ru.vladrus13.bean.Point;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+/**
+ * Image creator
+ */
+public class ImageCreator {
+
+    /**
+     * @param point point in (0, 0) on left-bottom
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormal(Point point) {
+        return new Point(point.x, 1000 - point.y);
+    }
+
+    /**
+     * @param point point on graphic
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormalOnGraphic(Point point) {
+        return makeNormal(new Point(point.x + 100, point.y + 100));
+    }
+
+    /**
+     * Draw line
+     *
+     * @param graphics {@link Graphics}
+     * @param start    start point
+     * @param finish   finish point
+     */
+    private static void lineOnGraphic(Graphics graphics, Point start, Point finish) {
+        start = makeNormalOnGraphic(start);
+        finish = makeNormalOnGraphic(finish);
+        graphics.drawLine((int) start.x, (int) start.y, (int) finish.x, (int) finish.y);
+    }
+
+    /**
+     * Draw point
+     *
+     * @param graphics {@link Graphics}
+     * @param point    point
+     */
+    private static void pointOnGraphic(Graphics graphics, Point point) {
+        point = makeNormalOnGraphic(point);
+        graphics.fillOval((int) point.x - 4, (int) point.y - 4, 8, 8);
+    }
+
+    public static BufferedImage draw(String file, String method, ArrayList<Point> test, ArrayList<Point> train) {
+        BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.createGraphics();
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(0, 0, 1000, 1000);
+        graphics.setColor(Color.BLACK);
+        lineOnGraphic(graphics, new Point(0, 0), new Point(800, 0));
+        lineOnGraphic(graphics, new Point(0, 0), new Point(0, 800));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, -10));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, 10));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(-10, 790));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(10, 790));
+        IntStream.range(0, 11).forEach(element -> {
+                    lineOnGraphic(graphics, new Point(-10, element * 80), new Point(10, element * 80));
+                    lineOnGraphic(graphics, new Point(element * 80, -10), new Point(element * 80, 10));
+                    graphics.drawString(String.valueOf((double) element / 10), 10, 1000 - (element * 80 + 100));
+                    graphics.drawString(String.valueOf(element), 100 + element * 80, 990);
+                }
+        );
+        graphics.drawString(String.format("File: %s, Method: %s", file, method), 10, 10);
+        graphics.drawString("Red - test, Blue - train", 10, 30);
+        graphics.drawString("@vladrus13", 930, 980);
+        graphics.setColor(Color.RED);
+        for (Point point : test) {
+            pointOnGraphic(graphics, point);
+        }
+        graphics.setColor(Color.BLUE);
+        for (Point point : train) {
+            pointOnGraphic(graphics, point);
+        }
+        return image;
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/drawing/ImageSaver.java --
+package ru.vladrus13.drawing;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * Image saver
+ */
+public class ImageSaver {
+    /**
+     * Save image
+     *
+     * @param image image
+     * @param type  type of network
+     */
+    public static void save(BufferedImage image, String file, String type) {
+        File imageFile = new File(String.valueOf(Path.of("resources")
+                .resolve("images")
+                .resolve(file)
+                .resolve(type)
+                .resolve("image.png")));
+        if (!imageFile.getParentFile().exists()) {
+            try {
+                Files.createDirectories(Path.of(imageFile.getParentFile().getAbsolutePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            ImageIO.write(image, "PNG", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/utils/NRMSE.java --
+package ru.vladrus13.utils;
+
+import ru.vladrus13.bean.Bean;
+
+import java.util.ArrayList;
+
+public class NRMSE {
+    public static double calculate(ArrayList<Bean> beans, ArrayList<Double> line) {
+        double answer = 0;
+        for (Bean bean : beans) {
+            double sum = 0;
+            for (int i = 0; i < line.size(); i++) {
+                sum += Math.pow(bean.getAttributes().get(i) * line.get(i), 2);
+            }
+            sum /= line.size();
+            answer += sum;
+        }
+        return Math.sqrt(answer / beans.size());
+    }
+
+    public static double calculateOne(ArrayList<Double> beans, Double line) {
+        double answer = 0;
+        for (Double bean : beans) {
+            answer += Math.pow(bean * line, 2);
+        }
+        return Math.sqrt(answer / beans.size());
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Bean.java --
+package ru.vladrus13.bean;
+
+import java.util.ArrayList;
+
+public class Bean {
+    private final ArrayList<Double> attributes;
+    private final double y;
+
+    public Bean(ArrayList<Double> attributes) {
+        this.attributes = attributes;
+        this.y = attributes.get(attributes.size() - 1);
+        attributes.set(attributes.size() - 1, 1.0);
+    }
+
+    public ArrayList<Double> getAttributes() {
+        return attributes;
+    }
+
+    public double getY() {
+        return y;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Point.java --
+package ru.vladrus13.bean;
+
+/**
+ * Point class
+ */
+public class Point {
+    /**
+     * X-axis position
+     */
+    public final long x;
+    /**
+     * Y-axis position
+     */
+    public final long y;
+
+    /**
+     * @param x x-axis position
+     * @param y y-axis position
+     */
+    public Point(long x, long y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/methods/Generic.java --
+package ru.vladrus13.methods;
+
+import ru.vladrus13.bean.Bean;
+import ru.vladrus13.utils.NRMSE;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class Generic extends Method {
+
+    final ArrayList<Double> answer = new ArrayList<>();
+
+    void naive(ArrayList<Bean> beans) {
+        IntStream.range(0, beans.get(0).getAttributes().size()).forEach(element -> answer.add(0.0));
+        for (Bean bean : beans) {
+            for (int i = 0; i < bean.getAttributes().size(); i++) {
+                answer.set(i, answer.get(i) + bean.getAttributes().get(i));
+            }
+        }
+        for (int i = 0; i < answer.size(); i++) {
+            answer.set(i, answer.get(i) / beans.size());
+        }
+    }
+
+    void heat(ArrayList<Bean> beans) {
+        IntStream.range(0, beans.get(0).getAttributes().size()).forEach(element -> answer.add(0.0));
+        ArrayList<Double> gensStarters = new ArrayList<>(List.of(0.0, 1.0, 10.0, 500.0, 1000.0, 50000.0, 1000000000000.0));
+        for (int i = 0; i < beans.get(0).getAttributes().size(); i++) {
+            ArrayList<Double> oneAttrBeans = new ArrayList<>();
+            for (Bean bean : beans) {
+                oneAttrBeans.add(bean.getAttributes().get(i));
+            }
+            ArrayList<Double> gens = new ArrayList<>();
+            for (Double starter : gensStarters) {
+                IntStream.range(0, beans.get(0).getAttributes().size()).forEach(element -> gens.add(starter));
+            }
+            for (int generation = 0; generation < 5; generation++) {
+                ArrayList<Double> parentsChance = new ArrayList<>();
+                for (Double gen : gens) {
+                    parentsChance.add(NRMSE.calculateOne(oneAttrBeans, gen));
+                }
+                double sum = 0.0;
+                for (double chance : parentsChance) {
+                    sum += chance;
+                }
+                double newGeneration = 0.0;
+                for (double chance : parentsChance) {
+                    newGeneration += chance / sum;
+                }
+                gens.add(newGeneration);
+                answer.set(i, newGeneration);
+            }
+        }
+    }
+
+    public Generic(ArrayList<Bean> beans) {
+        super();
+        heat(beans);
+    }
+
+    public ArrayList<Double> getAnswer() {
+        return answer;
+    }
+
+    @Override
+    public String getName() {
+        return "Generic";
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/methods/Gradient.java --
+package ru.vladrus13.methods;
+
+import ru.vladrus13.bean.Bean;
+
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+public class Gradient extends Method {
+
+    final ArrayList<Double> w;
+    final double k;
+
+    public Double scalarProduce(ArrayList<Double> a, ArrayList<Double> b) {
+        double result = 0.0;
+        assert a.size() == b.size();
+        for (int i = 0; i < a.size(); i++) {
+            result += a.get(i) * b.get(i);
+        }
+        return result;
+    }
+
+    public ArrayList<Double> batchRunner(ArrayList<Bean> beans, int batchSize, ArrayList<Double> w, int start) {
+        int m = beans.get(0).getAttributes().size();
+        ArrayList<Double> differ = new ArrayList<>();
+        for (int i = 0; i < batchSize; i++) {
+            differ.add(beans.get(i + start).getY() - scalarProduce(w, beans.get(i + start).getAttributes()));
+        }
+        ArrayList<Double> grad = new ArrayList<>();
+        IntStream.range(0, m).forEach(element -> grad.add(0.0));
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < batchSize; j++) {
+                grad.set(i, grad.get(i) - 2 * differ.get(j) * beans.get(j + start).getAttributes().get(i));
+            }
+            grad.set(i, grad.get(i) / batchSize);
+        }
+        ArrayList<Double> scalars = new ArrayList<>();
+        IntStream.range(0, batchSize).forEach(element -> scalars.add(scalarProduce(grad, beans.get(element + start).getAttributes())));
+        double bbb = 0.0;
+        for (int i = 0; i < batchSize; i++) {
+            bbb += scalars.get(i) * scalars.get(i);
+        }
+        double mmm = 0;
+        if (bbb == 0) {
+            mmm = 0;
+        } else {
+            for (int i = 0; i < batchSize; i++) {
+                mmm += differ.get(i) * scalars.get(i);
+            }
+            mmm = mmm / bbb * -1;
+        }
+        for (int i = 0; i < m; i++) {
+            grad.set(i, grad.get(i) * mmm / k);
+        }
+        return grad;
+    }
+
+    public Gradient(ArrayList<Bean> beans, double k) {
+        super();
+        this.k = k;
+        long time = System.currentTimeMillis();
+        int m = beans.get(0).getAttributes().size();
+        int n = beans.size();
+        int batchSize = (int) Math.log(beans.size());
+        w = new ArrayList<>();
+        IntStream.range(0, m).forEach(element -> w.add(0.0));
+        boolean ban = false;
+        while (!ban) {
+            int position;
+            for (position = 0; position < n - batchSize + 1; position += batchSize) {
+                ArrayList<Double> differ = batchRunner(beans, batchSize, w, position);
+                for (int i = 0; i < m; i++) {
+                    w.set(i, w.get(i) - differ.get(i));
+                }
+                if (System.currentTimeMillis() - time >= 800) {
+                    ban = true;
+                    break;
+                }
+            }
+            if (position != n - batchSize + 1) {
+                position -= batchSize;
+                int count = n - position;
+                ArrayList<Double> differ = batchRunner(beans, count, w, position);
+                for (int i = 0; i < m; i++) {
+                    w.set(i, w.get(i) - differ.get(i));
+                }
+            }
+        }
+    }
+
+    public ArrayList<Double> getAnswer() {
+        return w;
+    }
+
+    @Override
+    public String getName() {
+        return "Gradient";
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/methods/Method.java --
+package ru.vladrus13.methods;
+
+import java.util.ArrayList;
+
+public abstract class Method {
+    public Method() {
+
+    }
+
+    public abstract ArrayList<Double> getAnswer();
+
+    public abstract String getName();
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/methods/MMS.java --
+package ru.vladrus13.methods;
+
+import Jama.Matrix;
+import Jama.SingularValueDecomposition;
+import ru.vladrus13.bean.Bean;
+
+import java.util.ArrayList;
+
+public class MMS extends Method {
+
+    final Matrix matrix;
+    final Matrix ys;
+    final ArrayList<Double> answer;
+
+    public MMS(ArrayList<Bean> beans, double k) {
+        super();
+        double[][] prMatrix = new double[beans.size()][beans.get(0).getAttributes().size()];
+        for (int i = 0; i < beans.size(); i++) {
+            for (int j = 0; j < beans.get(0).getAttributes().size(); j++) {
+                prMatrix[i][j] = beans.get(i).getAttributes().get(j);
+            }
+        }
+        this.matrix = new Matrix(prMatrix);
+        prMatrix = new double[1][beans.size()];
+        for (int i = 0; i < beans.size(); i++) {
+            prMatrix[0][i] = beans.get(i).getY();
+        }
+        this.ys = new Matrix(prMatrix);
+        SingularValueDecomposition singularValueDecomposition = matrix.svd();
+        Matrix V = singularValueDecomposition.getV();
+        Matrix S = singularValueDecomposition.getS();
+        Matrix U = singularValueDecomposition.getU();
+        Matrix matrixAnswer = U.times(S.inverse()).times(k).times(V.transpose()).transpose().times(ys.transpose());
+        answer = new ArrayList<>();
+        double[][] copy = matrixAnswer.getArrayCopy();
+        for (double[] doubles : copy) {
+            for (double aDouble : doubles) {
+                answer.add(aDouble);
+            }
+        }
+    }
+
+    public ArrayList<Double> getAnswer() {
+        return answer;
+    }
+
+    @Override
+    public String getName() {
+        return "MMS";
+    }
+}

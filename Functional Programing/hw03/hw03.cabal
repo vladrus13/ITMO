@@ -1,0 +1,99 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 5cd876197907f1244c43b1600a90ea43bf87ad1910abdba9d92558172586a3ad
+
+name:           hw03
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/hw03#readme>
+homepage:       https://github.com/githubuser/hw03#readme
+bug-reports:    https://github.com/githubuser/hw03/issues
+author:         Vladislav Kuznetsov
+maintainer:     vladrus13rus@yandex.ru
+copyright:      2020 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/hw03
+
+library
+  exposed-modules:
+      Command
+      Command.Cat
+      Command.Cd
+      Command.CreateDir
+      Command.CreateFile
+      Command.Delete
+      Command.Dir
+      Command.Exit
+      Command.FindFile
+      Command.Information
+      Command.Ls
+      Command.WriteFile
+      Errors
+      FileSystem
+      Optics
+      Types
+      Utils
+  other-modules:
+      Paths_hw03
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , directory
+    , filepath
+    , optparse-applicative
+    , split
+    , strict
+    , time
+    , transformers
+  default-language: Haskell2010
+
+executable hw03-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_hw03
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base >=4.7 && <5
+    , directory
+    , filepath
+    , hw03
+    , optparse-applicative
+    , split
+    , strict
+    , time
+    , transformers
+  default-language: Haskell2010
+
+test-suite hw03-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_hw03
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base >=4.7 && <5
+    , directory
+    , filepath
+    , hw03
+    , optparse-applicative
+    , split
+    , strict
+    , time
+    , transformers
+  default-language: Haskell2010

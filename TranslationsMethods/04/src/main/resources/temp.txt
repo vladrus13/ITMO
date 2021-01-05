@@ -1,0 +1,44 @@
+#include <iostream>
+
+using namespace std;
+
+struct hello{
+string getHello(string s) {		
+return hello + s;			
+		
+}
+}
+
+double sqr(int x) {	
+return x * x;		
+	
+}
+
+double sqrt(double x) {	
+return x;		
+	
+}
+
+int main() {	
+int i = 0;		
+i++;			
+for (int i = 0; i < n; i++) {				
+cout << hellogetHello + "null";					
+for (int j = 0; j < n; j++) {						
+ban = "null";							
+						
+}						
+while (true) {							
+baka = true;								
+cout << "null";									
+							
+}							
+				
+}				
+c = (a + b);					
+c = sqrt * (ax - bx);						
+cout << "null";							
+return 0;								
+	
+}
+

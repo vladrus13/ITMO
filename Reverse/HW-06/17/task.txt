@@ -1,0 +1,89 @@
+1) return strcmp(strA, strB)		- a
+2) strncpy(strA, strB, length)	- e!
+3) strcat(strA, strB)			- d
+4) return strlen(strA)			- b!
+5) strcpy(strA, strB)			- c
+
+
+a) mov esi, offset strA
+   mov edi, offset strB
+   mov ecx, length
+   next:
+     mov al, byte ptr [esi]
+     sub al, byte ptr [edi]
+     test al, al
+     jnz finish
+     cmp byte ptr [esi], 0
+     je finish
+     inc esi
+     inc edi
+     jmp next
+   finish:
+   movsx eax, al
+   ret
+   
+b) mov esi, offset strA
+   mov edi, offset strB
+   mov ecx, length
+   next:
+     mov al, byte ptr [esi]
+     cmp al, 0
+     je finish
+     inc esi
+     jmp next
+   finish:
+   sub esi, offset strA
+   mov eax, esi
+   ret
+   
+c) mov esi, offset strA
+   mov edi, offset strB
+   mov ecx, length
+   next:
+     mov al, byte ptr [edi]
+     mov byte ptr [esi], al
+     cmp al, 0
+     je finish
+     inc esi
+     inc edi
+     jmp next
+   finish:
+   ret
+   
+d) mov esi, offset strA
+   mov edi, offset strB
+   mov ecx, length
+   next:
+     mov al, byte ptr [esi]
+     cmp al, 0
+     je finish
+     inc esi
+     jmp next
+   finish:
+   next2:
+     mov al, byte ptr [edi]
+     mov byte ptr [esi], al
+     cmp al, 0
+     je finish2
+     inc esi
+     inc edi
+     jmp next2
+   finish2:
+   ret
+   
+e) mov esi, offset strA
+   mov edi, offset strB
+   mov ecx, length
+   next:
+     test ecx, ecx
+     jz finish
+     mov al, byte ptr [edi]
+     mov byte ptr [esi], al
+     cmp al, 0
+     je finish
+     inc esi
+     inc edi
+     dec ecx
+     jmp next
+   finish:
+   ret

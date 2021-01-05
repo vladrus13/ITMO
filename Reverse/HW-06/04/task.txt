@@ -1,0 +1,20 @@
+BITS 32
+global _start
+
+section .text
+_start:
+mov eax, 10  	; a = 10
+
+mov ebx, eax	; b = 10
+
+mul eax	; a = 100
+mov esi, 10	; esi = 10
+mul esi	; a = 1000
+mov ecx, eax	; ecx = 1000
+
+mov eax, ebx	; a = 10
+mov esi, 7	; esi = 7
+mul esi	; a = 70
+add ecx, eax	; ecx = 1070
+
+add ecx, 37	; exc = 1107

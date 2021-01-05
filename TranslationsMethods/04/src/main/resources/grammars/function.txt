@@ -1,0 +1,37 @@
+!function;
+
+#public String string = null;
+
+OpenBracket     : '(';
+CloseBracket    : ')';
+Semicolon       : ';';
+Comma           : ',';
+Reference       : '*';
+Name            : $'[a-zA-Z]+';
+WS              : $'[ \t\n\r]' *;
+
+function : variable OpenBracket variables CloseBracket Semicolon
+    {[<string = children.get(0).string + "(" + children.get(2).string + ");">]};
+
+variables
+    : variable t_0
+        {[<string = children.get(0).string + children.get(1).string>]}
+    |
+        {[<string = "">]};
+
+t_0
+    : Comma variables
+        {[<string = ", " + children.get(1).string>]}
+    |
+        {[<string = "">]};
+
+variable : Name references Name
+    {[<string = ((%typeTerminal)children.get(0)).getData()
+        + children.get(1).string + " "
+        + ((%typeTerminal)children.get(2)).getData()>]};
+
+references
+    : Reference references
+        {[<string = "*" + children.get(1).string>]}
+    |
+        {[<string = "">]};

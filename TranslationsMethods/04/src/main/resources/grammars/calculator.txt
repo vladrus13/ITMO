@@ -1,0 +1,38 @@
+! added;
+
+#public Integer val = null;
+
+OpenBracket     : '(';
+CloseBracket    : ')';
+Plus            : '+';
+Number          : $'[0-9]+';
+Multiply        : '*';
+Divide          : '/';
+WS              : $'[ \t\n\r]' *;
+
+added
+    : multipliedOrDivided t_2 {[<val = children.get(0).val + children.get(1).val>]};
+t_0
+    : Plus added t_2 {[<val = children.get(2).val + children.get(1).val>]};
+t_2
+    : t_0 {[<val = children.get(0).val>]}
+    | {[<val = 0>]};
+
+multipliedOrDivided
+    : Number t_3 {[<int temp = Integer.parseInt(((%typeTerminal)children.get(0)).getData())>]
+                [<if (children.get(1).children.size() != 0)
+                    if (children.get(1).children.get(0) instanceof calculatorT1Multiplied)
+                        val = temp * children.get(1).val;
+                    else if (children.get(1).val == 0)
+                        throw new ArithmeticException("Divide by zero!");
+                        else val = temp / children.get(1).val;
+                    else val = temp>]}
+    | OpenBracket added CloseBracket {[<val = children.get(1).val>]};
+t_1_multiplied
+    : Multiply multipliedOrDivided t_3 {[<val = children.get(1).val * children.get(2).val>]};
+t_1_divided
+    : Divide multipliedOrDivided t_3 {[<val = children.get(1).val / children.get(2).val>]};
+t_3
+    : t_1_multiplied {[<val = children.get(0).val>]}
+    | t_1_divided {[<val = children.get(0).val>]}
+    | {[<val = 1>]};

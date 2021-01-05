@@ -1,0 +1,1437 @@
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/reader/MNISTReader.java --
+package ru.CNN.reader;
+
+import ru.CNN.bean.Matrix;
+import ru.CNN.bean.Tensor;
+import ru.CNN.bean.Vector;
+
+import java.io.ByteArrayOutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
+import static java.lang.String.format;
+import static ru.CNN.util.Utils.secondMatrix;
+import static ru.CNN.util.Utils.secondVector;
+
+public class MNISTReader {
+
+    public static ArrayList<Tensor> readImages(Path path) {
+        return getImages(path.toString());
+    }
+
+    public static ArrayList<Integer> readLabels(Path path) {
+        return getLabels(path.toString());
+    }
+
+    public static final int LABEL_FILE_MAGIC_NUMBER = 2049;
+    public static final int IMAGE_FILE_MAGIC_NUMBER = 2051;
+
+    public static ArrayList<Integer> getLabels(String infile) {
+
+        ByteBuffer bb = loadFileToByteBuffer(infile);
+
+        assertMagicNumber(LABEL_FILE_MAGIC_NUMBER, bb.getInt());
+
+        int numLabels = bb.getInt();
+        ArrayList<Integer> labels = new ArrayList<>();
+
+        for (int i = 0; i < numLabels; ++i)
+            labels.add(bb.get() & 0xFF);
+
+        return labels;
+    }
+
+    public static ArrayList<Tensor> getImages(String infile) {
+        ByteBuffer bb = loadFileToByteBuffer(infile);
+
+        assertMagicNumber(IMAGE_FILE_MAGIC_NUMBER, bb.getInt());
+
+        int numImages = bb.getInt();
+        int numRows = bb.getInt();
+        int numColumns = bb.getInt();
+        ArrayList<Tensor> tensors = new ArrayList<>();
+        for (int i = 0; i < Math.min(100, numImages); i++) {
+            tensors.add(readImage(numRows, numColumns, bb));
+        }
+        return tensors;
+    }
+
+    private static Tensor readImage(int numRows, int numCols, ByteBuffer bb) {
+        Matrix matrix = Matrix.generate(numRows, numCols, 0.0);
+        for (int row = 0; row < numRows; row++)
+            matrix.apply(row, secondVector, readRow(numCols, bb));
+        Tensor tensor = Tensor.generate(1, numRows, numCols, 0.0);
+        tensor.apply(0, secondMatrix, matrix);
+        return tensor;
+    }
+
+    private static Vector readRow(int numCols, ByteBuffer bb) {
+        ArrayList<Double> row = new ArrayList<>();
+        for (int col = 0; col < numCols; ++col)
+            row.add((bb.get() & 0xFF) / 255.0);
+        return new Vector(row);
+    }
+
+    public static void assertMagicNumber(int expectedMagicNumber, int magicNumber) {
+        if (expectedMagicNumber != magicNumber) {
+            switch (expectedMagicNumber) {
+                case LABEL_FILE_MAGIC_NUMBER:
+                    throw new RuntimeException("This is not a label file.");
+                case IMAGE_FILE_MAGIC_NUMBER:
+                    throw new RuntimeException("This is not an image file.");
+                default:
+                    throw new RuntimeException(
+                            format("Expected magic number %d, found %d", expectedMagicNumber, magicNumber));
+            }
+        }
+    }
+
+    /*******
+     * Just very ugly utilities below here. Best not to subject yourself to
+     * them. ;-)
+     ******/
+
+    public static ByteBuffer loadFileToByteBuffer(String infile) {
+        return ByteBuffer.wrap(loadFile(infile));
+    }
+
+    public static byte[] loadFile(String infile) {
+        try {
+            RandomAccessFile f = new RandomAccessFile(infile, "r");
+            FileChannel chan = f.getChannel();
+            long fileSize = chan.size();
+            ByteBuffer bb = ByteBuffer.allocate((int) fileSize);
+            chan.read(bb);
+            bb.flip();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            for (int i = 0; i < fileSize; i++)
+                baos.write(bb.get());
+            chan.close();
+            f.close();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Pool.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Tensor;
+import ru.CNN.bean.TensorSize;
+
+import static ru.CNN.util.Utils.sum;
+
+public class Pool extends Node<Tensor, Tensor> {
+    int s;
+    Tensor copy;
+
+    public Pool(int s, TensorSize tensorSize) {
+        this.s = s;
+        inputSize = tensorSize.copy();
+        outputSize = new TensorSize(inputSize.depth, (inputSize.height - s) / s + 1, (inputSize.width - s) / s + 1);
+    }
+
+    @Override
+    public Tensor makeStep(Tensor input) {
+        Tensor value = Tensor.generate(outputSize.depth, outputSize.height, outputSize.width, -Double.MAX_VALUE);
+        copy = input.copy();
+        for (int i = 0; i < outputSize.depth; ++i) {
+            for (int j = 0; j < outputSize.height; ++j) {
+                for (int k = 0; k < outputSize.width; ++k) {
+                    for (int dj = 0; dj < s; ++dj) {
+                        for (int dk = 0; dk < s; ++dk) {
+                            value.get(i).get(j).apply(k, Math::max, input.get(i).get(j * s + dj).get(k * s + dk));
+                        }
+                    }
+                }
+            }
+        }
+        return value;
+    }
+
+    @Override
+    public Tensor makeBackpropagation(Tensor output) {
+        Tensor res = Tensor.generate(inputSize.depth, inputSize.height, inputSize.width, 0);
+        for (int i = 0; i < outputSize.depth; ++i) {
+            for (int j = 0; j < outputSize.height; ++j) {
+                for (int k = 0; k < outputSize.width; ++k) {
+                    double cur_max = -Double.MAX_VALUE;
+                    for (int di = 0; di < s; ++di) {
+                        for (int dj = 0; dj < s; ++dj) {
+                            cur_max = Math.max(cur_max, copy.get(i).get(j * s + di).get(k * s + dj));
+                        }
+                    }
+                    for (int di = 0; di < s; ++di) {
+                        for (int dj = 0; dj < s; ++dj) {
+                            if (copy.get(i).get(j * s + di).get(k * s + dj) == cur_max) {
+                                res.get(i).get(j * s + di).apply(k * s + dj, sum, output.get(i).get(j).get(k));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Flat.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Tensor;
+import ru.CNN.bean.TensorSize;
+import ru.CNN.bean.Vector;
+
+import static ru.CNN.util.Utils.second;
+
+public class Flat extends Node<Vector, Tensor> {
+    public Flat(TensorSize tensorSize) {
+        inputSize = tensorSize;
+        outputSize = new TensorSize(1, 1, inputSize.cube());
+    }
+
+    @Override
+    public Vector makeStep(Tensor in) {
+        Vector returned = Vector.generate(outputSize.width, 0.0);
+        for (int i = 0; i < inputSize.depth; i++) {
+            for (int j = 0; j < inputSize.height; j++) {
+                for (int k = 0; k < inputSize.width; k++) {
+                    int coordinates = i * (inputSize.height * inputSize.width) + j * inputSize.width + k;
+                    returned.apply(coordinates, second, in.get(i).get(j).get(k));
+                }
+            }
+        }
+        return returned;
+    }
+
+    @Override
+    public Tensor makeBackpropagation(Vector out) {
+        Tensor returned = Tensor.generate(inputSize.depth, inputSize.height, inputSize.width, 0.0);
+        for (int i = 0; i < inputSize.depth; i++) {
+            for (int j = 0; j < inputSize.height; j++) {
+                for (int k = 0; k < inputSize.width; k++) {
+                    int coordinates = i * (inputSize.height * inputSize.width) + j * inputSize.width + k;
+                    returned.get(i).get(j).apply(k, second, out.get(coordinates));
+                }
+            }
+        }
+        return returned;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Cnve.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Matrix;
+import ru.CNN.bean.TensorSize;
+
+import static ru.CNN.util.Utils.second;
+import static ru.CNN.util.Utils.sum;
+
+public class Cnve extends Cnv {
+
+    public Cnve(int cnt, int n, int m, int p, int s, TensorSize inputSize) {
+        super(cnt, n, m, p, s, inputSize);
+    }
+
+    @Override
+    public Matrix getPaddedLayer(Matrix matrixLayer) {
+        Matrix returned = Matrix.generate(matrixLayer.in.size() + 2 * p, matrixLayer.get(0).in.size() + 2 * p, 0);
+        for (int i = 0; i < matrixLayer.in.size(); ++i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size(); ++j) {
+                returned.get(i + p).apply(j + p, second, matrixLayer.get(i).get(j));
+            }
+        }
+        for (int i = p; i < p + matrixLayer.in.size(); ++i) {
+            for (int j = 0; j < p; ++j) {
+                returned.get(i).apply(j, second, matrixLayer.get(i - p).get(0));
+            }
+            for (int j = matrixLayer.get(0).in.size() + p; j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, matrixLayer.get(i - p).get(matrixLayer.get(i - p).in.size() - 1));
+            }
+        }
+        for (int i = 0; i < p; ++i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, returned.get(p).get(j));
+            }
+        }
+        for (int i = matrixLayer.in.size() + p; i < matrixLayer.in.size() + 2 * p; ++i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, returned.get(matrixLayer.in.size() + p - 1).get(j));
+            }
+        }
+        return returned;
+    }
+
+    @Override
+    public void makeCompress(Matrix matrixLayer) {
+        int n = matrixLayer.in.size() - 2 * p;
+        int m = matrixLayer.get(0).in.size() - 2 * p;
+
+        for (int i = 0; i < p; ++i) {
+            for (int j = 0; j < m + 2 * p; ++j) {
+                matrixLayer.get(p).apply(j, sum, matrixLayer.get(i).get(j));
+            }
+        }
+        for (int i = n + p; i < n + 2 * p; ++i) {
+            for (int j = 0; j < m + 2 * p; ++j) {
+                matrixLayer.get(n + p - 1).apply(j, sum, matrixLayer.get(i).get(j));
+            }
+        }
+
+        for (int i = p; i < p + n; ++i) {
+            for (int j = 0; j < p; ++j) {
+                matrixLayer.get(i).apply(p, sum, matrixLayer.get(i).get(j));
+            }
+            for (int j = m + p; j < m + 2 * p; ++j) {
+                matrixLayer.get(i).apply(m + p - 1, sum, matrixLayer.get(i).get(j));
+            }
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Cnvm.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Matrix;
+import ru.CNN.bean.TensorSize;
+
+import static ru.CNN.util.Utils.second;
+import static ru.CNN.util.Utils.sum;
+
+public class Cnvm extends Cnv {
+
+    public Cnvm(int cnt, int n, int m, int p, int s, TensorSize inputSize) {
+        super(cnt, n, m, p, s, inputSize);
+    }
+
+    @Override
+    public Matrix getPaddedLayer(Matrix matrixLayer) {
+        Matrix returned = Matrix.generate(matrixLayer.in.size() + 2 * p, matrixLayer.get(0).in.size() + 2 * p, 0);
+        for (int i = 0; i < matrixLayer.in.size(); ++i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size(); ++j) {
+                returned.get(i + p).apply(j + p, second, matrixLayer.get(i).get(j));
+            }
+        }
+        for (int i = p; i < p + matrixLayer.in.size(); ++i) {
+            for (int j = 0; j < p; ++j) {
+                returned.get(i).apply(j, second, matrixLayer.get(i - p).get(p - j));
+            }
+            for (int j = p + matrixLayer.get(0).in.size(); j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, matrixLayer.get(i - p).get(2 * matrixLayer.get(0).in.size() + p - j - 2));
+            }
+        }
+        for (int i = 0; i < p; ++i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, returned.get(2 * p - i).get(j));
+            }
+        }
+        for (int i = matrixLayer.in.size() + p; i < matrixLayer.in.size() + 2 * p; ++i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, returned.get(2 * (matrixLayer.in.size() + p) - i - 2).get(j));
+            }
+        }
+        return returned;
+    }
+
+    @Override
+    public void makeCompress(Matrix matrixLayer) {
+        int n = matrixLayer.in.size() - 2 * p;
+        int m = matrixLayer.get(0).in.size() - 2 * p;
+        for (int i = 0; i < p; ++i) {
+            for (int j = 0; j < m + 2 * p; ++j) {
+                matrixLayer.get(2 * p - i).apply(j, sum, matrixLayer.get(i).get(j));
+            }
+        }
+        for (int i = n + p; i < n + 2 * p; ++i) {
+            for (int j = 0; j < m + 2 * p; ++j) {
+                matrixLayer.get(2 * (n + p) - i - 2).apply(j, sum, matrixLayer.get(i).get(j));
+            }
+        }
+        for (int i = p; i < p + n; ++i) {
+            for (int j = 0; j < p; ++j) {
+                matrixLayer.get(i).apply(p - j + p, sum, matrixLayer.get(i).get(j));
+            }
+            for (int j = p + m; j < m + 2 * p; ++j) {
+                matrixLayer.get(i).apply(2 * m + p - j - 2 + p, sum, matrixLayer.get(i).get(j));
+            }
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Relu.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Matrix;
+import ru.CNN.bean.Tensor;
+import ru.CNN.bean.TensorSize;
+import ru.CNN.bean.Vector;
+
+import static ru.CNN.util.Utils.divide;
+import static ru.CNN.util.Utils.sum;
+
+public class Relu extends Node<Tensor, Tensor> {
+    double invAlpha;
+    Tensor copy;
+
+    public Relu(double invAlpha, TensorSize tensorSize) {
+        this.invAlpha = invAlpha;
+        inputSize = tensorSize.copy();
+        outputSize = tensorSize.copy();
+    }
+
+    @Override
+    public Tensor makeStep(Tensor input) {
+        Tensor value = input.copy();
+        copy = input.copy();
+        for (Matrix i : value.in) {
+            for (Vector j : i.in) {
+                for (int k = 0; k < j.in.size(); k++) {
+                    if (j.in.get(k) < 0) {
+                        j.apply(k, divide, invAlpha);
+                    }
+                }
+            }
+        }
+        return value;
+    }
+
+    @Override
+    public Tensor makeBackpropagation(Tensor output) {
+        Tensor returned = Tensor.generate(inputSize.depth, inputSize.height, inputSize.width, 0);
+        for (int i = 0; i < outputSize.depth; ++i) {
+            for (int j = 0; j < outputSize.height; ++j) {
+                for (int k = 0; k < outputSize.width; ++k) {
+                    Double current = copy.get(i).get(j).get(k);
+                    double koff;
+                    if (current >= 0) {
+                        koff = 1.0;
+                    } else {
+                        koff = 1.0 / invAlpha;
+                    }
+                    returned.get(i).get(j).apply(k, sum, koff * output.get(i).get(j).get(k));
+                }
+            }
+        }
+        return returned;
+    }
+}
+
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Ender.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Matrix;
+import ru.CNN.bean.Pair;
+import ru.CNN.bean.TensorSize;
+import ru.CNN.bean.Vector;
+import ru.CNN.util.Generator;
+import ru.CNN.util.NetworkUtils;
+
+import static ru.CNN.util.Utils.sum;
+
+public class Ender extends Node<Vector, Vector> {
+
+    Matrix w;
+    Matrix dw;
+
+    Matrix mo;
+    Matrix adapt;
+    Vector copy;
+
+    public Ender(int count, TensorSize tensorSize) {
+        inputSize = tensorSize;
+        outputSize = new TensorSize(1, 1, count);
+        w = Generator.getMatrix.apply(new Pair<>(count, inputSize.width));
+        mo = Matrix.generate(count, inputSize.width, 0);
+        adapt = mo.copy();
+        dw = mo.copy();
+    }
+
+    @Override
+    public Vector makeStep(Vector in) {
+        copy = in.copy();
+        Vector values = Vector.generate(outputSize.width, 0);
+        for (int i = 0; i < outputSize.width; i++) {
+            for (int j = 0; j < outputSize.width; j++) {
+                values.apply(i, sum, in.get(j) * w.get(i).get(j));
+            }
+        }
+        dw = Matrix.generate(outputSize.width, inputSize.width, 0);
+        return values;
+    }
+
+    @Override
+    public Vector makeBackpropagation(Vector out) {
+        Vector result = Vector.generate(inputSize.width, 0);
+        for (int i = 0; i < outputSize.width; i++) {
+            for (int j = 0; j < inputSize.width; j++) {
+                result.apply(j, sum, out.get(i) * w.get(i).get(j));
+                dw.get(i).apply(j, sum, out.get(i) * copy.get(j));
+            }
+        }
+        return result;
+    }
+
+    public void updateGradient(int position, double m) {
+        NetworkUtils.updateParams(mo, adapt, dw, w, position, m);
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Cnvc.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Matrix;
+import ru.CNN.bean.TensorSize;
+
+import static ru.CNN.util.Utils.second;
+import static ru.CNN.util.Utils.sum;
+
+public class Cnvc extends Cnv {
+
+    public Cnvc(int cnt, int n, int m, int p, int s, TensorSize inputSize) {
+        super(cnt, n, m, p, s, inputSize);
+    }
+
+    @Override
+    public Matrix getPaddedLayer(Matrix matrixLayer) {
+        Matrix returned = Matrix.generate(matrixLayer.in.size() + 2 * p, matrixLayer.get(0).in.size() + 2 * p, 0);
+        for (int i = 0; i < matrixLayer.in.size(); ++i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size(); ++j) {
+                returned.get(i + p).apply(j + p, second, matrixLayer.get(i).get(j));
+            }
+        }
+        for (int i = p; i < p + matrixLayer.in.size(); ++i) {
+            for (int j = p - 1; j >= 0; --j) {
+                returned.get(i).apply(j, second, returned.get(i).get(j + matrixLayer.get(0).in.size()));
+            }
+            for (int j = matrixLayer.get(0).in.size() + p; j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, returned.get(i).get(j - matrixLayer.get(0).in.size()));
+            }
+        }
+        for (int i = p - 1; i >= 0; --i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, returned.get(i + matrixLayer.in.size()).get(j));
+            }
+        }
+        for (int i = matrixLayer.in.size() + p; i < matrixLayer.in.size() + 2 * p; ++i) {
+            for (int j = 0; j < matrixLayer.get(0).in.size() + 2 * p; ++j) {
+                returned.get(i).apply(j, second, returned.get(i - matrixLayer.in.size()).get(j));
+            }
+        }
+        return returned;
+    }
+
+    @Override
+    public void makeCompress(Matrix matrixLayer) {
+        int n = matrixLayer.in.size() - 2 * p;
+        int m = matrixLayer.get(0).in.size() - 2 * p;
+        for (int i = p - 1; i >= 0; --i) {
+            for (int j = 0; j < m + 2 * p; ++j) {
+                matrixLayer.get(i + n).apply(j, sum, matrixLayer.get(i).get(j));
+            }
+        }
+        for (int i = n + p; i < n + 2 * p; ++i) {
+            for (int j = 0; j < m + 2 * p; ++j) {
+                matrixLayer.get(i - n).apply(j, sum, matrixLayer.get(i).get(j));
+            }
+        }
+
+        for (int i = p; i < p + n; ++i) {
+            for (int j = p - 1; j >= 0; --j) {
+                matrixLayer.get(i).apply(j + m, sum, matrixLayer.get(i).get(j));
+            }
+            for (int j = m + p; j < m + 2 * p; ++j) {
+                matrixLayer.get(i).apply(j - m, sum, matrixLayer.get(i).get(j));
+            }
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Cnv.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.*;
+import ru.CNN.util.Generator;
+
+import java.util.ArrayList;
+
+import static ru.CNN.util.Utils.sum;
+
+public abstract class Cnv extends Node<Tensor, Tensor> {
+    ArrayList<Tensor> kernels;
+    ArrayList<Tensor> dkernels;
+    ArrayList<Tensor> momentum;
+    ArrayList<Tensor> adaptive;
+    int p;
+    int s;
+    Tensor paddedInput;
+
+    public Cnv(int cnt, int n, int m, int p, int s, TensorSize inputSize) {
+        kernels = new ArrayList<>();
+        for (int i = 0; i < cnt; i++) {
+            kernels.add(Generator.getTensor.apply(new Triple<>(inputSize.depth, n, m)));
+        }
+        this.p = p;
+        this.s = s;
+        this.inputSize = inputSize.copy();
+        outputSize = new TensorSize(cnt, (this.inputSize.height + 2 * p - n) / s + 1, (this.inputSize.width + 2 * p - m) / s + 1);
+        momentum = new ArrayList<>();
+        for (int i = 0; i < cnt; i++) {
+            momentum.add(Tensor.generate(inputSize.depth, n, m, 0));
+        }
+        adaptive = new ArrayList<>();
+        for (int i = 0; i < cnt; i++) {
+            adaptive.add(momentum.get(i).copy());
+        }
+    }
+
+    public abstract Matrix getPaddedLayer(Matrix matrixLayer);
+
+    public abstract void makeCompress(Matrix matrixLayer);
+
+    @Override
+    public Tensor makeStep(Tensor input) {
+        int d = inputSize.depth;
+        int layer1 = kernels.get(0).get(0).in.size();
+        int layer2 = kernels.get(0).get(0).get(0).in.size();
+        paddedInput = new Tensor(new ArrayList<>());
+        for (int i = 0; i < d; ++i) {
+            paddedInput.in.add(getPaddedLayer(input.get(i)));
+        }
+        Tensor returned = Tensor.generate(outputSize.depth, outputSize.height, outputSize.width, 0);
+        for (int i = 0; i < outputSize.depth; ++i) {
+            for (int cur_d = 0; cur_d < d; ++cur_d) {
+                for (int j = 0; j < outputSize.height; ++j) {
+                    for (int k = 0; k < outputSize.width; ++k) {
+                        for (int di = 0; di < layer1; ++di) {
+                            for (int dj = 0; dj < layer2; ++dj) {
+                                returned.get(i).get(j).apply(k, sum, paddedInput.get(cur_d).get(j * s + di).get(k * s + dj) * kernels.get(i).get(cur_d).get(di).get(dj));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        dkernels = new ArrayList<>();
+        for (int i = 0; i < kernels.size(); i++) {
+            dkernels.add(Tensor.generate(d, layer1, layer2, 0));
+        }
+        return returned;
+    }
+
+    @Override
+    public Tensor makeBackpropagation(Tensor outputDiff) {
+        Tensor paddedInputDiff = getPaddedBackpropagation(outputDiff);
+        int d = inputSize.depth;
+        int n = inputSize.height;
+        int m = inputSize.width;
+        Tensor returned = Tensor.generate(d, n, m, 0);
+        for (int i = 0; i < d; ++i) {
+            makeCompress(paddedInputDiff.get(i));
+            for (int j = 0; j < n; ++j) {
+                for (int k = 0; k < m; ++k) {
+                    returned.get(i).get(j).apply(k, sum, paddedInputDiff.get(i).get(j + p).get(k + p));
+                }
+            }
+        }
+        return returned;
+    }
+
+    public Tensor getPaddedBackpropagation(Tensor outDiff) {
+        int d = inputSize.depth;
+        int n = inputSize.height;
+        int m = inputSize.width;
+        int layer1 = kernels.get(0).get(0).in.size();
+        int layer2 = kernels.get(0).get(0).get(0).in.size();
+        Tensor paddedInputDiff = Tensor.generate(d, n + 2 * p, m + 2 * p, 0);
+        for (int i = 0; i < outputSize.depth; ++i) {
+            for (int current = 0; current < d; ++current) {
+                for (int j = 0; j < outputSize.height; ++j) {
+                    for (int k = 0; k < outputSize.width; ++k) {
+                        for (int di = 0; di < layer1; ++di) {
+                            for (int dj = 0; dj < layer2; ++dj) {
+                                paddedInputDiff.get(current).get(j * s + di).apply(k * s + dj, sum,
+                                        kernels.get(i).get(current).get(di).get(dj) * outDiff.get(i).get(j).get(k));
+                                dkernels.get(i).get(current).get(di).apply(dj, sum,
+                                        paddedInput.get(current).get(j * s + di).get(k * s + dj) * outDiff.get(i).get(j).get(k));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return paddedInputDiff;
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Bias.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Tensor;
+import ru.CNN.bean.TensorSize;
+import ru.CNN.bean.Vector;
+import ru.CNN.util.Generator;
+
+import static ru.CNN.util.Utils.second;
+import static ru.CNN.util.Utils.sum;
+
+public class Bias extends Node<Tensor, Tensor> {
+
+    Vector bias;
+    Vector dbias;
+
+    Vector momentum;
+    Vector adaptive;
+
+    public Bias(TensorSize tensorSize) {
+        bias = Generator.getVector.apply(tensorSize.depth);
+        inputSize = tensorSize.copy();
+        outputSize = tensorSize.copy();
+        momentum = Vector.generate(bias.in.size(), 0);
+        adaptive = Vector.generate(bias.in.size(), 0);
+    }
+
+    @Override
+    public Tensor makeStep(Tensor input) {
+        Tensor value = input.copy();
+        for (int i = 0; i < inputSize.depth; ++i) {
+            for (Vector j : value.get(i).in) {
+                for (int k = 0; k < j.in.size(); k++) {
+                    j.apply(k, sum, bias.get(i));
+                }
+            }
+        }
+        return value;
+    }
+
+    @Override
+    public Tensor makeBackpropagation(Tensor output) {
+        Tensor returned = Tensor.generate(inputSize.depth, inputSize.height, inputSize.width, 0);
+        dbias = Vector.generate(bias.in.size(), 0);
+        for (int i = 0; i < outputSize.depth; ++i) {
+            for (int j = 0; j < outputSize.height; ++j) {
+                for (int k = 0; k < outputSize.width; ++k) {
+                    returned.get(i).get(j).apply(k, sum, output.get(i).get(j).get(k));
+                    dbias.apply(i, sum, output.get(i).get(j).get(k));
+                }
+            }
+        }
+        return returned;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/Node.java --
+package ru.CNN.node;
+
+import ru.CNN.bean.Tensor;
+import ru.CNN.bean.TensorSize;
+
+public abstract class Node<A, B> {
+    protected TensorSize inputSize;
+    public TensorSize outputSize;
+    protected int steps;
+
+    public Node() {
+        steps = 1;
+    }
+
+    public abstract A makeStep(B in);
+
+    public abstract B makeBackpropagation(A out);
+
+    B getBackpropagation(A out) {
+        return makeBackpropagation(out);
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/node/CnvType.java --
+package ru.CNN.node;
+
+public enum CnvType {
+    M, E, C
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/util/Generator.java --
+package ru.CNN.util;
+
+import ru.CNN.bean.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class Generator {
+    private static final Random random = new Random();
+
+    /**
+     * Generate random double under [-1, 1]
+     * @return random
+     */
+    private static Double getDouble() {
+        return random.nextDouble() * 2 - 1;
+    }
+
+    public static final Function<Integer, Vector> getVector =
+            count -> new Vector(IntStream.range(0, count)
+                    .mapToDouble(i -> getDouble()).boxed()
+                    .collect(Collectors.toCollection(ArrayList::new)));
+
+    public static final Function<Pair<Integer, Integer>, Matrix> getMatrix =
+            pair -> new Matrix(IntStream.range(0, pair.first)
+                    .mapToObj(i -> getVector.apply(pair.second))
+                    .collect(Collectors.toCollection(ArrayList::new)));
+
+    public static final Function<Triple<Integer, Integer, Integer>, Tensor> getTensor =
+            triple -> new Tensor(IntStream.range(0, triple.depth)
+                    .mapToObj(i -> getMatrix.apply(new Pair<>(triple.height, triple.width)))
+                    .collect(Collectors.toCollection(ArrayList::new)));
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/util/NetworkUtils.java --
+package ru.CNN.util;
+
+import ru.CNN.bean.Matrix;
+import ru.CNN.bean.Vector;
+
+import static ru.CNN.util.Utils.*;
+
+public class NetworkUtils {
+    public static final double B1 = 0.9;
+    public static final double B2 = 0.999;
+    public static final double EPS = 1e-6;
+
+    public static Vector updateMoments(Vector moments, Vector grad, int t) {
+        double DIVISOR = 1.0 - Math.pow(B1, t);
+        Vector hats = Vector.generate(moments.in.size(), 0.0);
+        for (int i = 0; i < moments.in.size(); ++i) {
+            moments.apply(i, second, B1 * moments.get(i) + (1 - B1) * grad.get(i));
+            hats.apply(i, second, moments.get(i) / DIVISOR);
+        }
+        return hats;
+    }
+
+    public static Vector updateAdaptive(Vector adaptive, Vector grad, int t) {
+        double DIVISOR = 1 - Math.pow(B2, t);
+        Vector hats = Vector.generate(adaptive.in.size(), 0.0);
+        for (int i = 0; i < adaptive.in.size(); ++i) {
+            adaptive.apply(i, second, B2 * adaptive.get(i) + (1 - B2) * grad.get(i) * grad.get(i));
+            hats.apply(i, second, adaptive.get(i) / DIVISOR);
+        }
+        return hats;
+    }
+
+    public static void updateParams(Vector moments, Vector adaptive, Vector grad, Vector params, int t, double mu) {
+        Vector hat_moments = updateMoments(moments, grad, t);
+        Vector hat_adaptive = updateAdaptive(adaptive, grad, t);
+        for (int i = 0; i < grad.in.size(); ++i) {
+            double diff = mu * hat_moments.get(i) / (Math.sqrt(hat_adaptive.get(i)) + EPS);
+            params.apply(i, sum, -diff);
+        }
+    }
+
+    public static void updateParams(Matrix moments, Matrix adaptive, Matrix grad, Matrix params, int t, double mu) {
+        for (int i = 0; i < grad.in.size(); ++i) {
+            updateParams(moments.get(i), adaptive.get(i), grad.get(i), params.get(i), t, mu);
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/util/Utils.java --
+package ru.CNN.util;
+
+import ru.CNN.bean.Matrix;
+import ru.CNN.bean.Tensor;
+import ru.CNN.bean.Vector;
+
+import java.util.ArrayList;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+
+public class Utils {
+    public static ArrayList<Double> cloneA(ArrayList<Double> a) {
+        ArrayList<Double> copy = new ArrayList<>();
+        IntStream.range(0, a.size()).forEach(i -> copy.add(a.get(i)));
+        return copy;
+    }
+
+    public static ArrayList<ArrayList<Double>> cloneAA(ArrayList<ArrayList<Double>> a) {
+        ArrayList<ArrayList<Double>> copy = new ArrayList<>();
+        IntStream.range(0, a.size()).forEach(i -> copy.add(cloneA(a.get(i))));
+        return copy;
+    }
+
+    public static ArrayList<ArrayList<Double>> generate(int n, int m) {
+        return generate(n, m, 0.0);
+    }
+
+    public static ArrayList<ArrayList<Double>> generate(int n, int m, double x) {
+        ArrayList<ArrayList<Double>> returned = new ArrayList<>();
+        IntStream.range(0, n).forEach(i -> {
+            returned.add(new ArrayList<>());
+            IntStream.range(0, m).forEach(j ->
+                    returned.get(i).add(x));
+        });
+        return returned;
+    }
+
+    public static ArrayList<ArrayList<Integer>> generate(int n, int m, int x) {
+        ArrayList<ArrayList<Integer>> returned = new ArrayList<>();
+        IntStream.range(0, n).forEach(i -> {
+            returned.add(new ArrayList<>());
+            IntStream.range(0, m).forEach(j ->
+                    returned.get(i).add(x));
+        });
+        return returned;
+    }
+
+    public static final Function<ArrayList<Double>, Double> average =
+            array -> array.stream().mapToDouble(Double::doubleValue).sum() / array.size();
+
+    public static final Function<ArrayList<Double>, Double> max =
+            array -> array.stream().mapToDouble(Double::doubleValue).max().orElseThrow();
+
+    public static final Function<ArrayList<Integer>, Integer> maxInt =
+            array -> array.stream().mapToInt(Integer::intValue).max().orElseThrow();
+
+    public static final Function<ArrayList<Double>, Integer> getPositionMax = array -> {
+        double maxima = max.apply(array);
+        return IntStream.range(0, array.size()).filter(i -> array.get(i) == maxima).findFirst().orElseThrow();
+    };
+
+    public static final String precision = ".10";
+    public static final BinaryOperator<Double> divide = (a, b) -> a / b;
+    public static final BinaryOperator<Double> second = (a, b) -> b;
+    public static final BinaryOperator<Double> sum = Double::sum;
+    public static final BinaryOperator<Vector> secondVector = (a, b) -> b;
+    public static final BinaryOperator<Matrix> secondMatrix = (a, b) -> b;
+    public static final BinaryOperator<Tensor> secondTensor = (a, b) -> b;
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/util/SoftMax.java --
+package ru.CNN.util;
+
+import ru.CNN.bean.Vector;
+
+import java.util.ArrayList;
+
+public class SoftMax {
+    public static ArrayList<Double> softArgMax(Vector a) {
+        double f = Utils.average.apply(a.in);
+        ArrayList<Double> result = Utils.cloneA(a.in);
+        double sum = 0.0;
+        for (int i = 0; i < result.size(); i++) {
+            double exp = Math.exp(result.get(i) - f);
+            sum += exp;
+            result.set(i, exp);
+        }
+        for (int i = 0; i < result.size(); i++) {
+            result.set(i, result.get(i) / sum);
+        }
+        return result;
+    }
+
+    public static double crossEntropyLoss(Vector a, int label) {
+        return -Math.log(softArgMax(a).get(label));
+    }
+
+    public static ArrayList<Double> crossEntropyDerivative(Vector a, int label) {
+        ArrayList<Double> x = softArgMax(a);
+        x.set(label, x.get(label) - 1);
+        return x;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/Launcher.java --
+package ru.CNN;
+
+import ru.CNN.bean.Network;
+import ru.CNN.bean.Pair;
+import ru.CNN.bean.Tensor;
+import ru.CNN.bean.TensorSize;
+import ru.CNN.node.CnvType;
+import ru.CNN.reader.MNISTReader;
+import ru.CNN.util.Utils;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Launcher {
+
+    public static final String TRAIN_IMAGES = "train-images-idx3-ubyte";
+    public static final String TRAIN_LABELS = "train-labels-idx1-ubyte";
+    public static final String TEST_IMAGES = "t10k-images-idx3-ubyte";
+    public static final String TEST_LABELS = "t10k-labels-idx1-ubyte";
+    public static final ArrayList<String> databases = new ArrayList<>(List.of("digits", "fashion"));
+    public static final int TRIES = 5;
+
+    public static Pair<ArrayList<Tensor>, ArrayList<Integer>> loadTrain(String baseName) {
+        return new Pair<>(MNISTReader.readImages(Path.of("resources").resolve(baseName).resolve(TRAIN_IMAGES)),
+                MNISTReader.readLabels(Path.of("resources").resolve(baseName).resolve(TRAIN_LABELS)));
+    }
+
+    public static Pair<ArrayList<Tensor>, ArrayList<Integer>> loadTest(String baseName) {
+        return new Pair<>(MNISTReader.readImages(Path.of("resources").resolve(baseName).resolve(TEST_IMAGES)),
+                MNISTReader.readLabels(Path.of("resources").resolve(baseName).resolve(TEST_LABELS)));
+    }
+
+    public static Network getSuperNetwork(int labels, int h, int w) {
+        Network network = new Network(new TensorSize(1, h, w));
+        network.addCnv(20, 6, 6, 2, 1, CnvType.M);
+        network.addRelu(10);
+        network.addCnv(5, 5, 5, 2, 1, CnvType.C);
+        network.addBias();
+        network.addPool(2);
+        network.addCnv(20, 4, 4, 1, 1, CnvType.M);
+        network.addRelu(10);
+        network.addBias();
+        network.addPool(2);
+        network.end(labels);
+        return network;
+    }
+
+    public static String toStringA(ArrayList<Integer> a) {
+        StringBuilder sb = new StringBuilder();
+        for (Integer i : a) {
+            sb.append(String.format("%3d", i));
+        }
+        return sb.toString();
+    }
+
+    public static String toStringAA(ArrayList<ArrayList<Integer>> a) {
+        StringBuilder sb = new StringBuilder();
+        for (ArrayList<Integer> i : a) {
+            sb.append(toStringA(i)).append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        for (String databaseName : databases) {
+            System.out.println("Test: " + databaseName);
+            Pair<ArrayList<Tensor>, ArrayList<Integer>> base = loadTrain(databaseName);
+            System.out.println("Data loaded. Images: " + base.first.size());
+            int labels = Utils.maxInt.apply(base.second);
+            Network network = getSuperNetwork(labels + 1, base.first.get(0).get(0).in.size(), base.first.get(0).get(0).get(0).in.size());
+            network.addImages(base.first, base.second);
+            base = loadTest(databaseName);
+            System.out.println("Data loaded");
+            int countWrong = 0;
+            ArrayList<ArrayList<Integer>> matrix = Utils.generate(labels + 1, labels + 1, 0);
+            for (int i = 0; i < base.first.size(); i++) {
+                int predict = network.predict(base.first.get(i));
+                if (predict != base.second.get(i)) {
+                    countWrong++;
+                    matrix.get(base.second.get(i)).set(predict, matrix.get(base.second.get(i)).get(predict) + 1);
+                }
+            }
+            System.out.printf("--- Result: %d / %d%n", countWrong, base.first.size());
+            System.out.println(toStringAA(matrix));
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/bean/Tensor.java --
+package ru.CNN.bean;
+
+import java.util.ArrayList;
+import java.util.function.BinaryOperator;
+import java.util.stream.IntStream;
+
+public class Tensor {
+    public ArrayList<Matrix> in;
+
+    public Tensor(ArrayList<Matrix> in) {
+        this.in = in;
+    }
+
+    public static Tensor generate(int k, int j, int i, double x) {
+        ArrayList<Matrix> returned = new ArrayList<>();
+        IntStream.range(0, k).forEach(l -> returned.add(Matrix.generate(j, i, x)));
+        return new Tensor(returned);
+    }
+
+    public Tensor copy() {
+        ArrayList<Matrix> copies = new ArrayList<>();
+        IntStream.range(0, in.size()).forEach(i -> copies.add(in.get(i).copy()));
+        return new Tensor(copies);
+    }
+
+    public Matrix get(int i) {
+        return in.get(i);
+    }
+
+    public void apply(int i, BinaryOperator<Matrix> function, Matrix x) {
+        in.set(i, function.apply(in.get(i), x));
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/bean/Network.java --
+package ru.CNN.bean;
+
+import ru.CNN.node.*;
+import ru.CNN.util.NetworkUtils;
+import ru.CNN.util.SoftMax;
+import ru.CNN.util.Utils;
+
+import java.util.ArrayList;
+
+public class Network {
+    public TensorSize size;
+    public ArrayList<Node<Tensor, Tensor>> nodes;
+    public Flat toFlat;
+    public Ender ender;
+
+    public Network(TensorSize size) {
+        this.size = size;
+        this.nodes = new ArrayList<>();
+    }
+
+    public TensorSize getSize() {
+        return nodes.isEmpty() ? size : nodes.get(nodes.size() - 1).outputSize;
+    }
+
+    public void addBias() {
+        nodes.add(new Bias(getSize()));
+    }
+
+    public void addRelu(int invAlpha) {
+        nodes.add(new Relu(invAlpha, getSize()));
+    }
+
+    public void addPool(int s) {
+        nodes.add(new Pool(s, getSize()));
+    }
+
+    public void addCnv(int cnt, int n, int m, int p, int s, CnvType type) {
+        switch (type) {
+            case E:
+                nodes.add(new Cnve(cnt, n, m, p, s, getSize()));
+                break;
+            case M:
+                nodes.add(new Cnvm(cnt, n, m, p, s, getSize()));
+                break;
+            case C:
+                nodes.add(new Cnvc(cnt, n, m, p, s, getSize()));
+                break;
+        }
+    }
+
+    public void addFlat() {
+        toFlat = new Flat(getSize());
+    }
+
+    public void addEnder(int labelsCount) {
+        ender = new Ender(labelsCount, toFlat.outputSize);
+    }
+
+    public void end(int labelsCount) {
+        addFlat();
+        addEnder(labelsCount);
+    }
+
+    public double addImage(Tensor image, int label) {
+        Tensor copy = image.copy();
+        for (Node<Tensor, Tensor> node : nodes) {
+            copy = node.makeStep(copy);
+        }
+        Vector value = toFlat.makeStep(copy);
+        value = ender.makeStep(value);
+        Vector result = new Vector(SoftMax.crossEntropyDerivative(value, label));
+        result = ender.makeBackpropagation(result);
+        Tensor tensorResult = toFlat.makeBackpropagation(result);
+        for (int i = nodes.size() - 1; i >= 0; i--) {
+            tensorResult = nodes.get(i).makeBackpropagation(tensorResult);
+        }
+        return SoftMax.crossEntropyLoss(value, label);
+    }
+
+    public void addImages(ArrayList<Tensor> images, ArrayList<Integer> labels) {
+        for (int i = 0; i < images.size(); i++) {
+            addImage(images.get(i), labels.get(i));
+            if (i % 100 == 0) {
+                System.out.println("See " + i + "-th element");
+            }
+        }
+    }
+
+    public int predict(Tensor image) {
+        Tensor copy = image.copy();
+        for (Node<Tensor, Tensor> node : nodes) {
+            copy = node.makeStep(copy);
+        }
+        Vector result = toFlat.makeStep(copy);
+        result = ender.makeStep(result);
+        ArrayList<Double> p = SoftMax.softArgMax(result);
+        return Utils.getPositionMax.apply(p);
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/bean/Triple.java --
+package ru.CNN.bean;
+
+public class Triple<A, B, C> {
+    public A depth;
+    public B height;
+    public C width;
+
+    public Triple(A depth, B height, C width) {
+        this.depth = depth;
+        this.height = height;
+        this.width = width;
+    }
+
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/bean/Vector.java --
+package ru.CNN.bean;
+
+import java.util.ArrayList;
+import java.util.function.BinaryOperator;
+import java.util.stream.IntStream;
+
+public class Vector {
+    public ArrayList<Double> in;
+
+    public Vector(ArrayList<Double> in) {
+        this.in = in;
+    }
+
+    public static Vector generate(int i, double x) {
+        ArrayList<Double> returned = new ArrayList<>();
+        IntStream.range(0, i).forEach(j -> returned.add(x));
+        return new Vector(returned);
+    }
+
+    public Double get(int i) {
+        return in.get(i);
+    }
+
+    public void apply(int i, BinaryOperator<Double> function, Double x) {
+        in.set(i, function.apply(in.get(i), x));
+    }
+
+    public Vector copy() {
+        ArrayList<Double> copies = new ArrayList<>();
+        IntStream.range(0, in.size()).forEach(e -> copies.add(in.get(e)));
+        return new Vector(copies);
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/bean/TensorSize.java --
+package ru.CNN.bean;
+
+public class TensorSize extends Triple<Integer, Integer, Integer> {
+    public TensorSize(Integer first, Integer second, Integer third) {
+        super(first, second, third);
+    }
+
+    public TensorSize copy() {
+        return new TensorSize(depth, height, width);
+    }
+
+    public int cube() {
+        return depth * width * height;
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/bean/Pair.java --
+package ru.CNN.bean;
+
+public class Pair<F, S> {
+    public F first;
+    public S second;
+
+    public Pair(F first, S second) {
+        this.first = first;
+        this.second = second;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/CNN/bean/Matrix.java --
+package ru.CNN.bean;
+
+import java.util.ArrayList;
+import java.util.function.BinaryOperator;
+import java.util.stream.IntStream;
+
+public class Matrix {
+    public ArrayList<Vector> in;
+
+    public Matrix(ArrayList<Vector> in) {
+        this.in = in;
+    }
+
+    public static Matrix generate(int j, int i, double x) {
+        ArrayList<Vector> returned = new ArrayList<>();
+        IntStream.range(0, j).forEach(k -> returned.add(Vector.generate(i, x)));
+        return new Matrix(returned);
+    }
+
+    public Vector get(int i) {
+        return in.get(i);
+    }
+
+    public Matrix copy() {
+        ArrayList<Vector> copies = new ArrayList<>();
+        IntStream.range(0, in.size()).forEach(i -> copies.add(in.get(i).copy()));
+        return new Matrix(copies);
+    }
+
+    public void apply(int i, BinaryOperator<Vector> function, Vector x) {
+        in.set(i, function.apply(in.get(i), x));
+    }
+}

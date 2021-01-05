@@ -1,0 +1,202 @@
+!program;
+
+#public String string = null;
+
+Int         : 'int';
+LongLong    : 'long long';
+Auto        : 'auto';
+Bool        : 'bool';
+Double      : 'double';
+LongDouble  : 'long double';
+Void        : 'void';
+String      : 'string';
+Vector      : 'vector';
+
+PlusPlus                : '++';
+MinusMinus              : '--';
+
+Not             : '!' | 'not';
+
+PlusAssign      : '+=';
+MinusAssign     : '-=';
+MultiplyAssign  : '*=';
+DivAssign       : '/=';
+ModAssign       : '%=';
+XorAssign       : '^=';
+AndAssign       : '&=';
+OrAssign        : '|=';
+LeftShiftAssign : '<<=';
+RightShiftAssign : '>>=';
+
+Plus            : '+';
+Minus           : '-';
+Multiply        : '*';
+Div             : '/';
+Mod             : '%';
+Xor             : '^';
+And             : '&';
+Or              : '|';
+Less            : '<';
+Greater         : '>';
+Equal           : '==';
+NotEqual        : '!=';
+LessEqual       : '<=';
+GreaterEqual    : '>=';
+AndAnd          : '&&' | 'and';
+OrOr            : '||' | 'or';
+LeftShift       : '<<';
+RightShift      : '>>';
+Assign          : '=';
+
+Tilde           : '~';
+Comma           : ',';
+Semicolon       : ';';
+OpenBracket     : '(';
+CloseBracket    : ')';
+OpenFigureBracket : '{';
+CloseFigureBracket : '}';
+Point           : '.';
+Pointer         : '->';
+OpenSqBracket   : '[';
+CloseSqBracket  : ']';
+Child           : '::';
+Colon           : ':';
+Quotes          : '"';
+OpenSqBracket   : '<';
+CloseSqBracket  : '>';
+
+Break : 'break';
+Return : 'return';
+Continue : 'continue';
+Delete : 'delete';
+Include : '#include';
+For : 'for';
+While : 'while';
+Class : 'class';
+Struct : 'struct';
+If : 'if';
+Switch : 'switch';
+Case : 'case';
+Using : 'using';
+
+Digits : $'[0-9]+';
+True        : 'true';
+False       : 'false';
+
+Word : $'[a-zA-Z_]+';
+anyInQuoutes : Quotes Word Quotes;
+
+WS : $'[ \t\n\r]+' *;
+
+program : headers blocks;
+
+headers
+    :
+    | header headers;
+
+header : Include OpenSqBracket Word CloseSqBracket
+    | Include Quotes Word Quotes;
+
+blocks : block | block blocks;
+
+block : function | r_class | struct | using;
+
+function
+    : type Word OpenBracket arguments CloseBracket OpenFigureBracket body CloseFigureBracket
+    | type Word OpenBracket arguments CloseBracket Semicolon
+    ;
+arguments
+    : argument
+    | argument arguments;
+argument
+    : type references Word;
+references
+    : Multiply references
+    |;
+
+r_class : Class Word OpenFigureBracket classOrStructBody CloseFigureBracket;
+struct : Struct Word OpenFigureBracket classOrStructBody CloseFigureBracket;
+classOrStructBody
+    :
+    | classOrStructPart;
+classOrStructPart
+    : field
+    | function;
+field
+    : type Word Semicolon
+    | type expression Semicolon;
+
+using : Using Word Word Semicolon;
+
+body
+    :
+    | part_body body;
+part_body
+    : maybeExpression
+    | r_for
+    | r_while
+    | instruction
+    | r_if
+    | field;
+r_for : For OpenBracket field maybeExpression expression CloseBracket OpenFigureBracket body CloseFigureBracket;
+r_while : While OpenBracket expression CloseBracket OpenFigureBracket body CloseFigureBracket;
+r_if : If OpenBracket expression CloseBracket OpenFigureBracket body CloseFigureBracket;
+
+instruction : part_instruction Semicolon;
+part_instruction
+    : Delete
+    | Continue
+    | Break
+    | Return expression;
+maybeExpression : expression Semicolon | Semicolon | field;
+expression
+    : value singleAssignOperator
+    | expression binaryAssignOrNotOperator expression
+    | unaryOperation expression
+    | OpenBracket expression CloseBracket
+    | Word OpenBracket expression CloseBracket
+    | value
+    |
+    ;
+
+binaryAssignOrNotOperator : binaryAssignOperator | binaryOperator;
+
+boolean : True | False;
+number : FloatNumber | Digits | boolean;
+value : anyInQuoutes | number | Word;
+
+binaryAssignOperator : Assign | PlusAssign | MinusAssign | MultiplyAssign | DivAssign | ModAssign | XorAssign | AndAssign |
+    OrAssign | LeftShiftAssign | RightShiftAssign;
+type
+    : Int
+    | LongLong
+    | Auto
+    | Bool
+    | Double
+    | LongDouble
+    | Void
+    | String
+    | Vector OpenSqBracket type CloseSqBracket;
+binaryOperator
+    : Plus
+    | Minus
+    | Multiply
+    | Div
+    | Mod
+    | Xor
+    | And
+    | Or
+    | Less
+    | Greater
+    | Equal
+    | NotEqual
+    | LessEqual
+    | GreaterEqual
+    | AndAnd
+    | OrOr
+    | LeftShift
+    | RightShift;
+unaryOperation  : Not;
+singleAssignOperator
+    : PlusPlus
+    | MinusMinus;

@@ -1,0 +1,2 @@
+Best: Kernel class: RBF, gamma = 0.3, k = 0.0, C = 50.0.
+Result: 0.9144144144144144

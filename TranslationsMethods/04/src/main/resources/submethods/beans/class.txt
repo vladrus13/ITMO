@@ -1,0 +1,21 @@
+package %type.beans;
+
+import %type.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class %s extends %typeNode {
+
+    public %s(%typeLexer lexer, %typeNode parent) throws %type.exception.ParseException {
+        %typeToken token = lexer.getCurrentToken();
+        try {
+            switch (token.getType()) {
+%s
+                default:
+%s
+            }
+        } catch (Exception exception) {
+            throw new %type.exception.ParseException("Get exception while parse %type", exception);
+        }
+    }
+}

@@ -1,0 +1,2 @@
+Best: Kernel class: POLY, gamma = 0.5, k = 0.0, C = 1.0.
+Result: 0.652542372881356

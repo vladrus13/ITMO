@@ -20,6 +20,9 @@
   2. [Кратчайшие пути](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/2%20course/ShortestPathsAndGames)
   3. [DFS MST](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/2%20course/DFS%20MST)
   4. [Паросочетания](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/2%20course/Matchings)
+  5. [Максимальный поток](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/2%20course/MaxCostFlow)
+  6. [Поток минимальной стоимости](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/2%20course/MinCostFlow)
+  7. [Математика](https://github.com/vladrus13/ITMO/tree/master/AlgoritmsAndStructures/2%20course/Math)
   
   ## [Дискретная математика](https://github.com/vladrus13/ITMO/tree/master/DiscrethMath)
   
@@ -33,6 +36,8 @@
   ### [Второй курс](https://github.com/vladrus13/ITMO/tree/master/DiscrethMath/2%20course)
   1. [Гамильтоновы циклы](https://github.com/vladrus13/ITMO/tree/master/DiscrethMath/2%20course/Hamilton)
   2. [Матроиды и пересечение матроидов](https://github.com/vladrus13/ITMO/tree/master/DiscrethMath/2%20course/Matro)
+  3. [Производящие функции](https://github.com/vladrus13/ITMO/tree/master/DiscrethMath/2%20course/GenFunc)
+  4. [Машина Тьюринга](https://github.com/vladrus13/ITMO/tree/master/DiscrethMath/2%20course/Turing)
   
   ## [ОС](https://github.com/vladrus13/ITMO/tree/master/OS)
   * [Лабораторные работы](https://github.com/vladrus13/ITMO/tree/master/OS/Bash)
@@ -67,13 +72,23 @@
   10. [Комбинаторные парсеры](https://github.com/vladrus13/ITMO/blob/master/Programming/1%20course/Clojure/CombExpr/expression.clj)
   11. [Ассоциативные массивы на Prolog](https://github.com/vladrus13/ITMO/tree/master/Programming/1%20course/Prolog/Tree)
   
-  ### [Четвертый семестр](https://github.com/vladrus13/ITMO/tree/master/Programming/2%20course/java-advanced-2020)
+  ### [Четвертый семестр](https://github.com/vladrus13/JavaAdvanced)
+  [ДЗ](https://github.com/vladrus13/JavaAdvanced/blob/master/Git/HW.html)
   
-  1. [Обход файлов](https://github.com/vladrus13/ITMO/tree/master/Programming/2%20course/java-advanced-2020/01.%20Walk/HW)
-  2. [ArraySortedSet](https://github.com/vladrus13/ITMO/tree/master/Programming/2%20course/java-advanced-2020/02.%20ArraySet/HW02)
-  3. [Студенты](https://github.com/vladrus13/ITMO/tree/master/Programming/2%20course/java-advanced-2020/03.%20StudentGroupQuery/HW03)
-  4. [Implementor](https://github.com/vladrus13/ITMO/tree/master/Programming/2%20course/java-advanced-2020/04.%20Implementor/HW04)
-  
+  1. [Обход файлов](https://github.com/vladrus13/JavaAdvanced/tree/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/walk)
+  2. [Множество на массиве](https://github.com/vladrus13/JavaAdvanced/tree/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/arrayset)
+  3. [Студенты](https://github.com/vladrus13/JavaAdvanced/tree/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/student)
+  4. [Implementor](https://github.com/vladrus13/JavaAdvanced/blob/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/implementor/Implementor.java)
+  5. [Jar Implementor](https://github.com/vladrus13/JavaAdvanced/blob/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/implementor/JarImplementor.java)
+  6. [Javadoc](https://github.com/vladrus13/JavaAdvanced/blob/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/implementor/compile-javadoc.sh)
+  7. [Итеративный параллелизм](https://github.com/vladrus13/JavaAdvanced/blob/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/concurrent/IterativeParallelism.java)
+  8. [Параллельный запуск](https://github.com/vladrus13/JavaAdvanced/blob/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/concurrent/ParallelMapperImpl.java)
+  9. [Web Crawler](https://github.com/vladrus13/JavaAdvanced/tree/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/crawler)
+  10. [HelloUDP](https://github.com/vladrus13/JavaAdvanced/tree/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/hello)
+  11. [Физические лица](https://github.com/vladrus13/JavaAdvanced/tree/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/bank)
+  12. [HelloNonblockingUDP](https://github.com/vladrus13/JavaAdvanced/tree/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/hello)
+  13. [Статистика текста (не проверена)](https://github.com/vladrus13/JavaAdvanced/tree/master/Git/java-advanced-2020-solutions/java-solutions/ru/ifmo/rain/kuznetsov/i18n)
+ 
   ## [Web](https://github.com/vladrus13/ITMO/tree/master/Web/3sem)
   Условия содержатся в папке каждой из ДЗ. Их может быть несколько, поэтому сюда не вносится.
   01. [Базовые html действия](https://github.com/vladrus13/ITMO/tree/master/Web/3sem/01)
@@ -87,7 +102,7 @@
   09. [Vue-Js](https://github.com/vladrus13/ITMO/tree/master/Web/3sem/09)
   10. [VueJs + Servlet (backend + frontend)](https://github.com/vladrus13/ITMO/tree/master/Web/3sem/10)
   
-  ## C++
+  ## [C++](https://github.com/vladrus13/ITMO/tree/master/%D0%A1%2B%2B)
   Небольшие наработки по курсу плюсов
   1. [Uniquals](https://github.com/vladrus13/ITMO/tree/master/%D0%A1%2B%2B/00_test_uniq_template-vladrus13)
   2. [RandQueue](https://github.com/vladrus13/ITMO/tree/master/%D0%A1%2B%2B/02_radomized_queue_n_deque-vladrus13)
@@ -96,11 +111,20 @@
   
   ## Матан
   
+  ### Четвертый семестр
+  
   [Немного конспектов 4 сема](https://drive.google.com/open?id=1bkFUYV7jAa4ULyqXpFHZgvxhIFSEc0o8)
   
   ## МатЛог
   
+  ### Четвертый семестр
+  
   [Немного конспектов 4 сема](https://drive.google.com/drive/folders/1qC--wiRmMD1lo5838vAP4V4jin2q_oUp)
+  
+  #### Задачи:
+  0. [Haskell Разбор выражений](https://github.com/vladrus13/ITMO/tree/master/MatLog/00%20(haskell%20version))
+  1. [Haskell Минимизация доказательства](https://github.com/vladrus13/ITMO/tree/master/MatLog/01%20(haskell%20version)) и [С++ Минимизация доказательства](https://github.com/vladrus13/ITMO/tree/master/MatLog/01%20(c%2B%2B%20version))
+  2. [C++ Формальная арифметика](https://github.com/vladrus13/ITMO/tree/master/MatLog/02%20(c%2B%2B%20version))
   
   ## МатСтат
   

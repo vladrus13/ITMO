@@ -1,0 +1,47 @@
+    --- Start reading
+    --- Finish reading
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 2, gram = 1: 8
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 2, gram = 2: 7
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 2, gram = 3: 41
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 3, gram = 1: 8
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 3, gram = 2: 7
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 3, gram = 3: 119
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 4, gram = 1: 8
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 4, gram = 2: 7
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 4, gram = 3: 356
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 5, gram = 1: 8
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 5, gram = 2: 7
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 5, gram = 3: 1065
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 6, gram = 1: 8
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 6, gram = 2: 8
+    --- Binary upper
+    --- Binary search
+Perfect legit for prealpha = 6, gram = 3: 3191

@@ -1,0 +1,33 @@
+package %type.beans;
+
+import %type.%typeEnum;
+import %type.%typeLexer;
+import %type.%typeToken;
+
+public class %typeTerminal extends %typeNode {
+    private final %typeEnum token;
+    private final String data;
+
+    public %typeTerminal(%typeEnum token, String data) {
+        this.token = token;
+        this.data = data;
+    }
+
+    public %typeTerminal(%typeEnum expected, %typeLexer lexer) throws %type.exception.ParseException {
+        %typeToken realToken = lexer.getCurrentToken();
+        if (realToken.getType() != expected) {
+            throw new %type.exception.UnexpectedTokenException("Unexprected token. Expected: " + expected.name() + ". Actual: " + realToken.getType());
+        }
+        token = realToken.getType();
+        data = realToken.getData();
+        lexer.nextToken();
+    }
+
+    public %typeEnum getToken() {
+        return token;
+    }
+
+    public String getData() {
+        return data;
+    }
+}

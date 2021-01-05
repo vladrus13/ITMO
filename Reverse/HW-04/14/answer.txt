@@ -1,0 +1,25 @@
+Hello! In order to complete the challenge you need to fill some info about path to flag
+Filling path info
+Filling train info
+Enter value of rate field please:4
+Enter value of train_number field please:S146
+Filling user info
+Enter value of age field please:60
+Enter value of name field please:Sebastiano Riese
+Enter value of country field please:Rohan
+Enter value of price field please:2306
+Enter value of passengers_count field please:955
+Filling station info
+Enter value of average_trains field please:72
+Enter value of city field please:Mona
+Enter value of country field please:Mosapsa
+Filling station info
+Enter value of average_trains field please:87
+Enter value of city field please:Isontol
+Enter value of country field please:Hrotiecka
+Enter value of travel_time field please:9912
+Well done!
+Now concatenate all data you entered and place here as key
+Enter key: 4S14660Sebastiano RieseRohan230695572MonaMosapsa87IsontolHrotiecka9912
+Decrypting flag and second part
+Flag: spbctf{d41d8cd98f00b204e9800998ecf8427e}

@@ -1,0 +1,111 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 142392a84cb4110e38f5c6281662cad1ea60008627bd7bfca5008aa883e20e67
+
+name:           hw02
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/hw02#readme>
+homepage:       https://github.com/githubuser/hw02#readme
+bug-reports:    https://github.com/githubuser/hw02/issues
+author:         Vladislav Kuznetsov
+maintainer:     example@example.com
+copyright:      2020 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/hw02
+
+library
+  exposed-modules:
+      Expr
+      NonEmpty
+      Parser.Hard
+      Parser.Parser
+      Parser.Primitive
+      Parser.Simple
+      SMA
+      StringSum
+      Tree
+  other-modules:
+      Paths_hw02
+  hs-source-dirs:
+      src
+  ghc-options: -XLambdaCase
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , mtl
+  default-language: Haskell2010
+
+executable hw02-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_hw02
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , hw02
+  default-language: Haskell2010
+
+test-suite hw02-tests-block-01
+  type: exitcode-stdio-1.0
+  main-is: Block01.hs
+  other-modules:
+      Paths_hw02
+  hs-source-dirs:
+      test/Block01
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , containers
+    , hw02
+    , mtl
+    , random
+  default-language: Haskell2010
+
+test-suite hw02-tests-block-02
+  type: exitcode-stdio-1.0
+  main-is: Block02.hs
+  other-modules:
+      Paths_hw02
+  hs-source-dirs:
+      test/Block02
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , containers
+    , hw02
+    , mtl
+    , random
+  default-language: Haskell2010
+
+test-suite hw02-tests-block-03
+  type: exitcode-stdio-1.0
+  main-is: Block03.hs
+  other-modules:
+      Paths_hw02
+  hs-source-dirs:
+      test/Block03
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , containers
+    , hw02
+    , mtl
+    , random
+  default-language: Haskell2010

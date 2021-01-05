@@ -1,0 +1,16 @@
+mov eax, 0x11223344	; eax = 287454020
+mov ebx, 3344556677	; ebx = 3344556677
+push eax		; stack = [287454020]
+not eax		; eax = -287454021
+xor eax, ebx		; eax = -287454021 ^ 3344556677 = 696528446
+mov bl, al		; ebx = -950410690
+push ebx		; stack = [-950410690, 287454020]
+shr ebx, 16		; ebx = 51033
+xor ebx, eax		; ebx = 51033 ^ 696528446 = 696576359
+pop eax		; eax = -950410690; stack = [287454020]
+shr eax, 8		; eax = 13064674
+add eax, ebx		; eax = 13064674 + 696576359 = 709641033
+pop ebx		; ebx = 287454020; stack = []
+sub eax, ebx		; eax = 709641033 - 287454020 = 422187013
+
+answer: 4101

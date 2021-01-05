@@ -1,0 +1,815 @@
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/util/Splitter.java --
+package ru.DT.util;
+
+import ru.DT.bean.Pair;
+import ru.DT.bean.ResultPair;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
+public enum Splitter {
+    GINI {
+        @Override
+        public Optional<ResultPair> split(int k, ArrayList<Pair<ArrayList<Double>, Integer>> beans, int feature) {
+            double bestScore = Double.MIN_VALUE;
+            Optional<ResultPair> bestSplit = Optional.empty();
+            for (int i = 0; i < feature; i++) {
+                int finalI = i;
+                beans.sort((o1, o2) -> (int) ((o2.first.get(finalI) - o1.first.get(finalI)) * 100000));
+                if (beans.get(0).first.get(i).equals(beans.get(beans.size() - 1).first.get(i))) {
+                    continue;
+                }
+                ArrayList<Integer> left = new ArrayList<>();
+                ArrayList<Integer> right = new ArrayList<>();
+                IntStream.range(0, k + 1).forEach(x -> {
+                    left.add(0);
+                    right.add(0);
+                });
+                int leftSize = 0;
+                int rightSize = beans.size();
+                long leftSum = 0;
+                long rightSum = 0;
+                for (Pair<ArrayList<Double>, Integer> bean : beans) {
+                    rightSum -= right.get(bean.second) * right.get(bean.second);
+                    right.set(bean.second, right.get(bean.second) + 1);
+                    rightSum += right.get(bean.second) * right.get(bean.second);
+                }
+                double previous = -1;
+                for (int j = 0; j < beans.size(); j++) {
+                    if (j != 0 && beans.get(j).first.get(i) != previous) {
+                        double score = 1.0 * leftSum / leftSize + 1.0 * rightSum / rightSize;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestSplit = Optional.of(new ResultPair(i, ((double) previous + beans.get(j).first.get(i)) / 2));
+                        }
+                    }
+                    rightSum -= right.get(beans.get(j).second) * right.get(beans.get(j).second);
+                    right.set(beans.get(j).second, right.get(beans.get(j).second) - 1);
+                    rightSum += right.get(beans.get(j).second) * right.get(beans.get(j).second);
+                    rightSize--;
+
+                    leftSum -= left.get(beans.get(j).second) * left.get(beans.get(j).second);
+                    left.set(beans.get(j).second, left.get(beans.get(j).second) + 1);
+                    leftSum += left.get(beans.get(j).second) * left.get(beans.get(j).second);
+                    leftSize++;
+                    previous = beans.get(j).first.get(i);
+                }
+            }
+            return bestSplit;
+        }
+    },
+    ENTROPY {
+        private double entropy(ArrayList<Integer> counts, int size) {
+            double sum = 0;
+            for (int i : counts) {
+                if (i != 0) {
+                    sum -= ((double) i / size) * Math.log((double) i / size);
+                }
+            }
+            return sum;
+        }
+
+        @Override
+        public Optional<ResultPair> split(int k, ArrayList<Pair<ArrayList<Double>, Integer>> beans, int feature) {
+            double bestScore = Double.MAX_VALUE;
+            Optional<ResultPair> bestSplit = Optional.empty();
+            for (int i = 0; i < feature; i++) {
+                int finalI = i;
+                beans.sort((o1, o2) -> (int) ((o2.first.get(finalI) - o1.first.get(finalI)) * 10000));
+                if (beans.get(0).first.get(i).equals(beans.get(beans.size() - 1).first.get(i))) {
+                    continue;
+                }
+                ArrayList<Integer> left = new ArrayList<>();
+                ArrayList<Integer> right = new ArrayList<>();
+                IntStream.range(0, k + 1).forEach(x -> {
+                    left.add(0);
+                    right.add(0);
+                });
+                int leftSize = 0;
+                int rightSize = beans.size();
+                for (Pair<ArrayList<Double>, Integer> bean : beans) {
+                    right.set(bean.second, right.get(bean.second) + 1);
+                }
+                double previous = -1;
+                for (int j = 0; j < beans.size(); j++) {
+                    if (j != 0 && beans.get(j).first.get(i) != previous) {
+                        double score = entropy(left, leftSize) * leftSize + entropy(right, rightSize) * rightSize;
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestSplit = Optional.of(new ResultPair(i, ((double) previous + beans.get(j).first.get(i)) / 2));
+                        }
+                    }
+                    right.set(beans.get(j).second, right.get(beans.get(j).second) - 1);
+                    rightSize--;
+                    left.set(beans.get(j).second, left.get(beans.get(j).second) + 1);
+                    leftSize++;
+                    previous = beans.get(j).first.get(i);
+                }
+            }
+            return bestSplit;
+        }
+    };
+    public abstract Optional<ResultPair> split(int k, ArrayList<Pair<ArrayList<Double>, Integer>> beans, int feature);
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/Launcher.java --
+package ru.DT;
+
+import ru.DT.bean.AdaBoost;
+import ru.DT.bean.Pair;
+import ru.DT.bean.Point;
+import ru.DT.drawing.ImageCreator;
+import ru.DT.drawing.ImageSaver;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class Launcher {
+
+    private static final int countPixels = 10;
+
+    private static ArrayList<Pair<ArrayList<Double>, Integer>> read(String name) throws IOException {
+        BufferedReader bufferedReader = Files.newBufferedReader(Path.of("resources").resolve(name + ".csv"), StandardCharsets.UTF_8);
+        bufferedReader.readLine();
+        ArrayList<Pair<ArrayList<Double>, Integer>> beans = new ArrayList<>();
+        String s;
+        while ((s = bufferedReader.readLine()) != null) {
+            String[] readen = s.split(",");
+            beans.add(new Pair<>(new ArrayList<>(List.of(Double.parseDouble(readen[0]), Double.parseDouble(readen[1]))), readen[2].equals("N") ? 1 : 0));
+        }
+        return beans;
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    private static double checkTree(AdaBoost boost, ArrayList<Pair<ArrayList<Double>, Integer>> beans, int step, String file) {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        int countSteps = 800 / countPixels;
+        double xMinima = beans.stream().mapToDouble(bean -> bean.first.get(0)).min().getAsDouble();
+        double xMaxima = beans.stream().mapToDouble(bean -> bean.first.get(0)).max().getAsDouble();
+        double yMinima = beans.stream().mapToDouble(bean -> bean.first.get(1)).min().getAsDouble();
+        double yMaxima = beans.stream().mapToDouble(bean -> bean.first.get(1)).max().getAsDouble();
+        double realSizeX = (xMaxima - xMinima) / countSteps;
+        double realSizeY = (yMaxima - yMinima) / countSteps;
+        for (double x = xMinima; x < xMaxima; x += realSizeX) {
+            ArrayList<Integer> temp = new ArrayList<>();
+            for (double y = yMinima; y < yMaxima; y += realSizeY) {
+                temp.add(boost.predict(new Pair<>(new ArrayList<>(List.of(x, y)), null)));
+            }
+            result.add(temp);
+        }
+        BufferedImage image = ImageCreator.empty(file, String.valueOf(step));
+        ImageCreator.addMatrix(image, result);
+        ArrayList<String> x = new ArrayList<>();
+        ArrayList<String> y = new ArrayList<>();
+        for (double xx = xMinima; xx < xMaxima; xx += (xMaxima - xMinima) / 10) {
+            x.add(String.valueOf(xx));
+        }
+        for (double yy = yMinima; yy < yMaxima; yy += (yMaxima - yMinima) / 10) {
+            y.add(String.valueOf(yy));
+        }
+        ImageCreator.addValues(image, x, y);
+        ArrayList<Point> red = new ArrayList<>();
+        ArrayList<Point> green = new ArrayList<>();
+        int countWrong = 0;
+        for (Pair<ArrayList<Double>, Integer> bean : beans) {
+            Point point = new Point((int) ((bean.first.get(0) - xMinima) * 800 / (xMaxima - xMinima)),
+                    (int) ((bean.first.get(1) - yMinima) * 800 / (yMaxima - yMinima)));
+            if (bean.second == 1) {
+                red.add(point);
+            } else {
+                green.add(point);
+            }
+            countWrong += bean.second != (boost.predict(bean)) ? 1 : 0;
+        }
+        ImageCreator.addPoints(image, red, Color.RED);
+        ImageCreator.addPoints(image, green, Color.GREEN);
+        ImageSaver.save(image, file, String.valueOf(step));
+        return (double) countWrong / beans.size();
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        List<Integer> rows = List.of(1, 2, 3, 5, 8, 13, 21, 34, 55);
+        Map<Integer, Double> results = new ConcurrentHashMap<>();
+        for (String name : List.of("chips", "geyser")) {
+            System.out.println("\tTest: " + name);
+            ArrayList<Pair<ArrayList<Double>, Integer>> beans = read(name);
+            ArrayList<Integer> numbers = new ArrayList<>(rows);
+            ExecutorService executorService = Executors.newFixedThreadPool(Thread.activeCount());
+            AdaBoost boost = new AdaBoost(beans);
+            int step = 0;
+            while (!numbers.isEmpty()) {
+                System.out.println("Go to step " + step);
+                boost.fit();
+                step++;
+                if (step == numbers.get(0)) {
+                    numbers.remove(0);
+                    AdaBoost copy = boost;
+                    int real = step;
+                    //executorService.submit(() -> {
+                        try {
+                            System.out.println("Ready to built " + real);
+                            double result = checkTree(copy, beans, real, name);
+                            results.put(real, result);
+                            System.out.println(real + " done!");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    //});
+                }
+            }
+            do {
+                Thread.sleep(100);
+            } while (results.size() != rows.size());
+            ArrayList<Point> points = new ArrayList<>();
+            BufferedImage image = ImageCreator.empty(name, "result");
+            for (Map.Entry<Integer, Double> entry : results.entrySet()) {
+                points.add(new Point(entry.getKey() * 800 / 55, (int) (entry.getValue() * 800)));
+            }
+            ImageCreator.addPoints(image, points, Color.BLACK);
+            ArrayList<String> x = new ArrayList<>();
+            ArrayList<String> y = new ArrayList<>();
+            for (int i = 0; i <= 55; i += 5) {
+                x.add(String.valueOf(i));
+            }
+            for (int i = 0; i <= 10; i++) {
+                y.add(String.valueOf(((double) i) / 10));
+            }
+            ImageCreator.addValues(image, x, y);
+            ImageSaver.save(image, name, "result");
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/drawing/ImageCreator.java --
+package ru.DT.drawing;
+
+import ru.DT.bean.Point;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+/**
+ * Image creator
+ */
+public class ImageCreator {
+
+    /**
+     * @param point point in (0, 0) on left-bottom
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormal(Point point) {
+        return new Point(point.x, 1000 - point.y);
+    }
+
+    /**
+     * @param point point on graphic
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormalOnGraphic(Point point) {
+        return makeNormal(new Point(point.x + 100, point.y + 100));
+    }
+
+    /**
+     * Draw line
+     *
+     * @param graphics {@link Graphics}
+     * @param start    start point
+     * @param finish   finish point
+     */
+    private static void lineOnGraphic(Graphics graphics, Point start, Point finish) {
+        start = makeNormalOnGraphic(start);
+        finish = makeNormalOnGraphic(finish);
+        graphics.drawLine(start.x, start.y, finish.x, finish.y);
+    }
+
+    /**
+     * Draw point
+     *
+     * @param graphics {@link Graphics}
+     * @param point    point
+     */
+    private static void pointOnGraphic(Graphics graphics, Point point) {
+        point = makeNormalOnGraphic(point);
+        graphics.fillOval(point.x - 4, point.y - 4, 8, 8);
+    }
+
+    private static void squareOnGraphic(Graphics graphics, Point start, Point size, Color color) {
+        start = makeNormalOnGraphic(start);
+        start = new Point(start.x, start.y - size.y);
+        graphics.setColor(color);
+        graphics.fillRect(start.x, start.y, size.x, size.y);
+    }
+
+    public static BufferedImage empty(String file, String method) {
+        BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.createGraphics();
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(0, 0, 1000, 1000);
+        graphics.setColor(Color.BLACK);
+        lineOnGraphic(graphics, new Point(0, 0), new Point(800, 0));
+        lineOnGraphic(graphics, new Point(0, 0), new Point(0, 800));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, -10));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, 10));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(-10, 790));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(10, 790));
+        graphics.drawString(String.format("File: %s, Method: %s", file, method), 10, 10);
+        graphics.drawString("@vladrus13", 930, 980);
+        return image;
+    }
+
+    public static void addMatrix(BufferedImage image, ArrayList<ArrayList<Integer>> matrix) {
+        Graphics graphics = image.getGraphics();
+        int xSize = 800 / matrix.get(0).size();
+        int ySize = 800 / matrix.size();
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < matrix.get(i).size(); j++) {
+                int value = matrix.get(i).get(j);
+                squareOnGraphic(graphics, new Point(xSize * i, ySize * j),
+                        new Point(xSize, ySize), new Color(value * 127, (1 - value) * 127, 0, 127));
+            }
+        }
+    }
+
+    public static void addPoints(BufferedImage image, ArrayList<Point> points, Color color) {
+        Graphics graphics = image.getGraphics();
+        graphics.setColor(color);
+        for (Point point : points) {
+            pointOnGraphic(graphics, point);
+        }
+    }
+
+    public static void addValues(BufferedImage image, ArrayList<String> x, ArrayList<String> y) {
+        Graphics graphics = image.getGraphics();
+        graphics.setColor(Color.BLACK);
+        int xSize = 800 / x.size();
+        int ySize = 800 / y.size();
+        for (int i = 0; i < x.size(); i++) {
+            lineOnGraphic(graphics, new Point(i * xSize, -10), new Point(i * xSize, 10));
+            Point point = makeNormalOnGraphic(new Point(i * xSize, -25));
+            graphics.drawString(x.get(i), point.x, point.y);
+        }
+        for (int i = 0; i < y.size(); i++) {
+            lineOnGraphic(graphics, new Point(-10, i * ySize), new Point(10, i * ySize));
+            Point point = makeNormalOnGraphic(new Point(-25, i * ySize));
+            graphics.drawString(y.get(i), point.x, point.y);
+        }
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/drawing/ImageSaver.java --
+package ru.DT.drawing;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * Image saver
+ */
+public class ImageSaver {
+    /**
+     * Save image
+     *
+     * @param image image
+     * @param type  type of network
+     */
+    public static void save(BufferedImage image, String type, String step) {
+        File imageFile = new File(String.valueOf(Path.of("resources")
+                .resolve("images")
+                .resolve(type)
+                .resolve(step)
+                .resolve("image.png")));
+        if (!imageFile.getParentFile().exists()) {
+            try {
+                Files.createDirectories(Path.of(imageFile.getParentFile().getAbsolutePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            ImageIO.write(image, "PNG", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/tree/Leaf.java --
+package ru.DT.tree;
+
+public class Leaf extends Node {
+    private final int group;
+
+    public Leaf(int group, int id) {
+        this.group = group;
+        this.id = id;
+    }
+
+    public int getGroup() {
+        return group;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("C %d", group);
+    }
+
+    @Override
+    public StringBuilder toStringTree() {
+        return new StringBuilder(this.toString()).append("\n");
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/tree/DecisionTree.java --
+package ru.DT.tree;
+
+import ru.DT.bean.Pair;
+import ru.DT.bean.ResultPair;
+import ru.DT.util.Splitter;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
+public class DecisionTree {
+    private final int k;
+    private Node root;
+    private int id;
+    private final int max_depth;
+    private final Splitter splitter;
+
+    public DecisionTree(int k, int max_depth, Splitter splitter) {
+        this.k = k;
+        this.max_depth = max_depth;
+        this.splitter = splitter;
+        this.id = 0;
+        this.root = new Leaf(-1, -1);
+    }
+
+    private int dominantClass(ArrayList<Pair<ArrayList<Double>, Integer>> beans) {
+        ArrayList<Integer> counts = new ArrayList<>();
+        IntStream.range(0, k + 1).forEach(element -> counts.add(0));
+        for (var bean : beans) {
+            counts.set(bean.second, counts.get(bean.second) + 1);
+        }
+        //noinspection OptionalGetWithoutIsPresent
+        int max = counts.stream().mapToInt(element -> element).max().getAsInt();
+        for (int i = 0; i < counts.size(); i++) {
+            if (counts.get(i) == max) {
+                return i;
+            }
+        }
+        throw new ArithmeticException("NO");
+    }
+
+    private Node train(ArrayList<Pair<ArrayList<Double>, Integer>> beans, int depth) {
+        int nodeId = ++id;
+        int divider = beans.get(0).first.size();
+        if (depth == max_depth) {
+            return new Leaf(dominantClass(beans), nodeId);
+        }
+        int minima = Integer.MAX_VALUE;
+        int maxima = Integer.MIN_VALUE;
+        for (var bean : beans) {
+            minima = Math.min(minima, bean.second);
+            maxima = Math.max(maxima, bean.second);
+        }
+        if (minima == maxima) {
+            return new Leaf(beans.get(0).second, nodeId);
+        }
+        Optional<ResultPair> split = splitter.split(k, beans, divider);
+        if (split.isPresent()) {
+            ResultPair result = split.get();
+            EntireNode node = new EntireNode();
+            node.setDivider(result.divider);
+            node.setHold(result.hold);
+            ArrayList<Pair<ArrayList<Double>, Integer>> left = new ArrayList<>();
+            ArrayList<Pair<ArrayList<Double>, Integer>> right = new ArrayList<>();
+            for (var bean : beans) {
+                if (bean.first.get(result.divider) < result.hold) {
+                    left.add(bean);
+                } else {
+                    right.add(bean);
+                }
+            }
+            node.setLeft(train(left, depth + 1));
+            node.setRight(train(right, depth + 1));
+            node.id = nodeId;
+            return node;
+        } else {
+            return new Leaf(dominantClass(beans), nodeId);
+        }
+    }
+
+    private int precision(Node node, Pair<ArrayList<Double>, Integer> bean) {
+        if (node instanceof Leaf) {
+            return ((Leaf) node).getGroup();
+        }
+        if (node instanceof EntireNode) {
+            if (bean.first.get(((EntireNode) node).getDivider()) > ((EntireNode) node).getHold()) {
+                return precision(((EntireNode) node).getRight(), bean);
+            } else {
+                return precision(((EntireNode) node).getLeft(), bean);
+            }
+        }
+        throw new IllegalArgumentException("Can't find type of node");
+    }
+
+    public int precision(Pair<ArrayList<Double>, Integer> bean) {
+        return precision(root, bean);
+    }
+
+    public void train(ArrayList<Pair<ArrayList<Double>, Integer>> beans) {
+        root = train(beans, 0);
+    }
+
+    public String toString() {
+        return (id + "\n")+ root.toStringTree();
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/tree/EntireNode.java --
+package ru.DT.tree;
+
+public class EntireNode extends Node {
+    private int divider;
+    private double hold;
+    private Node left;
+    private Node right;
+
+    @Override
+    public String toString() {
+        return String.format("Q %d %.10f %d %d", divider + 1, hold, left.getId(), right.getId());
+    }
+
+    @Override
+    public StringBuilder toStringTree() {
+        return new StringBuilder(this.toString()).append("\n").append(left.toStringTree()).append(right.toStringTree());
+    }
+
+    public void setDivider(int divider) {
+        this.divider = divider;
+    }
+
+    public void setHold(double hold) {
+        this.hold = hold;
+    }
+
+    public void setLeft(Node left) {
+        this.left = left;
+    }
+
+    public void setRight(Node right) {
+        this.right = right;
+    }
+
+    public int getDivider() {
+        return divider;
+    }
+
+    public double getHold() {
+        return hold;
+    }
+
+    public Node getLeft() {
+        return left;
+    }
+
+    public Node getRight() {
+        return right;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/tree/Node.java --
+package ru.DT.tree;
+
+public abstract class Node {
+    protected int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public abstract String toString();
+
+    public abstract StringBuilder toStringTree();
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/bean/AdaBoost.java --
+package ru.DT.bean;
+
+import ru.DT.tree.DecisionTree;
+import ru.DT.util.Splitter;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class AdaBoost {
+    private final ArrayList<Double> errors;
+    private final ArrayList<DecisionTree> trees;
+    private final ArrayList<Double> w;
+    private final ArrayList<Double> alpha;
+    private final ArrayList<Pair<ArrayList<Double>, Integer>> data;
+    private final ArrayList<Double> err;
+    private final Random random;
+
+    public AdaBoost(ArrayList<Pair<ArrayList<Double>, Integer>> data) {
+        this.data = data;
+        errors = new ArrayList<>();
+        trees = new ArrayList<>();
+        w = new ArrayList<>();
+        alpha = new ArrayList<>();
+        err = new ArrayList<>();
+        for (int i = 0; i < data.size(); i++) {
+            w.add((double) 1 / data.size());
+            err.add(0.0);
+        }
+        random = new Random();
+    }
+
+    public AdaBoost(ArrayList<Double> errors,
+                    ArrayList<DecisionTree> trees,
+                    ArrayList<Double> w,
+                    ArrayList<Double> alpha,
+                    ArrayList<Pair<ArrayList<Double>, Integer>> data,
+                    ArrayList<Double> err, Random random) {
+        this.errors = errors;
+        this.trees = trees;
+        this.w = w;
+        this.alpha = alpha;
+        this.data = data;
+        this.err = err;
+        this.random = random;
+    }
+
+    public void fit() {
+        double sum = 0.0;
+        for (double i : w) {
+            sum += i;
+        }
+        for (int i = 0; i < w.size(); i++) {
+            w.set(i, w.get(i) / sum);
+        }
+        int height = random.nextInt(8);
+        trees.add(new DecisionTree(2, height, Splitter.GINI));
+        trees.get(trees.size() - 1).train(data);
+        for (int i = 0; i < data.size(); i++) {
+            err.set(i, trees.get(trees.size() - 1).precision(data.get(i)) != data.get(i).second ? 1.0 : 0.0);
+        }
+        double e = 0.0;
+        for (int i = 0; i < data.size(); i++) {
+            if (err.get(i) > 0) {
+                e += w.get(i);
+            }
+        }
+        errors.add(e);
+        alpha.add(Math.log((1 - e) / Math.max(1e-7, e)));
+        double a = alpha.get(alpha.size() - 1);
+        for (int i = 0; i < data.size(); i++) {
+            if (err.get(i) > 0) {
+                w.set(i, w.get(i) * a);
+            }
+        }
+    }
+
+    public int predict(Pair<ArrayList<Double>, Integer> x) {
+        double[] predictor = new double[2];
+        for (int i = 0; i < trees.size(); i++) {
+            predictor[trees.get(i).precision(x)] += alpha.get(i);
+        }
+        if (predictor[0] > predictor[1]) return 0;
+        else return 1;
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    public AdaBoost clone() {
+        return new AdaBoost(errors, trees, w, alpha, data, err, random);
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/bean/ResultPair.java --
+package ru.DT.bean;
+
+public class ResultPair {
+    public final int divider;
+    public final double hold;
+
+    public ResultPair(int divider, double hold) {
+        this.divider = divider;
+        this.hold = hold;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/bean/Point.java --
+package ru.DT.bean;
+
+public class Point {
+    public final int x;
+    public final int y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/DT/bean/Pair.java --
+package ru.DT.bean;
+
+public class Pair<T, E> {
+    public final T first;
+    public final E second;
+
+    public Pair(T first, E second) {
+        this.first = first;
+        this.second = second;
+    }
+}

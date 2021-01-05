@@ -1,0 +1,54 @@
+BITS 32
+
+global _start
+
+
+section .data
+
+	tet db 106, 112, 101, 107, 127, 119, 121, 102, 119, 120, 109, 120, 121, 120, 109, 115, 114, 99, 109, 119, 99, 114, 115, 120, 99, 120, 108, 105, 99, 119, 115, 112, 121, 120, 109, 115, 114, 129
+	nd db "all ok!\n"
+
+section .bss
+	pass resb 1024
+
+section .text
+_start:
+	mov eax, 3
+	mov ebx, 0
+	mov ecx, pass
+	mov edx, 256
+	int 80h
+	
+	mov edi, 38
+	mov ebx, tet
+	mov edx, pass
+ ff:
+	mov cl, 4
+	not cl
+	inc cl		; 252
+	mov al, [ebx]	; al = a[ebx]
+	add al, cl	; al += cl
+	push ebx	; s:[ebx]
+	mov bl, [edx]	; bl = a[edx]
+	cmp al, bl
+	jnz fail	; if al != bl -> BAN
+	pop ebx
+
+	inc ebx	; ebx++
+	inc edx	; edx++
+	dec edi	; edi--
+        test edi,edi
+	jnz ff
+	mov eax, 4	; eax = 4
+	mov ebx, 1	; ebx = 1
+	mov ecx, nd	; ecx = nd
+	mov edx, 7	; edx = 7
+	int 80h
+	jmp ext
+
+fail:
+	pop ebx
+ext:
+	mov eax, 1
+	xor ebx, ebx
+	int 80h

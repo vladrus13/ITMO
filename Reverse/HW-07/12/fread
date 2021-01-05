@@ -1,0 +1,8 @@
+PING this.binary.was.tampered.with.spbctf.ru (109.233.56.90) 56(84) bytes of data.
+64 bytes from 109.233.56.90 (109.233.56.90): icmp_seq=1 ttl=53 time=45.7 ms
+64 bytes from 109.233.56.90 (109.233.56.90): icmp_seq=2 ttl=53 time=44.4 ms
+64 bytes from 109.233.56.90 (109.233.56.90): icmp_seq=3 ttl=53 time=43.0 ms
+
+--- this.binary.was.tampered.with.spbctf.ru ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 43.011/44.362/45.655/1.080 ms

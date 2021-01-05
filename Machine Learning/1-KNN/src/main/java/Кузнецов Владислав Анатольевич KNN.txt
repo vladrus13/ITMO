@@ -1,0 +1,1402 @@
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/LauncherLearning.java --
+package ru.vladrus13;
+
+import ru.vladrus13.learning.LearningMachine;
+
+import java.io.IOException;
+
+/**
+ * Launcher for learning machine
+ */
+public class LauncherLearning {
+
+    /**
+     * @param args ignored
+     * @throws IOException if we have problem with files
+     */
+    public static void main(String[] args) throws IOException {
+        LearningMachine.start();
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/csv/package-info.java --
+/**
+ * Package for working with table
+ */
+package ru.vladrus13.csv;
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/csv/CSVParser.java --
+package ru.vladrus13.csv;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+import ru.vladrus13.bean.Person;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
+/**
+ * Parser for .csv
+ */
+public class CSVParser {
+    /**
+     * Read all persons
+     *
+     * @return all persions
+     * @throws IOException            if we have problem with read
+     * @throws CsvValidationException table is invalid
+     */
+    public static ArrayList<Person> readAll() throws IOException, CsvValidationException {
+        Reader reader = Files.newBufferedReader(Path.of("resources/phpMawTba.csv"));
+        CSVReader csvReader = new CSVReader(reader);
+        ArrayList<Person> persons = new ArrayList<>();
+        @SuppressWarnings("UnusedAssignment")
+        String[] line = csvReader.readNext();
+        while ((line = csvReader.readNext()) != null) {
+            persons.add(new Person(line));
+        }
+        reader.close();
+        csvReader.close();
+        return persons;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/LauncherDrawing.java --
+package ru.vladrus13;
+
+import ru.vladrus13.bean.Point;
+import ru.vladrus13.drawing.ImageCreator;
+import ru.vladrus13.drawing.ImageSaver;
+import ru.vladrus13.drawing.Parser;
+import ru.vladrus13.utils.DistanceFunction;
+import ru.vladrus13.utils.KernelFunction;
+import ru.vladrus13.utils.WindowCalculator;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+/**
+ * Launcher for drawing
+ */
+public class LauncherDrawing {
+
+    /**
+     * From result in network to point in graphic-coordinates
+     */
+    static final Function<Map.Entry<Integer, Double>, Point> entryToPoint = element ->
+            new Point(element.getKey() * 80, (int) (element.getValue() * 800));
+
+    /**
+     * @param args ignored
+     * @throws IOException if we have problem with files
+     */
+    public static void main(String[] args) throws IOException {
+        Parser parser = new Parser();
+        ArrayList<String> destinations = new ArrayList<>(List.of("naive", "onehot"));
+        for (String destination : destinations) {
+            for (DistanceFunction distanceFunction : DistanceFunction.values()) {
+                for (KernelFunction kernelFunction : KernelFunction.values()) {
+                    Map<Integer, Double> fixedMap = parser.getData().get(destination).get(distanceFunction).get(kernelFunction).get(WindowCalculator.FIXED);
+                    Map<Integer, Double> variableMap = parser.getData().get(destination).get(distanceFunction).get(kernelFunction).get(WindowCalculator.VARIABLE);
+                    ArrayList<Point> fixed = fixedMap.entrySet().stream().map(entryToPoint).collect(Collectors.toCollection(ArrayList::new));
+                    ArrayList<Point> variable = variableMap.entrySet().stream().map(entryToPoint).collect(Collectors.toCollection(ArrayList::new));
+                    ImageSaver.save(ImageCreator.draw(destination, distanceFunction, kernelFunction, fixed, variable),
+                            destination, distanceFunction, kernelFunction);
+                }
+            }
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/learning/package-info.java --
+/**
+ * Learning machine
+ */
+package ru.vladrus13.learning;
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/learning/LearningMachine.java --
+package ru.vladrus13.learning;
+
+import ru.vladrus13.bean.Network;
+import ru.vladrus13.bean.Person;
+import ru.vladrus13.csv.CSVParser;
+import ru.vladrus13.utils.*;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+/**
+ * Class learning
+ */
+public class LearningMachine {
+
+    /**
+     * Logger
+     */
+    private static final Logger logger = Logger.getLogger(LearningMachine.class.getName());
+
+    /**
+     * @param array array where we increase element
+     * @param i     row
+     * @param j     column
+     */
+    public static void increaseElement(ArrayList<ArrayList<Integer>> array, int i, int j) {
+        ArrayList<Integer> row = array.get(i);
+        row.set(j, row.get(j) + 1);
+    }
+
+    /**
+     * Start testing
+     *
+     * @throws IOException if we have problem with files
+     */
+    public static void start() throws IOException {
+        BufferedWriter bufferedWriter;
+        ArrayList<Person> persons;
+        try {
+            persons = new ArrayList<>(new HashSet<>(CSVParser.readAll()));
+        } catch (Exception e) {
+            Writer.printStackTrace(logger, e);
+            return;
+        }
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        int maxResult = persons.stream().mapToInt(Person::getResult).max().getAsInt();
+        ArrayList<Integer> kList = new ArrayList<>(List.of(1, 3, 5, 7, 9, 10));
+        int superK = 0;
+        double superF;
+        DistanceFunction superDistanceFunction = DistanceFunction.EUCLIDEAN;
+        KernelFunction superKernelFunction = KernelFunction.COSINE;
+        WindowCalculator superWindowCalculator = WindowCalculator.FIXED;
+        int superCount = 0;
+        HashMap<Boolean, String> variants = new HashMap<>(Map.ofEntries(
+                new AbstractMap.SimpleEntry<>(Boolean.TRUE, "naive"),
+                new AbstractMap.SimpleEntry<>(Boolean.FALSE, "onehot")));
+        persons = persons.stream().limit(2000).collect(Collectors.toCollection(ArrayList::new));
+        for (boolean isNaive : variants.keySet()) {
+            bufferedWriter = Files.newBufferedWriter(Path.of(String.format("resources/%s.out", variants.get(isNaive))));
+            superF = -1;
+            for (WindowCalculator windowCalculator : WindowCalculator.values()) {
+                for (int k : kList) {
+                    double realK = windowCalculator.equals(WindowCalculator.VARIABLE) ? 1.0 / k : k;
+                    for (DistanceFunction distanceFunction : DistanceFunction.values()) {
+                        for (KernelFunction kernelFunction : KernelFunction.values()) {
+                            Network network = new Network(distanceFunction, kernelFunction, realK, windowCalculator, isNaive);
+                            network.learn(persons);
+                            int right = 0;
+                            ArrayList<ArrayList<Integer>> matrix = new ArrayList<>();
+                            IntStream.range(0, maxResult + 1).forEach(index -> {
+                                matrix.add(new ArrayList<>());
+                                IntStream.range(0, maxResult + 1).forEach(indexJ -> matrix.get(index).add(0));
+                            });
+                            for (Person kicked : persons) {
+                                network.remove(kicked);
+                                Person networkPerson = kicked.copy();
+                                network.get(networkPerson);
+                                right += networkPerson.getResult() == kicked.getResult() ? 1 : 0;
+                                increaseElement(matrix, kicked.getResult(), networkPerson.getResult());
+                                network.learn(kicked);
+                            }
+                            FCalculator fCalculator = new FCalculator(matrix);
+                            double F = fCalculator.returnMicro().first;
+                            if (superF < F) {
+                                superF = F;
+                                superK = k;
+                                superCount = right;
+                                superDistanceFunction = distanceFunction;
+                                superKernelFunction = kernelFunction;
+                                superWindowCalculator = windowCalculator;
+                            }
+                            System.out.printf("F = %f Window = %s k = %d Distance = %s Kernel = %s result = %d/%d\n",
+                                    F, windowCalculator, k, distanceFunction.name(), kernelFunction.name(), right, persons.size());
+                            bufferedWriter.write(String.format("F = %f Window = %s k = %d Distance = %s Kernel = %s result = %d/%d\n",
+                                    F, windowCalculator, k, distanceFunction.name(), kernelFunction.name(), right, persons.size()));
+                        }
+                    }
+                }
+            }
+            bufferedWriter.write("----------------------------\n");
+            bufferedWriter.write("---------TOP RESULT---------\n");
+            bufferedWriter.write("----------------------------\n");
+            bufferedWriter.write(String.format("F = %f Window = %s k = %d Distance = %s Kernel = %s result = %d/%d\n",
+                    superF,
+                    superWindowCalculator,
+                    superK,
+                    superDistanceFunction.name(),
+                    superKernelFunction.name(),
+                    superCount,
+                    persons.size()));
+            bufferedWriter.close();
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/package-info.java --
+/**
+ * Launchers package
+ */
+package ru.vladrus13;
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/drawing/ImageCreator.java --
+package ru.vladrus13.drawing;
+
+import ru.vladrus13.bean.Point;
+import ru.vladrus13.utils.DistanceFunction;
+import ru.vladrus13.utils.KernelFunction;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+/**
+ * Image creator
+ */
+public class ImageCreator {
+
+    /**
+     * @param point point in (0, 0) on left-bottom
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormal(Point point) {
+        return new Point(point.x, 1000 - point.y);
+    }
+
+    /**
+     * @param point point on graphic
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormalOnGraphic(Point point) {
+        return makeNormal(new Point(point.x + 100, point.y + 100));
+    }
+
+    /**
+     * Draw line
+     *
+     * @param graphics {@link Graphics}
+     * @param start    start point
+     * @param finish   finish point
+     */
+    private static void lineOnGraphic(Graphics graphics, Point start, Point finish) {
+        start = makeNormalOnGraphic(start);
+        finish = makeNormalOnGraphic(finish);
+        graphics.drawLine(start.x, start.y, finish.x, finish.y);
+    }
+
+    /**
+     * Draw point
+     *
+     * @param graphics {@link Graphics}
+     * @param point    point
+     */
+    private static void pointOnGraphic(Graphics graphics, Point point) {
+        point = makeNormalOnGraphic(point);
+        graphics.fillOval(point.x - 4, point.y - 4, 8, 8);
+    }
+
+    /**
+     * Draw a graphic
+     *
+     * @param type             type of network
+     * @param distanceFunction {@link DistanceFunction}
+     * @param kernelFunction   {@link KernelFunction}
+     * @param fixed            fixed-window points
+     * @param variable         variable-window points
+     * @return {@link BufferedImage}
+     */
+    public static BufferedImage draw(String type, DistanceFunction distanceFunction, KernelFunction kernelFunction, ArrayList<Point> fixed, ArrayList<Point> variable) {
+        BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.createGraphics();
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(0, 0, 1000, 1000);
+        graphics.setColor(Color.BLACK);
+        lineOnGraphic(graphics, new Point(0, 0), new Point(800, 0));
+        lineOnGraphic(graphics, new Point(0, 0), new Point(0, 800));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, -10));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, 10));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(-10, 790));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(10, 790));
+        IntStream.range(0, 11).forEach(element -> {
+                    lineOnGraphic(graphics, new Point(-10, element * 80), new Point(10, element * 80));
+                    lineOnGraphic(graphics, new Point(element * 80, -10), new Point(element * 80, 10));
+                    graphics.drawString(String.valueOf((double) element / 10), 10, 1000 - (element * 80 + 100));
+                    graphics.drawString(String.valueOf(element), 100 + element * 80, 990);
+                }
+        );
+        graphics.drawString(String.format("Type: %s, Distance function: %s, Kernel function: %s", type, distanceFunction.toString(), kernelFunction.toString()), 10, 10);
+        graphics.drawString("Red - fixed window, Blue - variable window", 10, 30);
+        graphics.drawString("@vladrus13", 930, 980);
+        graphics.setColor(Color.RED);
+        for (Point point : fixed) {
+            pointOnGraphic(graphics, point);
+        }
+        graphics.setColor(Color.BLUE);
+        for (Point point : variable) {
+            pointOnGraphic(graphics, point);
+        }
+        return image;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/drawing/Parser.java --
+package ru.vladrus13.drawing;
+
+import ru.vladrus13.utils.DistanceFunction;
+import ru.vladrus13.utils.KernelFunction;
+import ru.vladrus13.utils.WindowCalculator;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Parser for network-testing result
+ */
+public class Parser {
+
+    // naive/onehot | DistanceFunction | KernelFunction | WindowCalculator | Width/count window | F
+    /**
+     * All results
+     */
+    private final Map<String, Map<DistanceFunction, Map<KernelFunction, Map<WindowCalculator, Map<Integer, Double>>>>> data = new HashMap<>();
+
+    /**
+     * Add to map
+     *
+     * @param path             type of network
+     * @param distanceFunction {@link DistanceFunction}
+     * @param kernelFunction   {@link KernelFunction}
+     * @param windowCalculator {@link WindowCalculator}
+     * @param window           window
+     * @param F                result
+     */
+    private void addToMap(String path, DistanceFunction distanceFunction,
+                          KernelFunction kernelFunction, WindowCalculator windowCalculator,
+                          Integer window, Double F) {
+        if (!data.containsKey(path)) {
+            data.put(path, new HashMap<>());
+        }
+        if (!data.get(path).containsKey(distanceFunction)) {
+            data.get(path).put(distanceFunction, new HashMap<>());
+        }
+        if (!data.get(path).get(distanceFunction).containsKey(kernelFunction)) {
+            data.get(path).get(distanceFunction).put(kernelFunction, new HashMap<>());
+        }
+        if (!data.get(path).get(distanceFunction).get(kernelFunction).containsKey(windowCalculator)) {
+            data.get(path).get(distanceFunction).get(kernelFunction).put(windowCalculator, new HashMap<>());
+        }
+        data.get(path).get(distanceFunction).get(kernelFunction).get(windowCalculator).put(window, F);
+    }
+
+    /**
+     * Constructor for class
+     *
+     * @throws IOException if we have problem with files
+     */
+    public Parser() throws IOException {
+        BufferedReader bufferedReader;
+        ArrayList<String> destinations = new ArrayList<>(List.of("naive", "onehot"));
+        for (String destination : destinations) {
+            bufferedReader = Files.newBufferedReader(Path.of(String.format("resources/%s.out", destination)));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                // example : "F = 0,431082 Window = FIXED k = 10 Distance = MANHATTAN Kernel = EPANECHNIKOV result = 724/2000"
+                String[] splitted = line.split(" ");
+                if (splitted.length != 18) continue;
+                addToMap(destination,
+                        DistanceFunction.valueOf(splitted[11]),
+                        KernelFunction.valueOf(splitted[14]),
+                        WindowCalculator.valueOf(splitted[5]),
+                        Integer.parseInt(splitted[8]),
+                        Double.parseDouble(splitted[2].replace(',', '.')));
+            }
+        }
+    }
+
+    /**
+     * @return get all results
+     */
+    public Map<String, Map<DistanceFunction, Map<KernelFunction, Map<WindowCalculator, Map<Integer, Double>>>>> getData() {
+        return data;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/drawing/ImageSaver.java --
+package ru.vladrus13.drawing;
+
+import ru.vladrus13.utils.DistanceFunction;
+import ru.vladrus13.utils.KernelFunction;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * Image saver
+ */
+public class ImageSaver {
+    /**
+     * Save image
+     *
+     * @param image            image
+     * @param type             type of network
+     * @param distanceFunction {@link DistanceFunction}
+     * @param kernelFunction   {@link KernelFunction}
+     */
+    public static void save(BufferedImage image, String type, DistanceFunction distanceFunction, KernelFunction kernelFunction) {
+        File imageFile = new File(String.valueOf(Path.of("resources")
+                .resolve("images")
+                .resolve(type)
+                .resolve(distanceFunction.toString().toLowerCase())
+                .resolve(kernelFunction.toString().toLowerCase())
+                .resolve("image.png")));
+        if (!imageFile.getParentFile().exists()) {
+            try {
+                Files.createDirectories(Path.of(imageFile.getParentFile().getAbsolutePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            ImageIO.write(image, "PNG", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/drawing/package-info.java --
+/**
+ * Drawing package
+ */
+package ru.vladrus13.drawing;
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/utils/WindowCalculator.java --
+package ru.vladrus13.utils;
+
+/**
+ * Windows types
+ */
+public enum WindowCalculator {
+    /**
+     * Fixed window
+     */
+    FIXED,
+    /**
+     * Variable window
+     */
+    VARIABLE
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/utils/package-info.java --
+/**
+ * Utils classes
+ */
+package ru.vladrus13.utils;
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/utils/Writer.java --
+package ru.vladrus13.utils;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.logging.Logger;
+
+/**
+ * Writer-utils class
+ */
+public class Writer {
+    /**
+     * @param logger logger where to write
+     * @param e      exception we write
+     */
+    public static void printStackTrace(Logger logger, Exception e) {
+        StringWriter stringWriter = new StringWriter();
+        e.printStackTrace(new PrintWriter(stringWriter));
+        logger.severe(stringWriter.toString());
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/utils/KernelFunction.java --
+package ru.vladrus13.utils;
+
+/**
+ * Kernel function
+ */
+public enum KernelFunction {
+    /**
+     * Uniform
+     */
+    UNIFORM {
+        @Override
+        public double get(double distance) {
+            return Math.abs(distance) < 1 ? (double) 1 / 2 : 0;
+        }
+    },
+    /**
+     * Triangular
+     */
+    TRIANGULAR {
+        @Override
+        public double get(double distance) {
+            return Math.abs(distance) < 1 ? 1 - distance : 0;
+        }
+    },
+    /**
+     * Epanechnikov
+     */
+    EPANECHNIKOV {
+        @Override
+        public double get(double distance) {
+            return Math.abs(distance) < 1 ? ((double) 3 / 4) * (1 - (Math.pow(distance, 2))) : 0;
+        }
+    },
+    /**
+     * Quartic
+     */
+    QUARTIC {
+        @Override
+        public double get(double distance) {
+            return Math.abs(distance) < 1 ? ((double) 15 / 16) * Math.pow((1 - Math.pow(distance, 2)), 2) : 0;
+        }
+    },
+    /**
+     * Triweight
+     */
+    TRIWEIGHT {
+        @Override
+        public double get(double distance) {
+            return Math.abs(distance) < 1 ? ((double) 35 / 32) * Math.pow((1 - Math.pow(distance, 2)), 3) : 0;
+        }
+    },
+    /**
+     * Trucube
+     */
+    TRICUBE {
+        @Override
+        public double get(double distance) {
+            return Math.abs(distance) < 1 ? ((double) 70 / 81) * Math.pow((1 - Math.pow(distance, 3)), 3) : 0;
+        }
+    },
+    /**
+     * Gaussian
+     */
+    GAUSSIAN {
+        @Override
+        public double get(double distance) {
+            return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(((double) -1 / 2) * Math.pow(distance, 2));
+        }
+    },
+    /**
+     * Cosine
+     */
+    COSINE {
+        @Override
+        public double get(double distance) {
+            return Math.abs(distance) < 1 ? (Math.PI / 4) * Math.cos(Math.PI * distance / 2) : 0;
+        }
+    },
+    /**
+     * Logistic
+     */
+    LOGISTIC {
+        @Override
+        public double get(double distance) {
+            return 1 / (Math.exp(distance) + 2 + Math.exp(-distance));
+        }
+    },
+    /**
+     * Sigmoid
+     */
+    SIGMOID {
+        @Override
+        public double get(double distance) {
+            return (2 / Math.PI) / (Math.exp(distance) + Math.exp(-distance));
+        }
+    };
+
+    /**
+     * Get kernel distance on normally distance
+     *
+     * @param distance normally distance in [0, 1]
+     * @return kernel function
+     */
+    public abstract double get(double distance);
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/utils/FCalculator.java --
+package ru.vladrus13.utils;
+
+import java.util.ArrayList;
+
+/**
+ * Calculate F
+ */
+public class FCalculator {
+    /**
+     * Matrix
+     */
+    private final ArrayList<ArrayList<Integer>> matrix;
+    /**
+     * Get macro F
+     */
+    double macro_f;
+    /**
+     * Get micro F
+     */
+    final double micro_f;
+
+    /**
+     * @param index index of getting line
+     * @return sum of line
+     */
+    private int getLine(int index) {
+        return matrix.get(index).stream().mapToInt(Integer::intValue).sum();
+    }
+
+    /**
+     * @param index index of result
+     * @return reslut
+     */
+    private Result getResult(int index) {
+        int normal = matrix.get(index).get(index);
+        int tpFp = matrix.stream().mapToInt(integers -> integers.get(index)).sum();
+        int tpFn = getLine(index);
+        Result returned = new Result();
+        returned.first = tpFp == 0 ? 0 : (double) normal / tpFp;
+        returned.second = tpFn == 0 ? 0 : (double) normal / tpFn;
+        return returned;
+    }
+
+    /**
+     * @param result result
+     * @return F
+     */
+    private double getF(Result result) {
+        return result.second + result.first == 0 ? 0 : 2 * result.first * result.second / (result.first + result.second);
+    }
+
+    /**
+     * @param index index of getting F
+     * @return F
+     */
+    private double getFReal(int index) {
+        return getF(getResult(index));
+    }
+
+    /**
+     * @param matrix matrix
+     */
+    public FCalculator(ArrayList<ArrayList<Integer>> matrix) {
+        this.matrix = matrix;
+        int total_sum = 0;
+        for (ArrayList<Integer> i : matrix) {
+            for (Integer j : i) {
+                total_sum += j;
+            }
+        }
+        macro_f = 0;
+        for (int i = 0; i < matrix.size(); i++) {
+            macro_f += getFReal(i) * getLine(i);
+        }
+        macro_f /= total_sum;
+        double micro_pre = 0;
+        for (int i = 0; i < matrix.size(); i++) {
+            micro_pre += getResult(i).first * getLine(i);
+        }
+        micro_pre /= total_sum;
+        double micro_recall = 0;
+        for (int i = 0; i < matrix.size(); i++) {
+            micro_recall += getResult(i).second * getLine(i);
+        }
+        micro_recall /= total_sum;
+        micro_f = getF(new Result(micro_pre, micro_recall));
+    }
+
+    /**
+     * @return result of F
+     */
+    public Result returnMicro() {
+        return new Result(micro_f, macro_f);
+    }
+
+    /**
+     * Result class
+     */
+    public static class Result {
+        /**
+         * First element
+         */
+        public double first;
+        /**
+         * Second element
+         */
+        public double second;
+
+        /**
+         * @param first  first
+         * @param second second
+         */
+        public Result(double first, double second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        /**
+         * Empty constructor
+         */
+        public Result() {
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/utils/DistanceFunction.java --
+package ru.vladrus13.utils;
+
+import java.util.ArrayList;
+
+/**
+ * Distance classes
+ */
+public enum DistanceFunction {
+    /**
+     * Manhattan
+     */
+    MANHATTAN {
+        @Override
+        public double get(ArrayList<Double> a, ArrayList<Double> b) {
+            double distance = 0;
+            for (int i = 0; i < a.size(); i++) {
+                distance += Math.abs(a.get(i) - b.get(i));
+            }
+            return distance;
+        }
+    },
+    /**
+     * Euclidean
+     */
+    EUCLIDEAN {
+        @Override
+        public double get(ArrayList<Double> a, ArrayList<Double> b) {
+            double distance = 0;
+            for (int i = 0; i < a.size(); i++) {
+                distance += Math.pow(a.get(i) - b.get(i), 2);
+            }
+            return Math.sqrt(distance);
+        }
+    },
+    /**
+     * Chebyshev
+     */
+    CHEBYSHEV {
+        @Override
+        public double get(ArrayList<Double> a, ArrayList<Double> b) {
+            double distance = 0;
+            for (int i = 0; i < a.size(); i++) {
+                distance = Math.max(distance, Math.abs(a.get(i) - b.get(i)));
+            }
+            return distance;
+        }
+    };
+
+    /**
+     * Get distance from ponts
+     *
+     * @param a first
+     * @param b second
+     * @return distance
+     */
+    public abstract double get(ArrayList<Double> a, ArrayList<Double> b);
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Network.java --
+package ru.vladrus13.bean;
+
+import ru.vladrus13.utils.DistanceFunction;
+import ru.vladrus13.utils.KernelFunction;
+import ru.vladrus13.utils.WindowCalculator;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+/**
+ * Network (just table) class
+ */
+public class Network {
+    /**
+     * {@link DistanceFunction}
+     */
+    private final DistanceFunction distanceFunction;
+    /**
+     * {@link KernelFunction}
+     */
+    private final KernelFunction kernelFunction;
+    /**
+     * {@link WindowCalculator}
+     */
+    private final WindowCalculator windowCalculator;
+    /**
+     * All persons
+     */
+    private final ArrayList<Person> data;
+    /**
+     * Window width or kNN-value
+     *
+     * @see WindowCalculator
+     */
+    private final double k;
+    /**
+     * Is naive method
+     */
+    private final boolean isNaive;
+
+    /**
+     * Constructor for class
+     *
+     * @param distanceFunction {@link DistanceFunction}
+     * @param kernelFunction   {@link KernelFunction}
+     * @param k                Window width or kNN-value
+     * @param windowCalculator {@link WindowCalculator}
+     * @param isNaive          is naive method
+     */
+    public Network(DistanceFunction distanceFunction, KernelFunction kernelFunction, double k, WindowCalculator windowCalculator, boolean isNaive) {
+        this.distanceFunction = distanceFunction;
+        this.kernelFunction = kernelFunction;
+        this.windowCalculator = windowCalculator;
+        this.k = k;
+        this.isNaive = isNaive;
+        data = new ArrayList<>();
+    }
+
+    /**
+     * Add to data more elements
+     *
+     * @param newData elements
+     */
+    public void learn(ArrayList<Person> newData) {
+        data.addAll(newData);
+    }
+
+    /**
+     * Add to data more elements
+     *
+     * @param newData elements
+     */
+    public void learn(Person newData) {
+        data.add(newData);
+    }
+
+    /**
+     * Remove from data element
+     *
+     * @param removingData removing element
+     */
+    public void remove(Person removingData) {
+        data.remove(removingData);
+    }
+
+    /**
+     * Set to person his result from network
+     *
+     * @param person person
+     */
+    public void get(Person person) {
+        double neibe;
+        ArrayList<Double> target = person.getPosition();
+        data.sort((o1, o2) -> (int) ((distanceFunction.get(o1.getPosition(), target) - distanceFunction.get(o2.getPosition(), target)) * 1000000));
+        if (windowCalculator.equals(WindowCalculator.FIXED)) {
+            neibe = distanceFunction.get(data.get((int) k).getPosition(), target);
+        } else {
+            neibe = k;
+        }
+        if (neibe < 0.00001) {
+            double result;
+            ArrayList<Person> neighborhood = data.stream().filter(element -> element.getPosition().equals(target)).collect(Collectors.toCollection(ArrayList::new));
+            if (neighborhood.size() == 0) {
+                result = data.stream().mapToDouble(Person::getResult).sum() / data.size();
+            } else {
+                result = neighborhood.stream().mapToDouble(Person::getResult).sum() / neighborhood.size();
+            }
+            person.setResult((int) Math.round(result));
+        } else {
+            if (isNaive) {
+                double result;
+                double x1 = data
+                        .parallelStream()
+                        .mapToDouble(element ->
+                                ((double) element.getResult()) *
+                                        kernelFunction.get(distanceFunction.get(element.getPosition(), target) / neibe)).sum();
+                double x2 = data
+                        .parallelStream()
+                        .mapToDouble(element ->
+                                kernelFunction.get(distanceFunction.get(element.getPosition(), target) / neibe)).sum();
+                if (x2 == 0) {
+                    result = data.stream().mapToDouble(Person::getResult).sum() / data.size();
+                } else {
+                    result = x1 / x2;
+                }
+                person.setResult((int) Math.round(result));
+            } else {
+                @SuppressWarnings("OptionalGetWithoutIsPresent")
+                int max = data.stream().mapToInt(Person::getResult).max().getAsInt() + 1;
+                ArrayList<Double> x1 = new ArrayList<>();
+                ArrayList<Double> x2 = new ArrayList<>();
+                IntStream.range(0, max).forEach(element -> {
+                    x1.add(0.0);
+                    x2.add(0.0);
+                });
+                data.parallelStream().forEach(element -> {
+                            x1.set(element.getResult(), x1.get(element.getResult()) + ((double) element.getResult()) *
+                                    kernelFunction.get(distanceFunction.get(element.getPosition(), target) / neibe));
+                            x2.set(element.getResult(), x2.get(element.getResult()) +
+                                    kernelFunction.get(distanceFunction.get(element.getPosition(), target) / neibe));
+                        }
+                );
+                int maxOnArrayPosition = 0;
+                double maxOnArray = 0;
+                for (int i = 0; i < max; i++) {
+                    if (x2.get(i) > 0.00001) {
+                        double divide = x1.get(i) / x2.get(i);
+                        if (divide > maxOnArray) {
+                            maxOnArray = divide;
+                            maxOnArrayPosition = i;
+                        }
+                    }
+                }
+                person.setResult(maxOnArrayPosition);
+            }
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/package-info.java --
+/**
+ * Beans classes for Network or Drawings classes
+ */
+package ru.vladrus13.bean;
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Person.java --
+package ru.vladrus13.bean;
+
+import java.util.*;
+import java.util.function.ToIntFunction;
+
+/**
+ * Person class
+ */
+@SuppressWarnings("FieldCanBeLocal")
+public class Person {
+    /**
+     * Age
+     */
+    private double age;
+    /**
+     * Workclass
+     */
+    private double workclass;
+    /**
+     * Education number
+     */
+    private double educationNum;
+    /**
+     * Education type
+     */
+    private double education;
+    /**
+     * Relationship
+     */
+    private double relationship;
+    /**
+     * Sex
+     */
+    private double sex;
+    /**
+     * Capital gain on start
+     */
+    private double capitalGain;
+    /**
+     * Hours her week work
+     */
+    private double hoursPerWeek;
+    /**
+     * Result (more or less than 50K)
+     */
+    private int result;
+
+    /**
+     * To integer
+     */
+    final ToIntFunction<String> toInteger = Integer::parseInt;
+
+    /**
+     * Education converter
+     */
+    private final HashMap<String, Integer> getEducation = new HashMap<>(Map.ofEntries(
+            new AbstractMap.SimpleEntry<>("Preschool", 2),
+            new AbstractMap.SimpleEntry<>("1st-4th", 3),
+            new AbstractMap.SimpleEntry<>("5th-6th", 5),
+            new AbstractMap.SimpleEntry<>("7th-8th", 7),
+            new AbstractMap.SimpleEntry<>("9th", 9),
+            new AbstractMap.SimpleEntry<>("10th", 10),
+            new AbstractMap.SimpleEntry<>("11th", 11),
+            new AbstractMap.SimpleEntry<>("12th", 12),
+            new AbstractMap.SimpleEntry<>("Assoc-acdm", 13),
+            new AbstractMap.SimpleEntry<>("Assoc-voc", 14),
+            new AbstractMap.SimpleEntry<>("Bachelors", 15),
+            new AbstractMap.SimpleEntry<>("Doctorate", 16),
+            new AbstractMap.SimpleEntry<>("HS-grad", 17),
+            new AbstractMap.SimpleEntry<>("Masters", 18),
+            new AbstractMap.SimpleEntry<>("Prof-school", 19),
+            new AbstractMap.SimpleEntry<>("Some-college", 20),
+            new AbstractMap.SimpleEntry<>("?", -1)
+    ));
+
+    /**
+     * Relationship converter
+     */
+    private final HashMap<String, Integer> getRelationship = new HashMap<>(Map.ofEntries(
+            new AbstractMap.SimpleEntry<>("Husband", 4),
+            new AbstractMap.SimpleEntry<>("Not-in-family", 8),
+            new AbstractMap.SimpleEntry<>("Other-relative", 5),
+            new AbstractMap.SimpleEntry<>("Own-child", 1),
+            new AbstractMap.SimpleEntry<>("Unmarried", 3),
+            new AbstractMap.SimpleEntry<>("Wife", 6),
+            new AbstractMap.SimpleEntry<>("?", -1)
+    ));
+
+    /**
+     * Sex converter
+     */
+    private final HashMap<String, Integer> getSex = new HashMap<>(Map.ofEntries(
+            new AbstractMap.SimpleEntry<>("Male", 0),
+            new AbstractMap.SimpleEntry<>("Female", 1),
+            new AbstractMap.SimpleEntry<>("?", -1)
+    ));
+
+    /**
+     * Result converter
+     */
+    private final HashMap<String, Integer> getResult = new HashMap<>(Map.ofEntries(
+            new AbstractMap.SimpleEntry<>("<=50K", 0),
+            new AbstractMap.SimpleEntry<>(">50K", 1),
+            new AbstractMap.SimpleEntry<>("?", -1)
+    ));
+
+    /**
+     * Workclass converter
+     */
+    private final HashMap<String, Integer> getWorkclass = new HashMap<>(Map.ofEntries(
+            new AbstractMap.SimpleEntry<>("Federal-gov", 10),
+            new AbstractMap.SimpleEntry<>("Local-gov", 9),
+            new AbstractMap.SimpleEntry<>("Never-worked", 1),
+            new AbstractMap.SimpleEntry<>("Private", 8),
+            new AbstractMap.SimpleEntry<>("Self-emp-inc", 2),
+            new AbstractMap.SimpleEntry<>("Self-emp-not-inc", 3),
+            new AbstractMap.SimpleEntry<>("State-gov", 6),
+            new AbstractMap.SimpleEntry<>("Without-pay", 4),
+            new AbstractMap.SimpleEntry<>("?", -1)
+    ));
+
+    /**
+     * Constructor for class
+     *
+     * @param line line form base .csv
+     */
+    public Person(String[] line) {
+        age = toInteger.applyAsInt(line[0].trim());
+        String workclassString = line[1].trim();
+        String educationString = line[3].trim();
+        educationNum = toInteger.applyAsInt(line[4].trim());
+        String relationshipString = line[7].trim();
+        String sexString = line[9].trim();
+        capitalGain = toInteger.applyAsInt(line[10].trim());
+        hoursPerWeek = toInteger.applyAsInt(line[12].trim());
+        String resultString = line[14].trim();
+        if (!getWorkclass.containsKey(workclassString)) {
+            throw new IllegalArgumentException("Can't find workclass: " + educationString);
+        }
+        workclass = getWorkclass.get(workclassString);
+        if (!getEducation.containsKey(educationString)) {
+            throw new IllegalArgumentException("Can't find education: " + educationString);
+        }
+        education = getEducation.get(educationString);
+        if (!getRelationship.containsKey(relationshipString)) {
+            throw new IllegalArgumentException("Can't find relationship: " + relationshipString);
+        }
+        relationship = getRelationship.get(relationshipString);
+        if (!getSex.containsKey(sexString)) {
+            throw new IllegalArgumentException("Can't find sex: " + sexString);
+        }
+        sex = getSex.get(sexString);
+        if (!getResult.containsKey(resultString)) {
+            throw new IllegalArgumentException("Can't find result: " + resultString);
+        }
+        result = getResult.get(resultString);
+        Random random = new Random();
+        if (education == -1) {
+            education = random.nextInt(17) + 3;
+        }
+        if (relationship == -1) {
+            relationship = random.nextInt(6) + 1;
+        }
+        if (sex == -1) {
+            sex = random.nextInt(2) + 1;
+        }
+        if (result == -1) {
+            result = random.nextInt(2);
+        }
+        if (workclass == -1) {
+            workclass = random.nextInt(10) + 1;
+        }
+        age /= 100;
+        workclass /= 10;
+        educationNum /= 20;
+        education /= 20;
+        relationship /= 8;
+        capitalGain /= 100000;
+        hoursPerWeek /= 100;
+        result = random.nextInt(4) == 2 ? 2 : result;
+    }
+
+    /**
+     * Constructor class
+     *
+     * @param age          age
+     * @param workclass    workclass
+     * @param educationNum education number
+     * @param education    education type
+     * @param relationship relationship
+     * @param sex          sex
+     * @param capitalGain  capital gain on stert
+     * @param hoursPerWeek hours per week work
+     * @param result       result
+     */
+    public Person(double age, double workclass, double educationNum, double education, double relationship, double sex, double capitalGain, double hoursPerWeek, int result) {
+        this.age = age;
+        this.workclass = workclass;
+        this.educationNum = educationNum;
+        this.education = education;
+        this.relationship = relationship;
+        this.sex = sex;
+        this.capitalGain = capitalGain;
+        this.hoursPerWeek = hoursPerWeek;
+        this.result = result;
+    }
+
+    /**
+     * @return copy of current person
+     */
+    public Person copy() {
+        return new Person(age, workclass, educationNum, education, relationship, sex, capitalGain, hoursPerWeek, result);
+    }
+
+    /**
+     * Get classes
+     *
+     * @return classes
+     */
+    public ArrayList<Double> getPosition() {
+        return new ArrayList<>(List.of(age, workclass, educationNum, education, relationship, sex, capitalGain, hoursPerWeek));
+    }
+
+    /**
+     * Get result
+     *
+     * @return result
+     */
+    public int getResult() {
+        return result;
+    }
+
+    /**
+     * Setter for result
+     *
+     * @param result result
+     */
+    public void setResult(int result) {
+        this.result = result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return age == person.age &&
+                workclass == person.workclass &&
+                educationNum == person.educationNum &&
+                education == person.education &&
+                relationship == person.relationship &&
+                sex == person.sex &&
+                capitalGain == person.capitalGain &&
+                hoursPerWeek == person.hoursPerWeek &&
+                result == person.result;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Point.java --
+package ru.vladrus13.bean;
+
+/**
+ * Point class
+ */
+public class Point {
+    /**
+     * X-axis position
+     */
+    public final int x;
+    /**
+     * Y-axis position
+     */
+    public final int y;
+
+    /**
+     * @param x x-axis position
+     * @param y y-axis position
+     */
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}

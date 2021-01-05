@@ -1,0 +1,16 @@
+mov [0xAABBCCCD], 0xDEADBEEF
+mov [0xAABBCCD1], 0xCAFEBABE ; this is
+mov [0xAABBCCD5], 0x12345678
+mov [0xAABBCCD9], 0x9ABCDEF0
+
+lea edi, [0xAABBCCDD] 	; edi = 0xDEADBEEF
+lea esi, [0xAABBCCD9]	; esi = 0x9ABCDEF0
+xor ebx, ebx		; ebx = 0
+l1:
+mov eax, DWORD [esi]	; eax = [esi]
+mov [edi], eax		; [edi] = eax
+sub esi, 0x4		; esi -= 4
+sub edi, 0x4		; edi -= 4
+add ebx, 0x4		; ebx -= 4
+cmp ebx, 0x10		; if (ebx >= 16) finish;
+jl l1

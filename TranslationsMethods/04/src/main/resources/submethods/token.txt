@@ -1,0 +1,25 @@
+package %type;
+
+public class %typeToken {
+    private final %typeEnum type;
+    private final String data;
+
+    public %typeToken(%typeEnum type, String data) {
+        this.type = type;
+        this.data = data;
+    }
+
+    public %typeToken(%typeEnum type) {
+            this.type = type;
+            this.data = null;
+    }
+
+
+    public %typeEnum getType() {
+        return type;
+    }
+
+    public String getData() {
+        return data;
+    }
+}

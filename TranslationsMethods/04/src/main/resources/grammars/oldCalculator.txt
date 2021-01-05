@@ -1,0 +1,15 @@
+added;
+
+OpenBracket : '(';
+CloseBracket : ')';
+Plus : '+';
+Number : '[0-9]+';
+Multiply : '*';
+
+added
+    : added Plus added
+    | multiplied;
+multiplied
+    : multiplied Multiply multiplied
+    | Number
+    | OpenBracket added CloseBracket;

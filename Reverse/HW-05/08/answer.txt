@@ -1,0 +1,1 @@
+ltrace -e memcpy ./flagbruter.elf 2> ltrace.txt

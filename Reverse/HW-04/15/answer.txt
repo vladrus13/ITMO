@@ -1,0 +1,38 @@
+Hello! In order to complete the challenge you need to fill some info about path to flag
+Filling path info
+Filling station info
+Enter value of average_trains field please:80
+Enter value of country field please:Savirellia
+Enter value of city field please:Ziyton
+Filling station info
+Enter value of average_trains field please:23
+Enter value of country field please:Contiensa
+Enter value of city field please:Zhand
+Filling train info
+Enter value of rate field please:5
+Filling user info
+Enter value of age field please:54
+Filling name info
+Enter value of surname field please:Wenger
+Enter value of name field please:Matthieu
+Filling passport info
+Enter value of number field please:1950707
+Filling country info
+Enter value of name field please:Rohan
+Enter value of age_country field please:1486
+Enter value of population field please:2759687
+Filling date info
+Enter value of day field please:22
+Enter value of month field please:4
+Enter value of year field please:2001
+Enter value of passengers_count field please:959
+Enter value of price field please:2392
+Enter value of train_number field please:H142
+Filling duration info
+Enter value of seconds field please:46
+Enter value of hours field please:27
+Enter value of minutes field please:33
+Well done!
+Now concatenate all data you entered and place here as key
+Enter key: 80SavirelliaZiyton23ContiensaZhand554WengerMatthieu1950707Rohan1486275968722420019592392H142462733
+Flag: spbctf{12DDWDQ1d12e11d128r1928ry192fy11253255}

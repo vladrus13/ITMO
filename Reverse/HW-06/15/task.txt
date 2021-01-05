@@ -1,0 +1,45 @@
+1) int num = 4 * 7 + 3 * 2; c
+2) int num = 4 + 7 - 3 * 8; e
+3) char num = 4 * 7 - 3 * 8; d
+4) int num = 4 * 7 - 3 * 8; b
+5) int num = 4 * 7 + 3 * 8; a
+
+
+a) mov rax, offset num 4 * 7 + 3 * 8 -> 5
+   mov rbx, 4
+   imul rbx, 7
+   mov dword ptr [rax], ebx
+   mov rbx, 3
+   lea rbx, [rbx * 8]
+   add dword ptr [rax], ebx
+   
+b) mov rax, offset num 4 * 7 - 3 * 8 -> 4
+   mov rbx, 4
+   imul rbx, 7
+   mov dword ptr [rax], ebx
+   mov rbx, 3
+   lea rbx, [rbx * 8]
+   sub dword ptr [rax], ebx
+   
+c) mov rax, offset num 4 * 7 + 
+   mov rbx, 4
+   imul rbx, 7
+   mov dword ptr [rax], ebx
+   mov rbx, 3
+   lea rbx, [rbx + rbx]
+   add dword ptr [rax], ebx
+   
+d) mov rax, offset num -> 2
+   mov rbx, 4
+   imul rbx, 7
+   mov byte ptr [rax], bl
+   mov rbx, 3
+   lea rbx, [rbx * 8]
+   sub byte ptr [rax], bl
+   
+e) mov rax, offset num -> 3
+   mov dword ptr [rax], 4
+   add dword ptr [rax], 7
+   mov rbx, 3
+   lea rbx, [rbx * 8]
+   sub dword ptr [rax], ebx

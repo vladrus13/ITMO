@@ -1,0 +1,31 @@
+package %type;
+
+import %type.beans.*;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class %typeLauncher {
+    /**
+     * Return parsed node
+     * @param s parsed string
+     * @return {@link %typeNode} - node
+     * @throws ParseException if we have parsing problem like unsupported character, unexpected token, etc.
+     */
+    public static %typeNode parse(String s) throws %type.exception.ParseException {
+        %typeLexer lexer = new %typeLexer(s);
+        lexer.nextToken();
+        return new %type%s(lexer, null);
+    }
+
+    public static void main(String[] args) throws %type.exception.ParseException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            parse(bufferedReader.lines().collect(Collectors.joining()));
+        } catch (%type.exception.ParseException e) {
+            e.printStackTrace();
+        }
+    }
+}

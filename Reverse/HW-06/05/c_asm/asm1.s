@@ -1,0 +1,43 @@
+4005b4: mov DWORD PTR [VAR],0x0
+4005bb: mov DWORD PTR [VAR+4],0x1
+4005c2: mov DWORD PTR [VAR+8],0x2
+4005c9: mov DWORD PTR [VAR+0xC],0x3
+4005d0: mov DWORD PTR [VAR+0x10],0x4
+4005d7: mov DWORD PTR [VAR+0x14],0x5
+4005de: mov DWORD PTR [VAR+0x18],0x6
+4005e5: mov DWORD PTR [VAR+0x1C],0x7
+4005ec: mov DWORD PTR [VAR+0x20],0x8
+4005f3: mov DWORD PTR [VAR+0x24],0x9
+4005fa: mov DWORD PTR [VAR_I],0x0
+
+400601: jmp 40066a
+400603: mov DWORD PTR [VAR_J],0x0
+40060a: jmp 400659
+40060c: mov eax,DWORD PTR [VAR_J]
+400611: mov edx,DWORD PTR [rbp+rax*4-0x30]
+400615: mov eax,DWORD PTR [VAR_J]
+400618: add eax,0x1
+40061d: mov eax,DWORD PTR [rbp+rax*4-0x30]
+400621: cmp edx,eax
+400623: jg  400655
+400625: mov eax,DWORD PTR [VAR_J]
+40062a: mov eax,DWORD PTR [rbp+rax*4-0x30]
+40062e: mov DWORD PTR [rbp-0x34],eax
+400631: mov eax,DWORD PTR [VAR_J]
+400634: add eax,0x1
+400639: mov edx,DWORD PTR [rbp+rax*4-0x30]
+40063d: mov eax,DWORD PTR [VAR_J]
+400642: mov DWORD PTR [rbp+rax*4-0x30],edx
+400646: mov eax,DWORD PTR [VAR_J]
+400649: add eax,0x1
+40064e: mov edx,DWORD PTR [rbp-0x34]
+400651: mov DWORD PTR [rbp+rax*4-0x30],edx
+400655: add DWORD PTR [VAR_J],0x1
+400659: mov eax,0xa
+40065e: sub eax,DWORD PTR [VAR_I]
+400661: cmp eax,DWORD PTR [VAR_J]
+400664: jg  40060c
+400666: add DWORD PTR [VAR_I],0x1
+
+40066a: cmp DWORD PTR [VAR_I],0x9
+40066e: jle 400603

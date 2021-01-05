@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/MathLogicHW.dir/main.cpp.o CMakeFiles/MathLogicHW.dir/Base.cpp.o CMakeFiles/MathLogicHW.dir/ExpressionParser.cpp.o CMakeFiles/MathLogicHW.dir/SolveStatus.cpp.o CMakeFiles/MathLogicHW.dir/SolveE.cpp.o  -o MathLogicHW 

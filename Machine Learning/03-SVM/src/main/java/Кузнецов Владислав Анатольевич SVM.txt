@@ -1,0 +1,647 @@
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/csv/CSVParser.java --
+package ru.vladrus13.csv;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+import ru.vladrus13.bean.Bean;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
+public class CSVParser {
+    public static ArrayList<Bean> readAll(Path path) throws IOException, CsvValidationException {
+        Reader reader = Files.newBufferedReader(path);
+        CSVReader csvReader = new CSVReader(reader);
+        ArrayList<Bean> persons = new ArrayList<>();
+        @SuppressWarnings("UnusedAssignment")
+        String[] line = csvReader.readNext();
+        while ((line = csvReader.readNext()) != null) {
+            persons.add(new Bean(line));
+        }
+        reader.close();
+        csvReader.close();
+        return persons;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/image/ImageCreator.java --
+package ru.vladrus13.image;
+
+import ru.vladrus13.bean.Point;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+/**
+ * Image creator
+ */
+public class ImageCreator {
+
+    /**
+     * @param point point in (0, 0) on left-bottom
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormal(Point point) {
+        return new Point(point.getX(), 1000 - point.getY());
+    }
+
+    /**
+     * @param point point on graphic
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormalOnGraphic(Point point) {
+        return makeNormal(new Point(point.getX() + 100, point.getY() + 100));
+    }
+
+    /**
+     * Draw line
+     *
+     * @param graphics {@link Graphics}
+     * @param start    start point
+     * @param finish   finish point
+     */
+    private static void lineOnGraphic(Graphics graphics, Point start, Point finish) {
+        start = makeNormalOnGraphic(start);
+        finish = makeNormalOnGraphic(finish);
+        graphics.drawLine(start.getX(), start.getY(), finish.getX(), finish.getY());
+    }
+
+    private static void squareOnGraphic(Graphics graphics, Point start, Point size, Color color) {
+        start = makeNormalOnGraphic(start);
+        start = new Point(start.getX(), start.getY() - size.getY());
+        graphics.setColor(color);
+        graphics.fillRect(start.getX(), start.getY(), size.getX(), size.getY());
+    }
+
+    /**
+     * Draw point
+     *
+     * @param graphics {@link Graphics}
+     * @param point    point
+     */
+    private static void pointOnGraphic(Graphics graphics, Point point, Color color) {
+        graphics.setColor(color);
+        point = makeNormalOnGraphic(point);
+        graphics.fillOval(point.getX() - 4, point.getY() - 4, 8, 8);
+    }
+
+    private static Color toColor(double m) {
+        m += 1;
+        return new Color((int) m * 127, 0, (int) (2 - m) * 127, 128);
+    }
+
+    private static Color NPToColor(int category) {
+        if (category == 1) {
+            return Color.RED;
+        } else {
+            return Color.BLUE;
+        }
+    }
+
+    private static Point normalize(double x, double y, double x_min, double x_max, double y_min, double y_max) {
+        return new Point((int) ((x - x_min) * 800 / (x_max - x_min)), (int) ((y - y_min) * 800 / (y_max - y_min)));
+    }
+
+    private static double lastDigit(double x) {
+        return (double) ((int) (x * 1000)) / 1000;
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public static BufferedImage draw(String file, String method, ArrayList<ArrayList<Double>> X, ArrayList<Integer> Y,
+                                     Point size, int chapters, ArrayList<ArrayList<Double>> colors) {
+        BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.createGraphics();
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(0, 0, 1000, 1000);
+
+        double x_min = X.stream().mapToDouble(e -> e.get(0)).min().getAsDouble();
+        double x_max = X.stream().mapToDouble(e -> e.get(0)).max().getAsDouble();
+        double y_min = X.stream().mapToDouble(e -> e.get(1)).min().getAsDouble();
+        double y_max = X.stream().mapToDouble(e -> e.get(1)).max().getAsDouble();
+        double x_step = (x_max - x_min) / chapters;
+        double y_step = (y_max - y_min) / chapters;
+
+        for (int i = 0; i < chapters; i++) {
+            for (int j = 0; j < chapters; j++) {
+                squareOnGraphic(graphics, normalize(x_min + i * x_step, y_min + j * y_step, x_min, x_max, y_min, y_max),
+                        size, toColor(colors.get(i).get(j)));
+            }
+        }
+        graphics.setColor(Color.BLACK);
+        lineOnGraphic(graphics, new Point(0, 0), new Point(800, 0));
+        lineOnGraphic(graphics, new Point(0, 0), new Point(0, 800));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, -10));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, 10));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(-10, 790));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(10, 790));
+        IntStream.range(0, chapters).forEach(i -> {
+                    lineOnGraphic(graphics, new Point(-10, i * (800 / chapters)), new Point(10, i * (800 / chapters)));
+                    lineOnGraphic(graphics, new Point(i * (800 / chapters), -10), new Point(i * (800 / chapters), 10));
+                    graphics.drawString(String.valueOf(lastDigit(x_min + x_step * i)), 10, 1000 - (i * (800 / chapters) + 100));
+                    graphics.drawString(String.valueOf(lastDigit(y_min + y_step * i)), 100 + i * (800 / chapters), 990);
+                }
+        );
+        graphics.drawString(String.format("File: %s, Method: %s", file, method), 10, 10);
+        graphics.drawString("Red - N, Blue - P", 10, 30);
+        graphics.drawString("@vladrus13", 930, 980);
+        graphics.setColor(Color.RED);
+        for (int i = 0; i < X.size(); i++) {
+            pointOnGraphic(graphics, normalize(X.get(i).get(0), X.get(i).get(1), x_min, x_max, y_min, y_max), NPToColor(Y.get(i)));
+        }
+        return image;
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/image/ImageSaver.java --
+package ru.vladrus13.image;
+
+import ru.vladrus13.kernel.KernelClass;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * Image saver
+ */
+public class ImageSaver {
+    /**
+     * Save image
+     *
+     * @param image image
+     * @param kernelClass type of network
+     */
+    public static void save(BufferedImage image, String file, KernelClass kernelClass) {
+        File imageFile = new File(String.valueOf(Path.of("resources")
+                .resolve("images")
+                .resolve(file)
+                .resolve(kernelClass.toFileString())
+                .resolve("image.png")));
+        if (!imageFile.getParentFile().exists()) {
+            try {
+                Files.createDirectories(Path.of(imageFile.getParentFile().getAbsolutePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            ImageIO.write(image, "PNG", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/util/Mathematics.java --
+package ru.vladrus13.util;
+
+import ru.vladrus13.bean.Bean;
+
+public class Mathematics {
+    public static double scalar(Bean a, Bean b) {
+        double result = 0;
+        for (int i = 0; i < a.getPosition().size(); i++) {
+            result += a.getPosition().get(i) * b.getPosition().get(i);
+        }
+        return result;
+    }
+
+    public static double manhattan(Bean a, Bean b) {
+        double result = 0;
+        for (int i = 0; i < a.getPosition().size(); i++) {
+            result += Math.pow(a.getPosition().get(i) - b.getPosition().get(i), 2);
+        }
+        return Math.sqrt(result);
+    }
+
+    public static double sqr(double x) {
+        return x * x;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/Launcher.java --
+package ru.vladrus13;
+
+import com.opencsv.exceptions.CsvValidationException;
+import ru.vladrus13.bean.Bean;
+import ru.vladrus13.bean.Point;
+import ru.vladrus13.bean.SVM;
+import ru.vladrus13.csv.CSVParser;
+import ru.vladrus13.image.ImageCreator;
+import ru.vladrus13.image.ImageSaver;
+import ru.vladrus13.kernel.KernelClass;
+import ru.vladrus13.kernel.KernelFunction;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Launcher {
+
+    private static final int chapters = 100;
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public static void main(String[] args) throws IOException, CsvValidationException {
+        ArrayList<String> namesCSV = new ArrayList<>(List.of("chips", "geyser"));
+        ArrayList<KernelClass> kernelClasses = KernelClass.generate();
+        for (String name : namesCSV) {
+            ArrayList<Bean> beans = CSVParser.readAll(Path.of("resources").resolve(name + ".csv"));
+            KernelClass best = null;
+            int resultBest = 0;
+            for (KernelClass kernelClass : kernelClasses) {
+                ArrayList<ArrayList<Double>> X = new ArrayList<>();
+                ArrayList<Integer> Y = new ArrayList<>();
+                for (Bean bean : beans) {
+                    // bean.getPosition().add(1.0);
+                    X.add(bean.getPosition());
+                    Y.add(bean.getClassification());
+                }
+                System.out.println("Start machine:        " + kernelClass.toString());
+                SVM svm = new SVM(X, Y, kernelClass);
+                System.out.println("Start calculate:      " + kernelClass.toString());
+                svm.calculateAnswer();
+                System.out.println("Start predict manage: " + kernelClass.toString());
+                double x_min = X.stream().mapToDouble(element -> element.get(0)).min().getAsDouble();
+                double x_max = X.stream().mapToDouble(element -> element.get(0)).max().getAsDouble();
+                double y_min = X.stream().mapToDouble(element -> element.get(1)).min().getAsDouble();
+                double y_max = X.stream().mapToDouble(element -> element.get(1)).max().getAsDouble();
+                double x_step = (x_max - x_min) / chapters;
+                double y_step = (y_max - y_min) / chapters;
+                ArrayList<ArrayList<Double>> colors = new ArrayList<>();
+                for (int i = 0; i < chapters; i++) {
+                    ArrayList<Double> temp = new ArrayList<>();
+                    for (int j = 0; j < chapters; j++) {
+                        temp.add(svm.predict(new ArrayList<>(List.of(x_min + i * x_step, y_min + j * y_step))));
+                    }
+                    colors.add(temp);
+                }
+                int result = 0;
+                for (int i = 0; i < X.size(); i++) {
+                    int predict = (int) svm.predict(X.get(i));
+                    if (predict == Y.get(i)) {
+                        result++;
+                    }
+                }
+                if (result > resultBest) {
+                    resultBest = result;
+                    best = kernelClass;
+                }
+                System.out.println("Result: " + result + " from " + X.size());
+                ImageSaver.save(ImageCreator.draw(name, kernelClass.toString(), X, Y,
+                        new Point((int) (x_step * 800 / (x_max - x_min)), (int) (y_step * 800 / (y_max - y_min))), chapters, colors),
+                        name, kernelClass);
+            }
+            if (best != null) {
+                BufferedWriter bufferedWriter = Files.newBufferedWriter(Path.of("resources/" + name + ".txt"));
+                bufferedWriter.write("Best: " + best.toString() + ".\nResult: " + ((double) resultBest / beans.size()));
+                bufferedWriter.close();
+            }
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/kernel/KernelClass.java --
+package ru.vladrus13.kernel;
+
+import ru.vladrus13.bean.Bean;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class KernelClass {
+    private final KernelFunction kernelFunction;
+    private final Double gamma;
+    private final Double k;
+    private final double C;
+
+    public KernelClass(KernelFunction kernelFunction, Double gamma, Double k, double C) {
+        this.kernelFunction = kernelFunction;
+        this.gamma = gamma;
+        this.k = k;
+        this.C = C;
+    }
+
+    public double calculate(ArrayList<Double> a, ArrayList<Double> b) {
+        return kernelFunction.calculate(new Bean(a, 0), new Bean(b, 0), gamma, k);
+    }
+
+    public static ArrayList<KernelClass> generate() {
+        ArrayList<KernelClass> result = new ArrayList<>();
+        for (double C : List.of(0.1, 1.0, 5.0, 10.0, 15.0, 50.0, 100.0, 1000.0)) {
+            result.add(new KernelClass(KernelFunction.LINEAR, 0.0, 0.0, C));
+            for (Double gamma : List.of(0.1, 0.2, 0.3)) {
+                result.add(new KernelClass(KernelFunction.RBF, gamma, 0.0, C));
+            }
+            for (Double gamma : List.of(0.25, 0.5, 0.75, 1.0)) {
+                for (Double k : List.of(0.0, 0.1, 0.25, 0.5, 0.75, 1.0)) {
+                    result.add(new KernelClass(KernelFunction.SIGMOID, gamma, k, C));
+                }
+            }
+            for (Double gamma : List.of(0.15, 0.5, 0.75, 1.0)) {
+                for (Double k : List.of(0.0, 0.1, 0.25, 0.5, 0.75, 1.0)) {
+                    result.add(new KernelClass(KernelFunction.POLY, gamma, k, C));
+                }
+            }
+        }
+        return result;
+    }
+
+    public String toString() {
+        return "Kernel class: " + kernelFunction.name() + ", gamma = " + gamma + ", k = " + k + ", C = " + C;
+    }
+    public String toFileString() {
+        return kernelFunction.name() + "-" + gamma + "-" + k + "-" + C;
+    }
+
+    public double getC() {
+        return C;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/kernel/KernelFunction.java --
+package ru.vladrus13.kernel;
+
+import ru.vladrus13.bean.Bean;
+import ru.vladrus13.util.Mathematics;
+
+public enum KernelFunction {
+    LINEAR {
+        @Override
+        public double calculate(Bean a, Bean b, double gamma, double k) {
+            return Mathematics.scalar(a, b);
+        }
+    },
+    SIGMOID {
+        @Override
+        public double calculate(Bean a, Bean b, double gamma, double k) {
+            return Math.tanh(gamma * Mathematics.scalar(a, b) + k);
+        }
+    },
+    RBF {
+        @Override
+        public double calculate(Bean a, Bean b, double gamma, double k) {
+            return Math.exp(-gamma * Math.pow(Mathematics.manhattan(a, b), 2));
+        }
+    },
+    POLY {
+        @Override
+        public double calculate(Bean a, Bean b, double gamma, double k) {
+            return Math.pow(gamma * Mathematics.scalar(a, b) + k, 3);
+        }
+    };
+
+    public abstract double calculate(Bean a, Bean b, double gamma, double k);
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/SVM.java --
+package ru.vladrus13.bean;
+
+import ru.vladrus13.kernel.KernelClass;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
+
+public class SVM {
+
+    private final ArrayList<ArrayList<Double>> matrix;
+    private final ArrayList<ArrayList<Double>> pre;
+    private final ArrayList<Integer> ys;
+    private final double C;
+    private final ArrayList<Double> lambda = new ArrayList<>();
+    private double B;
+    private final KernelClass kernelClass;
+
+    public ArrayList<ArrayList<Double>> kernelMatrix(ArrayList<ArrayList<Double>> a, ArrayList<ArrayList<Double>> b) {
+        ArrayList<ArrayList<Double>> result = new ArrayList<>();
+        for (ArrayList<Double> ae : a) {
+            ArrayList<Double> temp = new ArrayList<>();
+            for (ArrayList<Double> be : b) {
+                temp.add(kernelClass.calculate(ae, be));
+            }
+            result.add(temp);
+        }
+        return result;
+    }
+
+    public SVM(ArrayList<ArrayList<Double>> pre, ArrayList<Integer> ys, KernelClass kernelClass) {
+        this.pre = pre;
+        this.ys = ys;
+        this.C = kernelClass.getC();
+        this.kernelClass = kernelClass;
+        matrix = kernelMatrix(pre, pre);
+    }
+
+    private double wCalculate(int position) {
+        double answer = B;
+        for (int i = 0; i < ys.size(); i++) {
+            answer += matrix.get(position).get(i) * ys.get(i) * lambda.get(i);
+        }
+        return answer;
+    }
+
+    public double predict(ArrayList<Double> point) {
+        double result = 0;
+        ArrayList<ArrayList<Double>> single = new ArrayList<>(List.of(point));
+        ArrayList<ArrayList<Double>> smallMatrix = kernelMatrix(single, pre);
+        for (int i = 0; i < matrix.size(); i++) {
+            result += lambda.get(i) * ys.get(i) * smallMatrix.get(0).get(i);
+        }
+        return Math.signum(result - B);
+    }
+
+    public void calculateAnswer() {
+        B = 0;
+        ArrayList<Integer> pairs = new ArrayList<>();
+        IntStream.range(0, ys.size()).forEach(element -> {
+            lambda.add(0.0);
+            pairs.add(element);
+        });
+        for (int iii = 0; iii < 5000; iii++) {
+            Collections.shuffle(pairs);
+            for (int i = 0; i < ys.size(); i++) {
+                double ei = wCalculate(i) - ys.get(i);
+                double eps = 1e-6;
+                if ((ys.get(i) * ei < -eps && lambda.get(i) < C) || (ys.get(i) * ei > eps && lambda.get(i) > 0)) {
+                    int swapper = pairs.get(i);
+                    if (i == swapper) continue;
+                    double eswapper = wCalculate(swapper) - ys.get(swapper);
+                    if (Math.abs(ei - eswapper) < eps) continue;
+                    double L, H;
+                    if (!ys.get(i).equals(ys.get(swapper))) {
+                        L = Math.max(0.0, lambda.get(swapper) - lambda.get(i));
+                        H = Math.min(C, C + lambda.get(swapper) - lambda.get(i));
+                    } else {
+                        L = Math.max(0.0, lambda.get(swapper) + lambda.get(i) - C);
+                        H = Math.min(C, lambda.get(swapper) + lambda.get(i));
+                    }
+                    if (Math.abs(L - H) < eps) continue;
+                    double drob = 2 * matrix.get(i).get(swapper) - matrix.get(i).get(i) - matrix.get(swapper).get(swapper);
+                    if (drob > eps) continue;
+                    double aswapperOld = lambda.get(swapper);
+                    double aswapper = Math.max(L, Math.min(H, aswapperOld - ys.get(swapper) * (ei - eswapper) / drob));
+                    if (Math.abs(aswapper - aswapperOld) < eps) continue;
+                    double aiOld = lambda.get(i);
+                    double ai = aiOld + ys.get(i) * ys.get(swapper) * (aswapperOld - aswapper);
+                    double k1 = B - ei - ys.get(i) * (ai - aiOld) * matrix.get(i).get(i) - ys.get(swapper) * (aswapper - aswapperOld) * matrix.get(i).get(swapper);
+                    double k2 = B - eswapper - ys.get(i) * (ai - aiOld) * matrix.get(i).get(swapper) - ys.get(swapper) * (aswapper - aswapperOld) * matrix.get(swapper).get(swapper);
+                    if (aiOld > 0 && aiOld < C) {
+                        B = k1;
+                    } else {
+                        if (aswapperOld > 0 && aswapperOld < C) {
+                            B = k2;
+                        } else {
+                            B = (k1 + k2) / 2;
+                        }
+                    }
+                    lambda.set(i, ai);
+                    lambda.set(swapper, aswapper);
+                }
+            }
+        }
+    }
+
+    public ArrayList<Double> getLambda() {
+        return lambda;
+    }
+
+    public double getB() {
+        return B;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Bean.java --
+package ru.vladrus13.bean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+public class Bean {
+    private final ArrayList<Double> position;
+
+    // = 1 if N else -1
+    private final int classification;
+
+    public Bean(String[] line) {
+        this(new ArrayList<>(List.of(Double.parseDouble(line[0]), Double.parseDouble(line[1]))), (line[2].equals("N") ? 1 : -1));
+    }
+
+    public Bean(ArrayList<Double> position, int classification) {
+        this.position = position;
+        this.classification = classification;
+    }
+
+    public ArrayList<Double> getPosition() {
+        return position;
+    }
+
+    public int getClassification() {
+        return classification;
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    public Bean clone() {
+        ArrayList<Double> copy = new ArrayList<>();
+        //noinspection UnnecessaryUnboxing
+        IntStream.range(0, position.size()).forEach(element -> copy.add(position.get(element).doubleValue()));
+        return new Bean(copy, classification);
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Point.java --
+package ru.vladrus13.bean;
+
+public class Point {
+    private final int x, y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    public Point clone() {
+        return new Point(x, y);
+    }
+}

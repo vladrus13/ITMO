@@ -1,0 +1,494 @@
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/Launcher.java --
+package ru.vladrus13;
+
+import ru.vladrus13.bean.Message;
+import ru.vladrus13.bean.NaiveBayes;
+import ru.vladrus13.bean.Part;
+import ru.vladrus13.bean.Point;
+import ru.vladrus13.drawing.ImageCreator;
+import ru.vladrus13.drawing.ImageSaver;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
+
+public class Launcher {
+    public static void main(String[] args) throws InterruptedException {
+        ArrayList<Part> parts = new ArrayList<>();
+        Path messages = Path.of("resources").resolve("messages");
+        System.out.println("    --- Start reading");
+        for (int i = 1; i < 11; i++) {
+            parts.add(new Part(messages.resolve("part" + i)));
+        }
+        System.out.println("    --- Finish reading");
+        for (int preAlpha = 2; preAlpha < 7; preAlpha++) {
+            for (int gram = 1; gram < 4; gram++) {
+                BinarySearchMachine binarySearchMachine = new BinarySearchMachine();
+                int lSpam = 1;
+                long perfectLegit;
+                long lLegitPrevious = 0;
+                long lLegitCurrent = binarySearchMachine.nextStep(lLegitPrevious);
+                int finalPreAlpha = preAlpha;
+                int finalGram = gram;
+                System.out.println("    --- Binary upper");
+                int countWrong = 1;
+                while (countWrong > 0) {
+                    lLegitPrevious = lLegitCurrent;
+                    lLegitCurrent = binarySearchMachine.nextStep(lLegitCurrent);
+                    long finalLLegitCurrent = lLegitCurrent;
+                    countWrong = IntStream.range(0, 10)
+                            .map(kicked -> getCountWrong(parts, finalPreAlpha, finalGram, kicked, lSpam, finalLLegitCurrent))
+                            .sum();
+                }
+                System.out.println("    --- Binary search");
+                while (lLegitCurrent - lLegitPrevious > 1) {
+                    long m = (lLegitCurrent + lLegitPrevious) / 2;
+                    if (IntStream.range(0, 10)
+                            .map(kicked -> getCountWrong(parts, finalPreAlpha, finalGram, kicked, lSpam, m))
+                            .sum() > 0) {
+                        lLegitPrevious = m;
+                    } else {
+                        lLegitCurrent = m;
+                    }
+                }
+                perfectLegit = lLegitCurrent;
+                System.out.printf("Perfect legit for prealpha = %d, gram = %d: %d%n", preAlpha, gram, perfectLegit);
+                ArrayList<Integer> counter = new ArrayList<>();
+                long step = 1;
+                if (perfectLegit - lSpam > 20) {
+                    step = (perfectLegit - lSpam) / 20;
+                }
+                ExecutorService executorService = Executors.newFixedThreadPool(Thread.activeCount());
+                int count = 0;
+                AtomicInteger finishCount = new AtomicInteger();
+                for (long lLegit = lSpam; lLegit <= perfectLegit; lLegit += step) {
+                    counter.add(null);
+                    long finalLLegit1 = lLegit;
+                    int finalCount = count;
+                    executorService.submit(() -> {
+                        counter.set(finalCount, IntStream.range(0, 10)
+                                .map(kicked -> getCountWrong(parts, finalPreAlpha, finalGram, kicked, lSpam, finalLLegit1))
+                                .sum());
+                        finishCount.getAndIncrement();
+                    });
+                    count++;
+                }
+                //noinspection StatementWithEmptyBody
+                while (finishCount.get() != counter.size()) {
+                    // empty
+                }
+                executorService.awaitTermination(1, TimeUnit.SECONDS);
+                ArrayList<Point> points = new ArrayList<>();
+                int size = counter.size();
+                int perOne = 800 / size;
+                int ideal = counter.get(0);
+                for (int i = 0; i < counter.size(); i++) {
+                    points.add(new Point(i * perOne, 800 * counter.get(i) / ideal));
+                }
+                String file = String.format("a=%d-n=%d", preAlpha, gram);
+                ImageSaver.save(ImageCreator.draw("", file, points), file);
+            }
+        }
+    }
+
+    private static int getCountWrong(ArrayList<Part> parts, int preAlpha, int gram, int kicked, int lSpam, long lLegit) {
+        int countWrong = 0;
+        NaiveBayes naiveBayes = new NaiveBayes(2,
+                2 * ((double) 1 / Math.pow(3, preAlpha)),
+                new ArrayList<>(List.of((double) lSpam, (double) lLegit)));
+        teach(naiveBayes, parts, gram, kicked);
+        for (Message message : parts.get(kicked).getMessages()) {
+            ArrayList<ArrayList<String>> messages = message.getMessages(gram);
+            double v = 0;
+            for (ArrayList<String> s : messages) {
+                ArrayList<Double> predict = naiveBayes.predict(s);
+                v += predict.get(1);
+            }
+            countWrong += (message.getC() == 1 && v / messages.size() <= 0.5 ? 1 : 0);
+        }
+        return countWrong;
+    }
+
+    private static void teach(NaiveBayes naiveBayes, ArrayList<Part> parts, int gram, int kicked) {
+        for (int i = 0; i < 10; i++) {
+            if (i != kicked) {
+                parts.get(i).getMessages()
+                        .forEach(element -> element.getMessages(gram).forEach(cool -> naiveBayes.teach(element.getC(), cool)));
+            }
+        }
+        naiveBayes.readyToPredict();
+    }
+
+    protected static class BinarySearchMachine {
+        long binaryStep;
+
+        BinarySearchMachine() {
+            binaryStep = 1;
+        }
+
+        public long nextStep(long x) {
+            if (binaryStep > 1e15) {
+                throw new ArithmeticException("Step is big");
+            }
+            long result = x + binaryStep;
+            binaryStep *= 2;
+            return result;
+        }
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/drawing/ImageCreator.java --
+package ru.vladrus13.drawing;
+
+import ru.vladrus13.bean.Point;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+/**
+ * Image creator
+ */
+public class ImageCreator {
+
+    /**
+     * @param point point in (0, 0) on left-bottom
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormal(Point point) {
+        return new Point(point.x, 1000 - point.y);
+    }
+
+    /**
+     * @param point point on graphic
+     * @return point in (0, 0) on left-up
+     */
+    private static Point makeNormalOnGraphic(Point point) {
+        return makeNormal(new Point(point.x + 100, point.y + 100));
+    }
+
+    /**
+     * Draw line
+     *
+     * @param graphics {@link Graphics}
+     * @param start    start point
+     * @param finish   finish point
+     */
+    private static void lineOnGraphic(Graphics graphics, Point start, Point finish) {
+        start = makeNormalOnGraphic(start);
+        finish = makeNormalOnGraphic(finish);
+        graphics.drawLine(start.x, start.y, finish.x, finish.y);
+    }
+
+    /**
+     * Draw point
+     *
+     * @param graphics {@link Graphics}
+     * @param point    point
+     */
+    private static void pointOnGraphic(Graphics graphics, Point point) {
+        point = makeNormalOnGraphic(point);
+        graphics.fillOval(point.x - 4, point.y - 4, 8, 8);
+    }
+
+    public static BufferedImage draw(String file, String method, ArrayList<Point> points) {
+        BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.createGraphics();
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(0, 0, 1000, 1000);
+        graphics.setColor(Color.BLACK);
+        lineOnGraphic(graphics, new Point(0, 0), new Point(800, 0));
+        lineOnGraphic(graphics, new Point(0, 0), new Point(0, 800));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, -10));
+        lineOnGraphic(graphics, new Point(800, 0), new Point(800 - 10, 10));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(-10, 790));
+        lineOnGraphic(graphics, new Point(0, 800), new Point(10, 790));
+        int size = points.size();
+        int perOne = 800 / size;
+        IntStream.range(0, size).forEach(element -> {
+                    lineOnGraphic(graphics, new Point(-10, element * perOne), new Point(10, element * perOne));
+                    lineOnGraphic(graphics, new Point(element * perOne, -10), new Point(element * perOne, 10));
+                    graphics.drawString(String.valueOf((double) element / 10), 10, 1000 - (element * perOne + 100));
+                    graphics.drawString(String.valueOf(element), 100 + element * perOne, 990);
+                }
+        );
+        graphics.drawString(String.format("File: %s, Method: %s", file, method), 10, 10);
+        graphics.drawString("Red - points", 10, 30);
+        graphics.drawString("@vladrus13", 930, 980);
+        graphics.setColor(Color.RED);
+        for (Point point : points) {
+            pointOnGraphic(graphics, point);
+        }
+        return image;
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/drawing/ImageSaver.java --
+package ru.vladrus13.drawing;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * Image saver
+ */
+public class ImageSaver {
+    /**
+     * Save image
+     *
+     * @param image image
+     * @param type  type of network
+     */
+    public static void save(BufferedImage image, String type) {
+        File imageFile = new File(String.valueOf(Path.of("resources")
+                .resolve("images")
+                .resolve(type)
+                .resolve("image.png")));
+        if (!imageFile.getParentFile().exists()) {
+            try {
+                Files.createDirectories(Path.of(imageFile.getParentFile().getAbsolutePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            ImageIO.write(image, "PNG", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Part.java --
+package ru.vladrus13.bean;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Objects;
+
+public class Part {
+    private final ArrayList<Message> messages;
+
+    public Part(Path path) {
+        messages = new ArrayList<>();
+        for (File file : Objects.requireNonNull(path.toFile().listFiles())) {
+            messages.add(new Message(file.toPath()));
+        }
+    }
+
+    public ArrayList<Message> getMessages() {
+        return messages;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Message.java --
+package ru.vladrus13.bean;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Message {
+    private final int c;
+    private final ArrayList<String> subject;
+    private final ArrayList<String> message;
+
+    public Message(Path path) {
+        if (path.getFileName().toString().contains("spm")) {
+            c = 0;
+        } else {
+            c = 1;
+        }
+        subject = new ArrayList<>();
+        message = new ArrayList<>();
+        try {
+            BufferedReader bufferedReader = Files.newBufferedReader(path);
+            String lineSubject = bufferedReader.readLine();
+            String lineMessage = bufferedReader.readLine();
+            lineMessage = bufferedReader.readLine();
+            Arrays.stream(lineSubject.split(" ")).skip(1).forEach(subject::add);
+            message.addAll(Arrays.asList(lineMessage.split(" ")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<String> getSubject() {
+        return subject;
+    }
+
+    public ArrayList<String> getMessage() {
+        return message;
+    }
+
+    public ArrayList<String> getMessage(int n) {
+        return new ArrayList<>(message.subList(0, n));
+    }
+
+    public ArrayList<ArrayList<String>> getMessages(int n) {
+        ArrayList<ArrayList<String>> messages = new ArrayList<>();
+        for (int i = 0; i < Math.min(10, message.size() - n); i++) {
+            messages.add(new ArrayList<>(message.subList(i, i + n)));
+        }
+        return messages;
+    }
+
+    public int getC() {
+        return c;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/Point.java --
+package ru.vladrus13.bean;
+
+public class Point {
+    public int x, y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+
+
+----------------------------------------------------------
+
+
+
+-- ru/vladrus13/bean/NaiveBayes.java --
+package ru.vladrus13.bean;
+
+import java.util.*;
+
+public class NaiveBayes {
+    private final int k;
+    private final double alpha;
+    private final ArrayList<Double> lambdas;
+    private final ArrayList<Map<String, Integer>> counts;
+    private final ArrayList<Integer> classCounts;
+    private final Set<String> allWords;
+    private ArrayList<Map<String, Double>> problem;
+    private int n;
+
+    public NaiveBayes(int k, double alpha, ArrayList<Double> lambdas) {
+        this.k = k;
+        this.alpha = alpha;
+        this.lambdas = lambdas;
+        counts = new ArrayList<>();
+        classCounts = new ArrayList<>();
+        allWords = new HashSet<>();
+        for (int i = 0; i < k; i++) {
+            counts.add(new HashMap<>());
+            classCounts.add(0);
+        }
+        n = 0;
+    }
+
+    public void teach(int c, Collection<String> words) {
+        Set<String> setWords = new HashSet<>();
+        for (String word : words) {
+            allWords.add(word);
+            setWords.add(word);
+        }
+        setWords.forEach(element -> counts.get(c).merge(element, 1, Integer::sum));
+        classCounts.set(c, classCounts.get(c) + 1);
+        n++;
+    }
+
+    public void readyToPredict() {
+        problem = new ArrayList<>();
+        for (int i = 0; i < k; i++) {
+            problem.add(new HashMap<>());
+            for (Map.Entry<String, Integer> entry : counts.get(i).entrySet()) {
+                problem.get(i).put(entry.getKey(), ((double) entry.getValue() + alpha) / (classCounts.get(i) + 2 * alpha));
+            }
+        }
+    }
+
+    public ArrayList<Double> predict(Collection<String> words) {
+        ArrayList<Double> scores = new ArrayList<>();
+        for (int j = 0; j < k; j++) {
+            scores.add(0.0);
+        }
+        int counter = 0;
+        double sum = 0;
+        for (int j = 0; j < k; j++) {
+            if (classCounts.get(j) != 0) {
+                double score = Math.log((double) lambdas.get(j) * classCounts.get(j) / n);
+                for (String word : allWords) {
+                    double v = (problem.get(j).getOrDefault(word, (alpha / ((double) classCounts.get(j) + alpha * 2))));
+                    if (words.contains(word)) {
+                        score += Math.log(v);
+                    } else {
+                        score += Math.log(1 - v);
+                    }
+                }
+                scores.set(j, score);
+                counter++;
+                sum += score;
+            }
+        }
+        double avg = -sum / counter;
+        sum = 0;
+        for (int j = 0; j < k; j++) {
+            if (classCounts.get(j) != 0) {
+                scores.set(j, Math.exp(avg + scores.get(j)));
+                sum += scores.get(j);
+            }
+        }
+        for (int j = 0; j < k; j++) {
+            scores.set(j, scores.get(j) / sum);
+        }
+        return scores;
+    }
+}
