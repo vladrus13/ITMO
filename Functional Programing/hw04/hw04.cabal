@@ -1,0 +1,188 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: e6d1e7779f6e2a3e9056ec965e77b077ff1f99b20f317ff024283756f3fe5e85
+
+name:           hw04
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/hw04#readme>
+homepage:       https://github.com/vladrus13#readme
+bug-reports:    https://github.com/vladrus13/issues
+author:         Vladislav Kuznetsov
+maintainer:     example@example.com
+copyright:      2020 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/vladrus13
+
+library
+  exposed-modules:
+      Comonad.Comonad
+      FileSystem.FileSystem
+      Geometry.Point
+      HalyavaScript.JavaScript
+      HalyavaScript.Script
+      HashTable.HashTable
+      MonteCarlo.Expr
+      MonteCarlo.MonteCarlo
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      src
+  ghc-options: -Wall
+  build-depends:
+      base >=4.7 && <5
+    , comonad
+    , directory
+    , extra
+    , hashable
+    , microlens
+    , monad-loops
+    , monad-par
+    , monad-par-extras
+    , random
+    , stm
+    , vector
+  default-language: Haskell2010
+
+executable hw04-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , hw04
+    , random
+  default-language: Haskell2010
+
+test-suite file-system
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      test/FileSystem
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , hw04
+    , microlens
+  default-language: Haskell2010
+
+test-suite geometry
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      test/Geometry
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , hw04
+  default-language: Haskell2010
+
+test-suite halyava-script
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      test/HalyavaScript
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , hw04
+  default-language: Haskell2010
+
+test-suite hash-table
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      test/HashTable
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , hw04
+  default-language: Haskell2010
+
+test-suite monte-carlo
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      test/MonteCarlo
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , hw04
+  default-language: Haskell2010
+
+benchmark geometry-b
+  type: exitcode-stdio-1.0
+  main-is: GeometryBench.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      measurement/Geometry
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , criterion
+    , hw04
+  default-language: Haskell2010
+
+benchmark hash-table-b
+  type: exitcode-stdio-1.0
+  main-is: HashTableBench.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      measurement/HashTable
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N4 -O2
+  build-depends:
+      HUnit
+    , async
+    , base >=4.7 && <5
+    , criterion
+    , hw04
+  default-language: Haskell2010
+
+benchmark monte-carlo-b
+  type: exitcode-stdio-1.0
+  main-is: MonteCarloBench.hs
+  other-modules:
+      Paths_hw04
+  hs-source-dirs:
+      measurement/MonteCarlo
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N4 -O2
+  build-depends:
+      HUnit
+    , base >=4.7 && <5
+    , criterion
+    , hw04
+    , monad-par
+    , monad-par-extras
+  default-language: Haskell2010

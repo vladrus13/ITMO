@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE Rank2Types #-}</span><span>
+</span><span id="line-2"></span><span>
+</span><span id="line-3"></span><span class="hs-comment">-- | File system file</span><span>
+</span><span id="line-4"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">FileSystem.FileSystem</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="FileSystem.FileSystem.html#cd"><span class="hs-identifier">cd</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#ls"><span class="hs-identifier">ls</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#file"><span class="hs-identifier">file</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#getDirectory"><span class="hs-identifier">getDirectory</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#contents%27"><span class="hs-identifier">contents'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier">FS</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-5"></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Lens.Micro</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Lens'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">Traversal'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">each</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">filtered</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">lens</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-operator">(^?)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">System.Directory</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">doesDirectoryExist</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">listDirectory</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">withCurrentDirectory</span></span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span class="hs-comment">-- | File system</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">data</span><span> </span><span id="FS"><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-var">FS</span></a></span></span><span>
+</span><span id="line-11"></span><span>  </span><span class="hs-glyph">=</span><span> </span><span id="Dir"><span class="annot"><a href="FileSystem.FileSystem.html#Dir"><span class="hs-identifier hs-var">Dir</span></a></span></span><span>
+</span><span id="line-12"></span><span>      </span><span class="hs-special">{</span><span> </span><span id="name"><span class="annot"><span class="annottext">FS -&gt; FilePath
+</span><a href="FileSystem.FileSystem.html#name"><span class="hs-identifier hs-var hs-var">name</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">,</span><span> </span><span class="hs-comment">-- &#1085;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;&#1077; &#1087;&#1072;&#1087;&#1082;&#1080;, &#1085;&#1077; &#1087;&#1086;&#1083;&#1085;&#1099;&#1081; &#1087;&#1091;&#1090;&#1100;</span><span>
+</span><span id="line-13"></span><span>        </span><span id="contents"><span class="annot"><span class="annottext">FS -&gt; [FS]
+</span><a href="FileSystem.FileSystem.html#contents"><span class="hs-identifier hs-var hs-var">contents</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-14"></span><span>      </span><span class="hs-special">}</span><span>
+</span><span id="line-15"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="File"><span class="annot"><a href="FileSystem.FileSystem.html#File"><span class="hs-identifier hs-var">File</span></a></span></span><span>
+</span><span id="line-16"></span><span>      </span><span class="hs-special">{</span><span> </span><span id="name"><span class="annot"><a href="FileSystem.FileSystem.html#name"><span class="hs-identifier hs-var">name</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-comment">-- &#1085;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;&#1077; &#1092;&#1072;&#1081;&#1083;&#1072;, &#1085;&#1077; &#1087;&#1086;&#1083;&#1085;&#1099;&#1081; &#1087;&#1091;&#1090;&#1100;</span><span>
+</span><span id="line-17"></span><span>      </span><span class="hs-special">}</span><span>
+</span><span id="line-18"></span><span>
+</span><span id="line-19"></span><span class="hs-comment">-- | Scan file system and make FS class</span><span>
+</span><span id="line-20"></span><span class="annot"><a href="FileSystem.FileSystem.html#getDirectory"><span class="hs-identifier hs-type">getDirectory</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span>
+</span><span id="line-21"></span><span id="getDirectory"><span class="annot"><span class="annottext">getDirectory :: FilePath -&gt; IO FS
+</span><a href="FileSystem.FileSystem.html#getDirectory"><span class="hs-identifier hs-var hs-var">getDirectory</span></a></span></span><span> </span><span id="local-6989586621679104849"><span class="annot"><span class="annottext">path :: FilePath
+</span><a href="#local-6989586621679104849"><span class="hs-identifier hs-var">path</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-22"></span><span>  </span><span id="local-6989586621679104848"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679104848"><span class="hs-identifier hs-var">isDirectoryExist</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO Bool
+</span><span class="hs-identifier hs-var">doesDirectoryExist</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104849"><span class="hs-identifier hs-var">path</span></a></span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679104848"><span class="hs-identifier hs-var">isDirectoryExist</span></a></span><span>
+</span><span id="line-24"></span><span>    </span><span class="hs-keyword">then</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-25"></span><span>      </span><span id="local-6989586621679104847"><span class="annot"><span class="annottext">[FilePath]
+</span><a href="#local-6989586621679104847"><span class="hs-identifier hs-var">files</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO [FilePath]
+</span><span class="hs-identifier hs-var">listDirectory</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104849"><span class="hs-identifier hs-var">path</span></a></span><span>
+</span><span id="line-26"></span><span>      </span><span id="local-6989586621679104846"><span class="annot"><span class="annottext">[FS]
+</span><a href="#local-6989586621679104846"><span class="hs-identifier hs-var">fileSystem</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO [FS] -&gt; IO [FS]
+forall a. FilePath -&gt; IO a -&gt; IO a
+</span><span class="hs-identifier hs-var">withCurrentDirectory</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104849"><span class="hs-identifier hs-var">path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(FilePath -&gt; IO FS) -&gt; [FilePath] -&gt; IO [FS]
+forall (t :: * -&gt; *) (m :: * -&gt; *) a b.
+(Traversable t, Monad m) =&gt;
+(a -&gt; m b) -&gt; t a -&gt; m (t b)
+</span><span class="hs-identifier hs-var">mapM</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO FS
+</span><a href="FileSystem.FileSystem.html#getDirectory"><span class="hs-identifier hs-var">getDirectory</span></a></span><span> </span><span class="annot"><span class="annottext">[FilePath]
+</span><a href="#local-6989586621679104847"><span class="hs-identifier hs-var">files</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span>      </span><span class="annot"><span class="annottext">FS -&gt; IO FS
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; [FS] -&gt; FS
+</span><a href="FileSystem.FileSystem.html#Dir"><span class="hs-identifier hs-var">Dir</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104849"><span class="hs-identifier hs-var">path</span></a></span><span> </span><span class="annot"><span class="annottext">[FS]
+</span><a href="#local-6989586621679104846"><span class="hs-identifier hs-var">fileSystem</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-28"></span><span>    </span><span class="hs-keyword">else</span><span> </span><span class="annot"><span class="annottext">IOError -&gt; IO FS
+forall a. IOError -&gt; IO a
+</span><span class="hs-identifier hs-var">ioError</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; IOError
+</span><span class="hs-identifier hs-var">userError</span></span><span> </span><span class="annot"><span class="hs-string">&quot;This is not a directory&quot;</span></span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span>
+</span><span id="line-30"></span><span class="hs-comment">-- | Name lens</span><span>
+</span><span id="line-31"></span><span class="annot"><a href="FileSystem.FileSystem.html#name%27"><span class="hs-identifier hs-type">name'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Lens'</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
+</span><span id="line-32"></span><span id="name%27"><span class="annot"><span class="annottext">name' :: (FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS
+</span><a href="FileSystem.FileSystem.html#name%27"><span class="hs-identifier hs-var hs-var">name'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(FS -&gt; FilePath)
+-&gt; (FS -&gt; FilePath -&gt; FS) -&gt; Lens FS FS FilePath FilePath
+forall s a b t. (s -&gt; a) -&gt; (s -&gt; b -&gt; t) -&gt; Lens s t a b
+</span><span class="hs-identifier hs-var">lens</span></span><span> </span><span class="annot"><span class="annottext">FS -&gt; FilePath
+</span><a href="FileSystem.FileSystem.html#name"><span class="hs-identifier hs-var hs-var">name</span></a></span><span> </span><span class="annot"><span class="annottext">((FS -&gt; FilePath -&gt; FS) -&gt; (FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS)
+-&gt; (FS -&gt; FilePath -&gt; FS) -&gt; (FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679104841"><span class="annot"><span class="annottext">fileSystem :: FS
+</span><a href="#local-6989586621679104841"><span class="hs-identifier hs-var">fileSystem</span></a></span></span><span> </span><span id="local-6989586621679104840"><span class="annot"><span class="annottext">input :: FilePath
+</span><a href="#local-6989586621679104840"><span class="hs-identifier hs-var">input</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">FS
+</span><a href="#local-6989586621679104841"><span class="hs-identifier hs-var">fileSystem</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">name :: FilePath
+</span><a href="FileSystem.FileSystem.html#name"><span class="hs-identifier hs-var">name</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104840"><span class="hs-identifier hs-var">input</span></a></span><span class="hs-special">}</span><span>
+</span><span id="line-33"></span><span>
+</span><span id="line-34"></span><span class="hs-comment">-- | Content lens</span><span>
+</span><span id="line-35"></span><span class="annot"><a href="FileSystem.FileSystem.html#contents%27"><span class="hs-identifier hs-type">contents'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Lens'</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-36"></span><span id="contents%27"><span class="annot"><span class="annottext">contents' :: ([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS
+</span><a href="FileSystem.FileSystem.html#contents%27"><span class="hs-identifier hs-var hs-var">contents'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(FS -&gt; [FS]) -&gt; (FS -&gt; [FS] -&gt; FS) -&gt; Lens FS FS [FS] [FS]
+forall s a b t. (s -&gt; a) -&gt; (s -&gt; b -&gt; t) -&gt; Lens s t a b
+</span><span class="hs-identifier hs-var">lens</span></span><span> </span><span class="annot"><span class="annottext">FS -&gt; [FS]
+</span><a href="FileSystem.FileSystem.html#contents"><span class="hs-identifier hs-var hs-var">contents</span></a></span><span> </span><span class="annot"><span class="annottext">((FS -&gt; [FS] -&gt; FS) -&gt; ([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS)
+-&gt; (FS -&gt; [FS] -&gt; FS) -&gt; ([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679104839"><span class="annot"><span class="annottext">fileSystem :: FS
+</span><a href="#local-6989586621679104839"><span class="hs-identifier hs-var">fileSystem</span></a></span></span><span> </span><span id="local-6989586621679104838"><span class="annot"><span class="annottext">input :: [FS]
+</span><a href="#local-6989586621679104838"><span class="hs-identifier hs-var">input</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">FS
+</span><a href="#local-6989586621679104839"><span class="hs-identifier hs-var">fileSystem</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">contents :: [FS]
+</span><a href="FileSystem.FileSystem.html#contents"><span class="hs-identifier hs-var">contents</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[FS]
+</span><a href="#local-6989586621679104838"><span class="hs-identifier hs-var">input</span></a></span><span class="hs-special">}</span><span>
+</span><span id="line-37"></span><span>
+</span><span id="line-38"></span><span class="hs-comment">-- | Filename traversal</span><span>
+</span><span id="line-39"></span><span class="annot"><a href="FileSystem.FileSystem.html#_file"><span class="hs-identifier hs-type">_file</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Traversal'</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
+</span><span id="line-40"></span><span id="_file"><span class="annot"><span class="annottext">_file :: (FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS
+</span><a href="FileSystem.FileSystem.html#_file"><span class="hs-identifier hs-var hs-var">_file</span></a></span></span><span> </span><span id="local-6989586621679104836"><span class="annot"><span class="annottext">fileFunction :: FilePath -&gt; f FilePath
+</span><a href="#local-6989586621679104836"><span class="hs-identifier hs-var">fileFunction</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="FileSystem.FileSystem.html#File"><span class="hs-identifier hs-type">File</span></a></span><span> </span><span id="local-6989586621679104835"><span class="annot"><span class="annottext">file' :: FilePath
+</span><a href="#local-6989586621679104835"><span class="hs-identifier hs-var">file'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FS
+</span><a href="FileSystem.FileSystem.html#File"><span class="hs-identifier hs-var">File</span></a></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; FS) -&gt; f FilePath -&gt; f FS
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; f FilePath
+</span><a href="#local-6989586621679104836"><span class="hs-identifier hs-var">fileFunction</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104835"><span class="hs-identifier hs-var">file'</span></a></span><span>
+</span><span id="line-41"></span><span class="annot"><a href="FileSystem.FileSystem.html#_file"><span class="hs-identifier hs-var">_file</span></a></span><span> </span><span class="hs-identifier">_</span><span> </span><span id="local-6989586621679104833"><span class="annot"><span class="annottext">another :: FS
+</span><a href="#local-6989586621679104833"><span class="hs-identifier hs-var">another</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FS -&gt; f FS
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">FS
+</span><a href="#local-6989586621679104833"><span class="hs-identifier hs-var">another</span></a></span><span>
+</span><span id="line-42"></span><span>
+</span><span id="line-43"></span><span class="hs-comment">-- | Directory name traversal</span><span>
+</span><span id="line-44"></span><span class="annot"><a href="FileSystem.FileSystem.html#_directoryName"><span class="hs-identifier hs-type">_directoryName</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Traversal'</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
+</span><span id="line-45"></span><span id="_directoryName"><span class="annot"><span class="annottext">_directoryName :: (FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS
+</span><a href="FileSystem.FileSystem.html#_directoryName"><span class="hs-identifier hs-var hs-var">_directoryName</span></a></span></span><span> </span><span id="local-6989586621679104831"><span class="annot"><span class="annottext">directoryFunction :: FilePath -&gt; f FilePath
+</span><a href="#local-6989586621679104831"><span class="hs-identifier hs-var">directoryFunction</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="FileSystem.FileSystem.html#Dir"><span class="hs-identifier hs-type">Dir</span></a></span><span> </span><span id="local-6989586621679104830"><span class="annot"><span class="annottext">name'' :: FilePath
+</span><a href="#local-6989586621679104830"><span class="hs-identifier hs-var">name''</span></a></span></span><span> </span><span id="local-6989586621679104829"><span class="annot"><span class="annottext">package :: [FS]
+</span><a href="#local-6989586621679104829"><span class="hs-identifier hs-var">package</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; [FS] -&gt; FS
+</span><a href="FileSystem.FileSystem.html#Dir"><span class="hs-identifier hs-var">Dir</span></a></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; [FS] -&gt; FS) -&gt; f FilePath -&gt; f ([FS] -&gt; FS)
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; f FilePath
+</span><a href="#local-6989586621679104831"><span class="hs-identifier hs-var">directoryFunction</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104830"><span class="hs-identifier hs-var">name''</span></a></span><span> </span><span class="annot"><span class="annottext">f ([FS] -&gt; FS) -&gt; f [FS] -&gt; f FS
+forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">[FS] -&gt; f [FS]
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">[FS]
+</span><a href="#local-6989586621679104829"><span class="hs-identifier hs-var">package</span></a></span><span>
+</span><span id="line-46"></span><span class="annot"><a href="FileSystem.FileSystem.html#_directoryName"><span class="hs-identifier hs-var">_directoryName</span></a></span><span> </span><span class="hs-identifier">_</span><span> </span><span id="local-6989586621679104828"><span class="annot"><span class="annottext">another :: FS
+</span><a href="#local-6989586621679104828"><span class="hs-identifier hs-var">another</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FS -&gt; f FS
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">FS
+</span><a href="#local-6989586621679104828"><span class="hs-identifier hs-var">another</span></a></span><span>
+</span><span id="line-47"></span><span>
+</span><span id="line-48"></span><span class="hs-comment">-- | Directory content traversal</span><span>
+</span><span id="line-49"></span><span class="annot"><a href="FileSystem.FileSystem.html#_directoryContent"><span class="hs-identifier hs-type">_directoryContent</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Traversal'</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-50"></span><span id="_directoryContent"><span class="annot"><span class="annottext">_directoryContent :: ([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS
+</span><a href="FileSystem.FileSystem.html#_directoryContent"><span class="hs-identifier hs-var hs-var">_directoryContent</span></a></span></span><span> </span><span id="local-6989586621679104826"><span class="annot"><span class="annottext">functionDirectory :: [FS] -&gt; f [FS]
+</span><a href="#local-6989586621679104826"><span class="hs-identifier hs-var">functionDirectory</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="FileSystem.FileSystem.html#Dir"><span class="hs-identifier hs-type">Dir</span></a></span><span> </span><span id="local-6989586621679104825"><span class="annot"><span class="annottext">name'' :: FilePath
+</span><a href="#local-6989586621679104825"><span class="hs-identifier hs-var">name''</span></a></span></span><span> </span><span id="local-6989586621679104824"><span class="annot"><span class="annottext">package :: [FS]
+</span><a href="#local-6989586621679104824"><span class="hs-identifier hs-var">package</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; [FS] -&gt; FS
+</span><a href="FileSystem.FileSystem.html#Dir"><span class="hs-identifier hs-var">Dir</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104825"><span class="hs-identifier hs-var">name''</span></a></span><span> </span><span class="annot"><span class="annottext">([FS] -&gt; FS) -&gt; f [FS] -&gt; f FS
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">[FS] -&gt; f [FS]
+</span><a href="#local-6989586621679104826"><span class="hs-identifier hs-var">functionDirectory</span></a></span><span> </span><span class="annot"><span class="annottext">[FS]
+</span><a href="#local-6989586621679104824"><span class="hs-identifier hs-var">package</span></a></span><span>
+</span><span id="line-51"></span><span class="annot"><a href="FileSystem.FileSystem.html#_directoryContent"><span class="hs-identifier hs-var">_directoryContent</span></a></span><span> </span><span class="hs-identifier">_</span><span> </span><span id="local-6989586621679104823"><span class="annot"><span class="annottext">another :: FS
+</span><a href="#local-6989586621679104823"><span class="hs-identifier hs-var">another</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FS -&gt; f FS
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">FS
+</span><a href="#local-6989586621679104823"><span class="hs-identifier hs-var">another</span></a></span><span>
+</span><span id="line-52"></span><span>
+</span><span id="line-53"></span><span class="hs-comment">-- | Focus lens on folder with name</span><span>
+</span><span id="line-54"></span><span class="annot"><a href="FileSystem.FileSystem.html#cd"><span class="hs-identifier hs-type">cd</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Traversal'</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span>
+</span><span id="line-55"></span><span id="cd"><span class="annot"><span class="annottext">cd :: FilePath -&gt; Traversal' FS FS
+</span><a href="FileSystem.FileSystem.html#cd"><span class="hs-identifier hs-var hs-var">cd</span></a></span></span><span> </span><span id="local-6989586621679104822"><span class="annot"><span class="annottext">path :: FilePath
+</span><a href="#local-6989586621679104822"><span class="hs-identifier hs-var">path</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS
+Traversal' FS [FS]
+</span><a href="FileSystem.FileSystem.html#_directoryContent"><span class="hs-identifier hs-var">_directoryContent</span></a></span><span> </span><span class="annot"><span class="annottext">(([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS)
+-&gt; ((FS -&gt; f FS) -&gt; [FS] -&gt; f [FS]) -&gt; (FS -&gt; f FS) -&gt; FS -&gt; f FS
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(FS -&gt; f FS) -&gt; [FS] -&gt; f [FS]
+forall s t a b. Each s t a b =&gt; Traversal s t a b
+</span><span class="hs-identifier hs-var">each</span></span><span> </span><span class="annot"><span class="annottext">((FS -&gt; f FS) -&gt; [FS] -&gt; f [FS])
+-&gt; ((FS -&gt; f FS) -&gt; FS -&gt; f FS) -&gt; (FS -&gt; f FS) -&gt; [FS] -&gt; f [FS]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(FS -&gt; Bool) -&gt; Traversal' FS FS
+forall a. (a -&gt; Bool) -&gt; Traversal' a a
+</span><span class="hs-identifier hs-var">filtered</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Maybe FilePath -&gt; Bool
+forall (t :: * -&gt; *) a. (Foldable t, Eq a) =&gt; a -&gt; t a -&gt; Bool
+</span><span class="hs-identifier hs-var">elem</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104822"><span class="hs-identifier hs-var">path</span></a></span><span> </span><span class="annot"><span class="annottext">(Maybe FilePath -&gt; Bool) -&gt; (FS -&gt; Maybe FilePath) -&gt; FS -&gt; Bool
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FS -&gt; Getting (First FilePath) FS FilePath -&gt; Maybe FilePath
+forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">Getting (First FilePath) FS FilePath
+Traversal' FS FilePath
+</span><a href="FileSystem.FileSystem.html#_directoryName"><span class="hs-identifier hs-var">_directoryName</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-56"></span><span>
+</span><span id="line-57"></span><span class="hs-comment">-- | Focus on names on folder</span><span>
+</span><span id="line-58"></span><span class="annot"><a href="FileSystem.FileSystem.html#ls"><span class="hs-identifier hs-type">ls</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Traversal'</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
+</span><span id="line-59"></span><span id="ls"><span class="annot"><span class="annottext">ls :: (FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS
+</span><a href="FileSystem.FileSystem.html#ls"><span class="hs-identifier hs-var hs-var">ls</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS
+Traversal' FS [FS]
+</span><a href="FileSystem.FileSystem.html#_directoryContent"><span class="hs-identifier hs-var">_directoryContent</span></a></span><span> </span><span class="annot"><span class="annottext">(([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS)
+-&gt; ((FilePath -&gt; f FilePath) -&gt; [FS] -&gt; f [FS])
+-&gt; (FilePath -&gt; f FilePath)
+-&gt; FS
+-&gt; f FS
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(FS -&gt; f FS) -&gt; [FS] -&gt; f [FS]
+forall s t a b. Each s t a b =&gt; Traversal s t a b
+</span><span class="hs-identifier hs-var">each</span></span><span> </span><span class="annot"><span class="annottext">((FS -&gt; f FS) -&gt; [FS] -&gt; f [FS])
+-&gt; ((FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS)
+-&gt; (FilePath -&gt; f FilePath)
+-&gt; [FS]
+-&gt; f [FS]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS
+Lens FS FS FilePath FilePath
+</span><a href="FileSystem.FileSystem.html#name%27"><span class="hs-identifier hs-var">name'</span></a></span><span>
+</span><span id="line-60"></span><span>
+</span><span id="line-61"></span><span class="hs-comment">-- | Focus on file name, if exists</span><span>
+</span><span id="line-62"></span><span class="annot"><a href="FileSystem.FileSystem.html#file"><span class="hs-identifier hs-type">file</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Traversal'</span></span><span> </span><span class="annot"><a href="FileSystem.FileSystem.html#FS"><span class="hs-identifier hs-type">FS</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
+</span><span id="line-63"></span><span id="file"><span class="annot"><span class="annottext">file :: FilePath -&gt; Traversal' FS FilePath
+</span><a href="FileSystem.FileSystem.html#file"><span class="hs-identifier hs-var hs-var">file</span></a></span></span><span> </span><span id="local-6989586621679104819"><span class="annot"><span class="annottext">path :: FilePath
+</span><a href="#local-6989586621679104819"><span class="hs-identifier hs-var">path</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS
+Traversal' FS [FS]
+</span><a href="FileSystem.FileSystem.html#_directoryContent"><span class="hs-identifier hs-var">_directoryContent</span></a></span><span> </span><span class="annot"><span class="annottext">(([FS] -&gt; f [FS]) -&gt; FS -&gt; f FS)
+-&gt; ((FilePath -&gt; f FilePath) -&gt; [FS] -&gt; f [FS])
+-&gt; (FilePath -&gt; f FilePath)
+-&gt; FS
+-&gt; f FS
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(FS -&gt; f FS) -&gt; [FS] -&gt; f [FS]
+forall s t a b. Each s t a b =&gt; Traversal s t a b
+</span><span class="hs-identifier hs-var">each</span></span><span> </span><span class="annot"><span class="annottext">((FS -&gt; f FS) -&gt; [FS] -&gt; f [FS])
+-&gt; ((FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS)
+-&gt; (FilePath -&gt; f FilePath)
+-&gt; [FS]
+-&gt; f [FS]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(FS -&gt; Bool) -&gt; Traversal' FS FS
+forall a. (a -&gt; Bool) -&gt; Traversal' a a
+</span><span class="hs-identifier hs-var">filtered</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Maybe FilePath -&gt; Bool
+forall (t :: * -&gt; *) a. (Foldable t, Eq a) =&gt; a -&gt; t a -&gt; Bool
+</span><span class="hs-identifier hs-var">elem</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679104819"><span class="hs-identifier hs-var">path</span></a></span><span> </span><span class="annot"><span class="annottext">(Maybe FilePath -&gt; Bool) -&gt; (FS -&gt; Maybe FilePath) -&gt; FS -&gt; Bool
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FS -&gt; Getting (First FilePath) FS FilePath -&gt; Maybe FilePath
+forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">Getting (First FilePath) FS FilePath
+Traversal' FS FilePath
+</span><a href="FileSystem.FileSystem.html#_file"><span class="hs-identifier hs-var">_file</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((FS -&gt; f FS) -&gt; FS -&gt; f FS)
+-&gt; ((FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS)
+-&gt; (FilePath -&gt; f FilePath)
+-&gt; FS
+-&gt; f FS
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; f FilePath) -&gt; FS -&gt; f FS
+Lens FS FS FilePath FilePath
+</span><a href="FileSystem.FileSystem.html#name%27"><span class="hs-identifier hs-var">name'</span></a></span></pre></body></html>

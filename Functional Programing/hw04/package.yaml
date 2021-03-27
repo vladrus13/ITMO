@@ -1,0 +1,154 @@
+name:                hw04
+version:             0.1.0.0
+github:              "vladrus13"
+license:             BSD3
+author:              "Vladislav Kuznetsov"
+maintainer:          "example@example.com"
+copyright:           "2020 Author name here"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/hw04#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  ghc-options:
+    - -Wall
+  dependencies:
+    - monad-par-extras
+    - monad-par
+    - stm
+    - vector
+    - hashable
+    - extra
+    - monad-loops
+    - directory
+    - microlens
+    - comonad
+    - random
+
+executables:
+  hw04-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hw04
+    - random
+
+tests:
+  geometry:
+    main:                Test.hs
+    source-dirs:         test/Geometry
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hw04
+    - HUnit
+  monte-carlo:
+    main:                Test.hs
+    source-dirs:         test/MonteCarlo
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - hw04
+    - HUnit
+  hash-table:
+    main:                Test.hs
+    source-dirs:         test/HashTable
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - hw04
+    - HUnit
+  halyava-script:
+    main:                Test.hs
+    source-dirs:         test/HalyavaScript
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - hw04
+    - HUnit
+  file-system:
+    main:                Test.hs
+    source-dirs:         test/FileSystem
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - hw04
+    - HUnit
+    - microlens
+
+benchmarks:
+  geometry-b:
+    main:                GeometryBench.hs
+    source-dirs:         measurement/Geometry
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hw04
+    - HUnit
+    - criterion
+  monte-carlo-b:
+    main:                MonteCarloBench.hs
+    source-dirs:         measurement/MonteCarlo
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    - -O2
+    dependencies:
+    - hw04
+    - HUnit
+    - criterion
+    - monad-par
+    - monad-par-extras
+  hash-table-b:
+    main:                HashTableBench.hs
+    source-dirs:         measurement/HashTable
+    ghc-options:
+    - -Wall
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    - -O2
+    dependencies:
+    - hw04
+    - HUnit
+    - criterion
+    - async
