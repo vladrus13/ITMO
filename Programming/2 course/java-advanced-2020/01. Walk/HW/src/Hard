@@ -1,2 +1,0 @@
-javac ru/ifmo/rain/kuznetsov/walk/Walk.java
-java -cp . -p . -m info.kgeorgiy.java.advanced.walk RecursiveWalk ru.ifmo.rain.kuznetsov.walk.Walk M3237

@@ -1,1 +1,0 @@
-moduleSearchIndex = [{"l":"info.kgeorgiy.java.advanced.implementor"},{"l":"ru.ifmo.rain.kuznetsov.impl"}]

@@ -1,2 +1,0 @@
-jar xf info.kgeorgiy.java.advanced.implementor.jar info/kgeorgiy/java/advanced/implementor/Impler.class info/kgeorgiy/java/advanced/implementor/JarImpler.class info/kgeorgiy/java/advanced/implementor/ImplerException.class
-jar cmf Manifest ru.ifmo.rain.kuznetsov.impl.jar ru/ifmo/rain/kuznetsov/impl/*.class
