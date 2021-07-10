@@ -1,0 +1,28 @@
+html {
+    padding: 2rem;
+    margin: 0 auto;
+}
+
+table .OK {
+    background-color: rgb(216, 256, 216);
+}
+
+table .WA {
+    background-color: rgb(256, 216, 216);
+}
+
+table .RE {
+    background-color: rgb(256, 256, 216);
+}
+
+table .TL {
+    background-color: rgb(216, 216, 256);
+}
+
+th {
+    padding: 2px 2px 2px 5px;
+}
+
+td {
+    padding: 2px 2px 2px 5px;
+}
