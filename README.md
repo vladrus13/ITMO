@@ -129,3 +129,47 @@
   ## МатСтат
   
   [Немного конспектов 4 сема](https://drive.google.com/open?id=1GREET-tE_5B-rSwuRCh6jNu4frIqEdQU)
+
+  ## [Криптография](https://github.com/vladrus13/ITMO/tree/master/Crypto)
+  
+  1. [Вижнер](https://github.com/vladrus13/ITMO/tree/master/Crypto/01)
+  2. [Неразличимость](https://github.com/vladrus13/ITMO/tree/master/Crypto/02)
+  3. [Дерево Меркла](https://github.com/vladrus13/ITMO/tree/master/Crypto/03)
+  4. [Подписи](https://github.com/vladrus13/ITMO/tree/master/Crypto/06)
+  5. [OPA](https://github.com/vladrus13/ITMO/tree/master/Crypto/07)
+
+  ## [Машинное обучение](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning)
+  
+  1. [KNN](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/1-KNN)
+  2. [Linear](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/2-linear)
+  3. [SVM](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/03-SVM)
+  4. [Bayes](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/04-Bayes)
+  5. [DT](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/05-DT)
+  6. [Boost](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/06-Boost)
+  7. [CNN](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/07-CNN)
+  8. [Clust](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/09-Clust)
+  9. [Codeforces labs](https://github.com/vladrus13/ITMO/tree/master/Machine%20Learning/laba)
+
+  ## [Функциональное программирование](https://github.com/vladrus13/ITMO/tree/master/Functional%20Programing)
+  
+  1. [Начало работы](https://github.com/vladrus13/ITMO/tree/master/Functional%20Programing/HW-01)
+  2. [Функторы и монады](https://github.com/vladrus13/ITMO/tree/master/Functional%20Programing/hw02)
+  3. [Файловая система](https://github.com/vladrus13/ITMO/tree/master/Functional%20Programing/hw03)
+  4. [Сложный Хаскель](https://github.com/vladrus13/ITMO/tree/master/Functional%20Programing/hw04)
+
+  ## [Параллельное программирование](https://github.com/vladrus13/ITMO/tree/master/MPP)
+  
+  ## [Reverse](https://github.com/vladrus13/ITMO/tree/master/Reverse)
+  
+  ## [Методы трансляции](https://github.com/vladrus13/ITMO/tree/master/TranslationsMethods)
+  
+  1. [Perl](https://github.com/vladrus13/ITMO/tree/master/TranslationsMethods/01)
+  2. [Рекурсивный парсер](https://github.com/vladrus13/ITMO/tree/master/TranslationsMethods/02)
+  3. [Автоматические средства генерации парсеров](https://github.com/vladrus13/ITMO/tree/master/TranslationsMethods/03)
+  4. [Написание парсера парсеров](https://github.com/vladrus13/ITMO/tree/master/TranslationsMethods/04)
+
+  ## [Вычислительная геометрия](https://github.com/vladrus13/ITMO/tree/master/ComputationalGeometry)
+  
+  ## [Эволюционные алгоритмы](https://github.com/vladrus13/ITMO/tree/master/EvolutionaryAlgorithms)
+  
+  ## [Распределенное программирование](https://github.com/vladrus13/ITMO/tree/master/PDS)
