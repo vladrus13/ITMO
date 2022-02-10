@@ -1,0 +1,10 @@
+
+Normal(SessionId, Letter) :-
+  Runs(_, SessionId, Letter, _, 1).
+BadSessions(ContestId, Letter) :-
+  Sessions(SessionId, _, ContestId, _),
+  Problems(ContestId, Letter, _),
+  ¬ Normal(SessionId, Letter).
+Answer(ContestId, Letter) :-
+  Problems(ContestId, Letter, _),
+  ¬ BadSessions(ContestId, Letter).

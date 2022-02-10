@@ -1,0 +1,1233 @@
+====================
+ДЗ-5.1.1s. Информация о студентах по :StudentId (sql)
+====================
+select StudentId, StudentName, GroupId from Students where StudentId = :StudentId
+
+
+====================
+ДЗ-5.1.2s. Информация о студентах по :StudentName (sql)
+====================
+select StudentId, StudentName, GroupId from Students where StudentName = :StudentName
+
+
+====================
+ДЗ-5.10s. Статистика по студентам (sql)
+====================
+select 1 as StudentId, 0 as Passed, 0 as Failed, 0 as Total from Students where StudentId != StudentId
+
+
+====================
+ДЗ-5.2.1s. Полная информация о студентах по :StudentId (sql)
+====================
+select StudentId, StudentName, GroupName from Students natural join Groups where StudentId = :StudentId
+
+
+====================
+ДЗ-5.2.2s. Полная информация о студентах по :StudentName (sql)
+====================
+select StudentId, StudentName, GroupName from Students natural join Groups where StudentName = :StudentName
+
+
+====================
+ДЗ-5.3.1s. Информация о студентах с :Mark по предмету :CourseId (sql)
+====================
+select StudentId, StudentName, GroupId from Marks 
+natural join Students 
+where Mark = :Mark and CourseId = :CourseId
+
+
+====================
+ДЗ-5.3.2s. Информацию о студентах с :Mark по предмету :CourseName (sql)
+====================
+select StudentId, StudentName, GroupId from Marks 
+natural join Courses 
+natural join Students 
+where Mark = :Mark and CourseName = :CourseName
+
+
+====================
+ДЗ-5.3.3s. Информацию о студентах с :Mark по предмету :LecturerId (sql)
+====================
+select StudentId, StudentName, GroupId from Marks 
+natural join Plan 
+natural join Students 
+where Mark = :Mark and LecturerId = :LecturerId
+
+
+====================
+ДЗ-5.3.4s. Информацию о студентах с :Mark по предмету :LecturerName (sql)
+====================
+select StudentId, StudentName, GroupId from Marks 
+natural join Students 
+natural join Plan 
+natural join Lecturers 
+where Mark = :Mark and LecturerName = :LecturerName
+
+
+====================
+ДЗ-5.3.5s. Информацию о студентах с :Mark по предмету :LecturerId (sql)
+====================
+select StudentId, StudentName, students.GroupId as GroupId
+  from Students students
+  natural join Marks m 
+  inner join Plan p using (CourseId)
+  where LecturerId = :LecturerId and Mark = :Mark
+
+
+====================
+ДЗ-5.3.6s. Информацию о студентах с :Mark по предмету :LecturerName (sql)
+====================
+select StudentId, StudentName, students.GroupId as GroupId
+  from Students students
+  inner join Marks using (StudentId) 
+  inner join Plan using (CourseId)
+  inner join Lecturers using (LecturerId)
+  where LecturerName = :LecturerName and Mark = :Mark
+
+
+====================
+ДЗ-5.4.1s. Информацию о студентах не имеющих оценки по :CourseName среди всех (sql)
+====================
+select StudentId, StudentName, GroupId from Students
+except 
+select StudentId, StudentName, GroupId from Marks natural join 
+  Courses natural join 
+  Students 
+where CourseName = :CourseName
+
+
+====================
+ДЗ-5.4.2s. Информацию о студентах не имеющих оценки по :CourseName среди тех, у кого он есть (sql)
+====================
+select StudentId, StudentName, GroupId 
+  from Students natural join Plan natural join Courses
+  where CourseName = :CourseName 
+except
+select StudentId, StudentName, GroupId
+  from Marks natural join Courses natural join Students
+  where CourseName = :CourseName
+
+
+====================
+ДЗ-5.5.1s. ФИО студента и названия предметов которые у него есть по плану (sql)
+====================
+select StudentName, CourseName 
+from Students natural join Plan natural join Courses;
+
+
+====================
+ДЗ-5.5.2s. ФИО студента и названия предметов которые у него есть без оценки (sql)
+====================
+select StudentName, CourseName from
+  (select distinct Students.StudentId, Courses.CourseId from Students
+    natural join Plan
+    natural join Courses
+    left join Marks on Marks.StudentId = Students.StudentId and Marks.CourseId = Courses.CourseId
+  where Mark is null
+  ) Studies
+  natural join Students
+  natural join Courses
+
+
+====================
+ДЗ-5.5.3s. ФИО студента и названия предметов которые у него есть, но не 4 или 5 (sql)
+====================
+select StudentName, CourseName from
+  (select distinct Students.StudentId, Courses.CourseId from Students
+    natural join Plan
+    natural join Courses
+    left join Marks on Marks.StudentId = Students.StudentId and Marks.CourseId = Courses.CourseId
+  where Mark is null or (Mark <> 4 and Mark <> 5)
+  ) Studies
+  natural join Students
+  natural join Courses
+
+
+====================
+ДЗ-5.6.1s. StudentId имеющих хотя бы одну оценку у :LecturerName (sql)
+====================
+select distinct StudentId from
+  Marks 
+  natural join Students 
+  natural join Plan 
+  natural join Lecturers
+  where LecturerName = :LecturerName
+
+
+====================
+ДЗ-5.6.2s. StudentId не имеющих оценок у :LecturerName (sql)
+====================
+select StudentId from Students
+except
+select distinct StudentId from Students
+  natural join Marks 
+  natural join Students 
+  natural join Plan 
+  natural join Lecturers
+  where LecturerName = :LecturerName
+
+
+====================
+ДЗ-5.6.3s. StudentId имеющих оценки по всем предметам :LecturerName (sql)
+====================
+select StudentId from Marks
+  left join Plan on Marks.CourseId = Plan.CourseId
+except
+select StudentId from (
+  select StudentId, CourseId from (
+    select LecturerId, LecturerName, GroupId, CourseId from Lecturers
+      natural join Plan
+      where LecturerName = :LecturerName
+  ) LearningPlan, (
+    select StudentId, Mark from Marks
+      left join Plan on Marks.CourseId = Plan.CourseId
+  ) Studing
+  except
+  select StudentId, Plan.CourseId from Marks
+    left join Plan on Plan.CourseId = Marks.CourseId
+) OutStyding
+
+
+====================
+ДЗ-5.6.4s. StudentId имеющих оценки по всем предметам :LecturerName, которые он у него вёл (sql)
+====================
+select StudentId from Marks
+  left join Plan on Marks.CourseId = Plan.CourseId
+except
+select StudentId from (
+  select StudentId, CourseId from (
+    select LecturerId, LecturerName, GroupId, CourseId from Lecturers
+      natural join Plan
+      where LecturerName = :LecturerName
+  ) LearningPlan, (
+    select StudentId, Mark from Marks
+      left join Plan on Marks.CourseId = Plan.CourseId
+  ) Studing
+  except
+  select StudentId, Plan.CourseId from Marks
+    left join Plan on Plan.CourseId = Marks.CourseId
+) OutStyding
+
+
+====================
+ДЗ-5.8.1s. SumMark по :StudentId (sql)
+====================
+select sum(Mark) as SumMark from Marks where StudentId = :StudentId
+
+
+====================
+ДЗ-5.8.2s. SumMark для каждого студента (StudentName) (sql)
+====================
+select StudentName, SumMark from (
+  Students
+  left join (
+    select StudentId, sum(Mark)
+      as SumMark 
+      from Marks 
+      group by StudentId
+  ) MarksIds
+  on Students.StudentId = MarksIds.StudentId
+)
+
+
+====================
+ДЗ-5.8.3s. SumMark студентов каждой группы (GroupName) (sql)
+====================
+select GroupName, SumMark from (
+  Groups
+  left join (
+    select GroupId, sum(UnderSum) as SumMark from (
+      select GroupId, UnderSum from (
+        Students
+        natural join (
+          select StudentId, sum(Mark) as UnderSum from Marks group by StudentId
+        ) studentsMarks
+      )
+    ) GroupsMarks
+    group by GroupId
+  ) GroupsGroupedMarks
+  on Groups.GroupId = GroupsGroupedMarks.GroupId
+)
+
+
+====================
+ДЗ-5.9.1s. AvgMark по :StudentId (sql)
+====================
+select cast(sum(Mark) as double) / count(*) as AvgMark from Marks where StudentId = :StudentId
+
+
+====================
+ДЗ-5.9.2s. AvgMark для каждого студента (StudentName) (sql)
+====================
+select StudentName, AvgMark from (
+  Students
+  left join (
+    select StudentId, cast(sum(Mark) as double) / count(*) 
+      as AvgMark 
+      from Marks 
+      group by StudentId
+  ) MarksIds
+  on Students.StudentId = MarksIds.StudentId
+)
+
+
+====================
+ДЗ-5.9.3s. AvgMark каждой группы (GroupName) (sql)
+====================
+select GroupName, AvgMark from (
+  Groups
+  left join (
+    select GroupId, cast(sum(UnderAvgMark) as double) / sum(CountAvgMark) as AvgMark from (
+      select GroupId, UnderAvgMark, CountAvgMark from (
+        Students
+        natural join (
+          select StudentId, sum(Mark) as UnderAvgMark, count(*) as CountAvgMark from Marks group by StudentId
+        ) studentsMarks
+      )
+    ) groupsMarks
+    group by GroupId
+  ) groupsGroupedMarks
+  on Groups.GroupId = GroupsGroupedMarks.GroupId
+)
+
+
+====================
+ДЗ-5.9.4s. AvgAvgMark студентов каждой группы (GroupName) (sql)
+====================
+select GroupName, AvgAvgMark from (
+  Groups
+  left join (
+    select GroupId, cast(sum(UnderAvgMark) as double) / count(*) as AvgAvgMark from (
+      select GroupId, UnderAvgMark from (
+        Students
+        natural join (
+          select StudentId, cast(sum(Mark) as double) / count(*) as UnderAvgMark from Marks group by StudentId
+        ) studentsMarks
+      )
+    ) groupsMarks
+    group by GroupId
+  ) groupsGroupedMarks
+  on Groups.GroupId = GroupsGroupedMarks.GroupId
+)
+
+
+====================
+ДЗ-6.1.1r. Информация о студентах по :StudentName (rc-sql)
+====================
+select StudentId, StudentName, GroupId from Students where StudentName = :StudentName;
+
+
+====================
+ДЗ-6.1.2r. Информация о студентах по :GroupName (rc-sql)
+====================
+select StudentId, StudentName, GroupId from Students s where s.GroupId in (
+  select GroupId from Groups g where GroupName = :GroupName
+);
+
+
+
+====================
+ДЗ-6.1.3r. Информация о студентах по :Mark и :CourseId (rc-sql)
+====================
+select distinct s.StudentId, s.StudentName, s.GroupId
+  from Students s, Marks m
+  where 
+    s.StudentId = m.StudentId and
+    CourseId = CourseId and
+    Mark = :Mark and
+    CourseId = :CourseId
+
+
+====================
+ДЗ-6.1.4r. Информация о студентах по :Mark и :CourseName (rc-sql)
+====================
+select distinct s.StudentId, s.StudentName, s.GroupId
+  from Students s, Marks m, Courses c
+  where 
+    s.StudentId = m.StudentId and
+    m.CourseId = c.CourseId and
+    Mark = :Mark and
+    CourseName = :CourseName
+
+
+====================
+ДЗ-6.2.1r. Полная информация о всех студентах (rc-sql)
+====================
+select StudentId, StudentName, GroupName
+  from Students, Groups
+  where Students.GroupId = Groups.GroupId
+
+
+====================
+ДЗ-6.2.2r. Полная информация о студентах, не имеющих оценки по :CourseId (rc-sql)
+====================
+select StudentId, StudentName, GroupName
+  from Students s, Groups g
+  where 
+    s.GroupId = g.GroupId and
+    StudentId not in (
+      select s.StudentId
+        from Students s, Marks m
+        where
+          s.StudentId = m.StudentId and
+          CourseId = :CourseId
+      );
+
+
+====================
+ДЗ-6.2.3r. Полная информация о студентах, не имеющих оценки по :CourseName (rc-sql)
+====================
+select StudentId, StudentName, GroupName
+  from Students s, Groups g
+  where 
+    s.GroupId = g.GroupId and
+    StudentId not in (
+      select s.StudentId
+        from Students s, Marks m, Courses c
+        where
+          s.StudentId = m.StudentId and
+          m.CourseId = c.CourseId and
+          CourseName = :CourseName
+      );
+
+
+====================
+ДЗ-6.2.4r. Полная информация о студентах, не имеющих оценки по :CourseId, у которых есть этот предмет (rc-sql)
+====================
+select distinct StudentId, StudentName, GroupName
+  from Students s, Plan p, Groups g
+  where 
+    s.GroupId = g.GroupId and
+    g.GroupId = p.GroupId and
+    CourseId = :CourseId and
+    StudentId not in (
+      select s.StudentId
+        from Marks m, Students s
+        where
+          s.StudentId = m.StudentId and
+          CourseId = :CourseId
+    );
+
+
+====================
+ДЗ-6.2.5r. Полная информация о студентах, не имеющих оценки по :CourseName, у которых есть этот предмет (rc-sql)
+====================
+select distinct StudentId, StudentName, GroupName
+  from Students s, Courses c, Plan p, Groups g
+  where 
+    s.GroupId = g.GroupId and
+    p.CourseId = c.CourseId and
+    g.GroupId = p.GroupId and
+    CourseName = :CourseName and
+    StudentId not in (
+      select s.StudentId
+        from Marks m, Students s, Courses c
+        where
+          m.CourseId = c.CourseId and
+          s.StudentId = m.StudentId and
+          CourseName = :CourseName
+    );
+
+
+====================
+ДЗ-6.3.1r. StudentId, CourseId, такие что у студента был предмет (rc-sql)
+====================
+select StudentId, CourseId
+  from Students s, Plan p
+  where s.GroupId = p.GroupId
+union
+select StudentId, CourseId from Marks
+
+
+====================
+ДЗ-6.3.2r. StudentName, CourseName, такие что у студента был предмет (rc-sql)
+====================
+select StudentName, CourseName
+  from Students s, Courses c
+  where exists (
+    select s.StudentId, CourseId from Plan p
+      where 
+        s.GroupId = p.GroupId and
+        p.CourseId = c.CourseId
+    union
+    select StudentId, CourseId from Marks m
+    where
+      m.StudentId = s.StudentId and
+      m.CourseId = c.CourseId
+  )
+
+
+====================
+ДЗ-6.4.1r. StudentName, CourseName, долги по отсутствию оценки (rc-sql)
+====================
+select StudentName, CourseName
+  from Students s, Courses c
+  where
+  exists (
+    select distinct s.StudentId, p.CourseId 
+      from Plan p
+      where
+        s.GroupId = p.GroupId and
+        c.CourseId = p.CourseId and
+        not exists (
+          select distinct s.StudentId, p.CourseId from Marks m
+          where
+            m.StudentId = s.StudentId and
+            m.CourseId = p.CourseId
+    )
+  )
+
+
+====================
+ДЗ-6.4.2r. StudentName, CourseName, долги по неудовлетворительной оценке (rc-sql)
+====================
+select StudentName, CourseName
+  from Students s, Courses c
+  where
+  exists (
+    select distinct s.StudentId, p.CourseId 
+      from Plan p
+      where
+        s.GroupId = p.GroupId and
+        c.CourseId = p.CourseId and
+        exists (
+          select distinct s.StudentId, p.CourseId from Marks m
+          where
+            m.StudentId = s.StudentId and
+            m.CourseId = p.CourseId and
+            m.mark <= 2
+        )
+  )
+
+
+====================
+ДЗ-6.4.3r. StudentName, CourseName, долги по отсутствию или неудовлетворительной оценке (rc-sql)
+====================
+select StudentName, CourseName
+  from Students s, Courses c
+  where
+  exists (
+    select distinct s.StudentId, p.CourseId 
+      from Plan p
+      where
+        s.GroupId = p.GroupId and
+        c.CourseId = p.CourseId and
+        not exists (
+          select distinct s.StudentId, p.CourseId from Marks m
+          where
+            m.StudentId = s.StudentId and
+            m.CourseId = p.CourseId and
+            m.mark > 2
+        )
+  )
+
+
+====================
+ДЗ-6.5.1r. StudentId имеющих хотя бы одну оценку у :LecturerName (rc-sql)
+====================
+select distinct s.StudentId
+  from Students s, Marks m, Plan p, Lecturers l
+  where 
+    s.StudentId = m.StudentId and
+    p.LecturerId = l.LecturerId and
+    s.GroupId = p.GroupId and
+    p.CourseId = m.CourseId and
+    LecturerName = :LecturerName
+
+
+====================
+ДЗ-6.5.2r. StudentId не имеющих оценок у :LecturerName (rc-sql)
+====================
+select s.StudentId
+  from Students s
+  where s.StudentId not in (
+    select m.StudentId
+    from Plan p, Marks m, Lecturers l
+    where
+      s.GroupId = p.GroupId and
+      m.CourseId = p.CourseId and
+      LecturerName = :LecturerName and
+      p.LecturerId = l.LecturerId
+  )
+
+
+====================
+ДЗ-6.5.3r. StudentId имеющих оценки по всем предметам :LecturerName (rc-sql)
+====================
+select s.StudentId
+  from Students s
+  where not exists (
+    select s.StudentId
+    from Plan p, Lecturers l
+    where
+      p.LecturerId = l.LecturerId and
+      LecturerName = :LecturerName and
+      not exists (
+        select m.Mark from Marks m
+        where
+          s.StudentId = m.StudentId and
+          m.CourseId = p.CourseId
+      )
+  )
+
+
+====================
+ДЗ-6.5.4r. StudentId имеющих оценки по всем предметам :LecturerName, которые он у него вёл (rc-sql)
+====================
+select s.StudentId
+  from Students s
+  where not exists (
+    select s.StudentId
+    from Plan p, Lecturers l
+    where
+      p.LecturerId = l.LecturerId and
+      p.GroupId = s.GroupId and
+      LecturerName = :LecturerName and
+      not exists (
+        select m.Mark from Marks m
+        where
+          s.StudentId = m.StudentId and
+          m.CourseId = p.CourseId
+      )
+  )
+
+
+====================
+ДЗ-6.6.1r. GroupId и CourseId, такие что все студенты группы сдали предмет (rc-sql)
+====================
+select g.GroupId, c.CourseId
+  from Groups g, Courses c
+  where not exists (
+    select s.StudentId from Students s
+    where
+      s.GroupId = g.GroupId and
+      not exists (
+        select m.Mark from Marks m
+          where
+            s.StudentId = m.StudentId and
+            c.CourseId = m.CourseId
+      )
+  )
+
+
+====================
+ДЗ-6.6.2r. GroupName и CourseName, такие что все студенты группы сдали предмет (rc-sql)
+====================
+select g.GroupName, c.CourseName
+  from Groups g, Courses c
+  where not exists (
+    select s.StudentId from Students s
+    where
+      s.GroupId = g.GroupId and
+      not exists (
+        select m.Mark from Marks m
+          where
+            s.StudentId = m.StudentId and
+            c.CourseId = m.CourseId
+      )
+  )
+
+
+====================
+ДЗ-7.1.1s. Удаление студентов по :GroupId (sql)
+====================
+delete from Students where GroupId = :GroupId
+
+
+====================
+ДЗ-7.1.2s. Удаление студентов по :GroupName (sql)
+====================
+delete from Students where GroupId in 
+  (select GroupId from Groups where GroupName = :GroupName)
+
+
+====================
+ДЗ-7.1.3s. Удаление студентов без оценок (sql)
+====================
+delete from Students where StudentId not in 
+  (select StudentId from Marks)
+
+
+====================
+ДЗ-7.1.4s. Удаление студентов с 3+ оценками (sql)
+====================
+delete from Students where StudentId in 
+  (select StudentId from Marks group by StudentId having count(CourseId) >= 3)
+
+
+====================
+ДЗ-7.1.5s. Удаление студентов с 3- оценками (sql)
+====================
+delete from Students where StudentId not in 
+  (select StudentId from Marks group by StudentId having count(CourseId) > 3)
+
+
+
+====================
+ДЗ-7.1.6s. Удаление студентов с долгами (sql)
+====================
+delete from Students where StudentId in (
+  select StudentId 
+    from Students natural join Plan natural left join Marks
+    where 
+      Mark is null
+    group by StudentId
+    having count(*) >= 0
+)
+
+
+====================
+ДЗ-7.1.7s. Удаление студентов c 2+ долгами (sql)
+====================
+delete from Students where StudentId in (
+  select StudentId 
+    from Students natural join Plan natural left join Marks
+    where Mark is null
+    group by StudentId
+    having count(distinct CourseId) >= 2
+)
+
+
+====================
+ДЗ-7.1.8s. Удаление студентов c 2- долгами (sql)
+====================
+delete from Students where StudentId not in (
+  select StudentId 
+    from Students natural join Plan natural left join Marks
+    where Mark is null
+    group by StudentId
+    having count(distinct CourseId) > 2
+)
+
+
+====================
+ДЗ-7.2.1s. Изменение имени студента (sql)
+====================
+update Students set StudentName = :StudentName where StudentId = :StudentId
+
+
+====================
+ДЗ-7.2.2s. Перевод студента (sql)
+====================
+update Students set GroupId = :GroupId where StudentId = :StudentId and GroupId = :FromGroupId
+
+
+====================
+ДЗ-7.2.3s. Перевод всех студентов группы по :*GroupId (sql)
+====================
+update Students set GroupId = :GroupId where GroupId = :FromGroupId
+
+
+====================
+ДЗ-7.2.4s. Перевод всех студентов группы по :*GroupName (sql)
+====================
+update Students 
+  set GroupId = (select GroupId from Groups where GroupName = :GroupName) 
+  where GroupId = (select GroupId from Groups where GroupName = :FromGroupName)
+
+
+====================
+ДЗ-7.2.5s. Перевод всех студентов в существующую группу (sql)
+====================
+update Students 
+  set GroupId = (select GroupId from Groups where GroupName = :GroupName) 
+  where 
+    GroupId = (select GroupId from Groups where GroupName = :FromGroupName) and
+    :GroupName in (select GroupName from Groups)
+
+
+====================
+ДЗ-7.3.1s. Число оценок студента (sql)
+====================
+update Students set Marks = (
+  select count(CourseId) from Marks m where StudentId = :StudentId
+) where StudentId = :StudentId
+
+
+====================
+ДЗ-7.3.2s. Число оценок каждого студента (sql)
+====================
+update Students set Marks = (
+  select count(CourseId) from Marks m where Students.StudentId = m.StudentId
+)
+
+
+====================
+ДЗ-7.3.3s. Обновления числа оценок (sql)
+====================
+update Students set Marks = Marks + (
+  select count(CourseId) from NewMarks m where Students.StudentId = m.StudentId
+)
+
+
+====================
+ДЗ-7.3.4s. Число сданных дисциплин (sql)
+====================
+update Students set Marks = (
+  select count(distinct CourseId) 
+    from Marks m 
+    where Students.StudentId = m.StudentId
+)
+
+
+====================
+ДЗ-7.3.5s. Число долгов одного студента (sql)
+====================
+update Students set Debts = (
+  select count(distinct p.CourseId) 
+    from Plan p 
+    where
+      Students.StudentId = :StudentId and
+      Students.GroupId = p.GroupId and
+      not exists (
+        select distinct m.CourseId 
+          from Marks m
+          where
+            m.StudentId = :StudentId and
+            p.CourseId = m.CourseId
+      )
+) where StudentId = :StudentId
+
+
+====================
+ДЗ-7.3.6s. Число долгов каждого студента (sql)
+====================
+update Students set Debts = (
+  select count(distinct p.CourseId) 
+    from Students s natural join Plan p 
+    where
+      Students.StudentId = s.StudentId and 
+      not exists (
+        select distinct m.CourseId 
+          from Marks m
+          where
+            s.StudentId = m.StudentId and
+            p.CourseId = m.CourseId
+      )
+)
+
+
+====================
+ДЗ-7.3.7s. Число долгов каждого студента группы (sql)
+====================
+update Students set Debts = (
+  select count(distinct p.CourseId) 
+    from Students s natural join Plan p 
+    where
+      Students.StudentId = s.StudentId and 
+      not exists (
+        select distinct m.CourseId 
+          from Marks m
+          where
+            s.StudentId = m.StudentId and
+            p.CourseId = m.CourseId
+      )
+) where GroupId = (select GroupId from Groups where GroupName = :GroupName)
+
+
+====================
+ДЗ-7.3.8s. Число оценок и долгов каждого студента (sql)
+====================
+update Students set Debts = (
+  select count(distinct p.CourseId) 
+    from Students s natural join Plan p 
+    where
+      Students.StudentId = s.StudentId and 
+      not exists (
+        select distinct m.CourseId 
+          from Marks m
+          where
+            s.StudentId = m.StudentId and
+            p.CourseId = m.CourseId
+      )
+), Marks = (
+  select count(CourseId) from Marks m where Students.StudentId = m.StudentId
+)
+
+
+====================
+ДЗ-7.4.1s. Только новые оценки (sql)
+====================
+insert into Marks select StudentId, CourseId, Mark from NewMarks nm where not exists (
+  select m.StudentId, m.CourseId from Marks m 
+    where 
+      nm.StudentId = m.StudentId and 
+      nm.CourseId = m.CourseId 
+)
+
+
+====================
+ДЗ-7.4.2s. Только поверх старых оценок (sql)
+====================
+update Marks as m set Mark = (
+  select Mark from NewMarks nm 
+    where 
+      m.StudentId = nm.StudentId and
+      m.CourseId = nm.CourseId and
+      exists (
+      select temp.StudentId, temp.CourseId from Marks temp
+        where 
+          temp.StudentId = nm.StudentId and 
+          temp.CourseId = nm.CourseId 
+      )
+) where exists (
+  select nm.StudentId, nm.CourseId from NewMarks nm 
+  where 
+    m.StudentId = nm.StudentId and
+    m.CourseId = nm.CourseId
+)
+
+
+====================
+ДЗ-7.4.3s. Обновление старых оценок (sql)
+====================
+update Marks as m set Mark = (
+  select Mark from NewMarks nm 
+    where 
+      m.StudentId = nm.StudentId and
+      m.CourseId = nm.CourseId and
+      exists (
+      select temp.StudentId, temp.CourseId from Marks temp
+        where 
+          temp.StudentId = nm.StudentId and 
+          temp.CourseId = nm.CourseId
+      )
+) where exists (
+  select nm.StudentId, nm.CourseId from NewMarks nm 
+  where 
+    m.StudentId = nm.StudentId and
+    m.CourseId = nm.CourseId and
+    m.Mark < nm.Mark
+)
+
+
+====================
+ДЗ-7.4.4s. Обновление всех оценок (sql)
+====================
+merge into Marks mm
+using NewMarks nm
+on
+  mm.StudentId = nm.StudentId and
+  mm.CourseId = nm.CourseId
+when matched and mm.Mark < nm.Mark then update set Mark = nm.Mark
+when not matched then insert (StudentId, CourseId, Mark) values (nm.StudentId, nm.CourseId, nm.Mark)
+
+
+====================
+ДЗ-7.5.1s. Представление StudentMarks (sql)
+====================
+create view StudentMarks as
+select s.StudentId, (select count(CourseId) from Marks m where StudentId = s.StudentId) as Marks from Students s
+
+
+====================
+ДЗ-7.5.2s. Представление AllMarks (sql)
+====================
+create view AllMarks as
+select s.StudentId, 
+  (select count(CourseId) from Marks m where StudentId = s.StudentId) + 
+  (select count(CourseId) from NewMarks nm where StudentId = s.StudentId) 
+  as Marks 
+from Students s
+
+
+====================
+ДЗ-7.5.3s. Представление Debts (sql)
+====================
+create view Debts as
+select StudentId, count(CourseId) as Debts from (
+  select StudentId, CourseId from Students s natural join Plan p
+  except
+  select StudentId, CourseId from Marks m
+) DeptsStudents
+group by StudentId
+having count(CourseId) > 0
+
+
+====================
+ДЗ-7.5.4s. Представление StudentDebts (sql)
+====================
+create view StudentDebts as
+select ls.StudentId, (
+  select count(distinct p.CourseId) 
+    from Students s natural join Plan p 
+    where
+      ls.StudentId = s.StudentId and 
+      not exists (
+        select distinct m.CourseId 
+          from Marks m
+          where
+            s.StudentId = m.StudentId and
+            p.CourseId = m.CourseId
+      ) 
+) as Debts 
+from Students ls
+
+
+====================
+ДЗ-7.6.1s. Проверка NoExtraMarks (sql)
+====================
+-- psql (PostgreSQL) 
+-- 12.8 
+-- Ubuntu 12.8-0ubuntu0.20.04.1
+
+-- В данной программе проверены такие случаи:
+-- - Добавление оценки за курс, которого нет у студента
+-- - Удаление курса из плана, который уже раздал оценки студентам
+
+-- Функция, которая отвечает за вывод в случае ошибок на добавление. 
+-- Если хотите, что бы вывод был, то поставьте в return true.
+-- Она начнет выводить, где же произошел конфликт при удалении
+
+create function isRaise()
+  returns boolean
+  language plpgsql
+  as $function$
+    begin
+    return true;
+    end;
+  $function$;
+
+-- Функция, которая проверяет, что в данный момент все оценки
+-- соответствуют плану. Мы будем вызывать ее не так часто, 
+-- так как она проверяет все пары студентов и курсов
+
+create function CheckExistsAll()
+  returns boolean
+  language plpgsql
+  as $function$
+    declare
+      isBad boolean;
+      bad record;
+    begin
+      for bad in
+        select StudentId, CourseId from Marks
+        except
+        select StudentId, CourseId from Students natural join Plan
+      loop
+        if isRaise() 
+          then raise notice 'Found pair of student and course with mark without in plan. Student - %, Course - %', bad.StudentId, bad.CourseId;
+        end if;
+        isBad = true;
+      end loop;
+      return isBad;
+    end;
+  $function$;
+  
+-- Функция, которая проверяет, что данный курс можно удалить
+-- из плана так, что люди по по прежнему будут иметь оценки
+-- только за те курсы, что у них есть
+
+-- Другими словами, эта функция проверяет, что на данном курсе
+-- никто не обучается
+
+create function CheckExistsOnDeleteCourse(getCourseId integer)
+  returns boolean
+  language plpgsql
+  as $function$
+    declare
+      isBad boolean;
+      bad record;
+    begin
+      for bad in
+        select StudentId, CourseId from Marks where CourseId = getCourseId
+      loop
+        if isRaise() 
+          then raise notice 'Found pair on deleting course with existing mark on course with id - %, student with id - %', bad.CourseId, bad.StudentId;
+        end if;
+        isBad = true;
+      end loop;
+      return isBad;
+    end;
+  $function$;
+
+-- Функция для триггера, которая проверяет, что курс можно удалить
+
+create function TriggerExistsOnDeletingCourse()
+  returns trigger
+  language plpgsql
+  as $function$
+    begin
+      if CheckExistsOnDeleteCourse(old.CourseId)
+      then
+        if isRaise() 
+          then raise notice 'Failed delete course';
+        end if;
+        return null;
+      else
+        return old;
+      end if;
+    end;
+  $function$;
+
+-- Функция, которая проверяет, что оценку можно добавить
+
+-- Другими словами, она проверяет, есть ли у студента тот курс,
+-- на который мы пытаемся добавить оценку
+
+create function CheckExistsCourseOnAddingMark(getStudentId integer, getCourseId integer)
+  returns boolean
+  language plpgsql
+  as $function$
+    declare
+      isBad boolean;
+    begin
+      if (not exists (select StudentId, CourseId from Students natural join Plan where CourseId = getCourseId and StudentId = getStudentId))
+      then
+        isBad = true;
+        if isRaise() 
+          then raise notice 'Found that course not exists on adding mark on course with id - %, student with id - %', getCourseId, getStudentId;
+        end if;
+      else
+        isBad = false;
+      end if;
+      return isBad;
+    end;
+  $function$;
+  
+-- Функция для триггера, которая проверяет, что оценку можно добавить
+  
+create function TriggerExistsCourseOnAddingMark()
+  returns trigger
+  language plpgsql
+  as $function$
+    begin
+      if CheckExistsCourseOnAddingMark(new.StudentId, new.CourseId)
+      then
+        if isRaise() 
+          then raise notice 'Failed adding';
+        end if;
+        return null;
+      else
+        return old;
+      end if;
+    end;
+  $function$;
+
+-- Триггер для того, что бы не удалить курс, на котором студенты уже получили оценки
+
+create trigger onDeletingCourse before delete on Plan
+  for each row execute procedure TriggerExistsOnDeletingCourse();
+
+-- Триггер для того, что бы не добавить оценку за курс, на котором студент не учится
+
+create trigger onInsertMark before insert or update of StudentId, CourseId on Marks
+  for each row execute procedure TriggerExistsCourseOnAddingMark();
+
+-- Проверка в самом начале, что табличка соответствует требованиям. 
+-- Внимание! Она всего лишь выводит конфликты, но не решает их
+-- Вывод будет только при isRaise() = true
+
+do $$ begin
+  perform CheckExistsAll();
+end $$;
+
+
+====================
+ДЗ-7.6.2s. Проверка SameMarks (sql)
+====================
+-- psql (PostgreSQL) 
+-- 12.8 
+-- Ubuntu 12.8-0ubuntu0.20.04.1
+
+-- Функция, которая отвечает за вывод в случае ошибок на добавление. 
+-- Если хотите, что бы вывод был, то поставьте в return true.
+-- Она начнет выводить, где же произошел конфликт при удалении
+
+create function isRaise()
+  returns boolean
+  language plpgsql
+  as $function$
+    begin
+    return true;
+    end;
+  $function$;
+
+-- Проверяет, что все студенты группы имеют те же оценки, 
+-- что и любой в их группе
+create function IsCorrect()
+  returns boolean
+  language plpgsql
+  as $function$
+    declare
+      isCool boolean;
+      bad record;
+    begin
+      isCool = true;
+      for bad in
+        select StudentId, CourseId from Students natural join (select distinct GroupId, CourseId from Students natural join Marks) GroupsMarks
+        except
+        select distinct StudentId, CourseId from Marks natural join Students
+      loop
+        if isRaise()
+        then
+          raise notice 'Student with id = % doesnt have mark on course on with id = %, but someone in his group does', bad.StudentId, bad.CourseId;
+          isCool = false;
+        end if;
+      end loop;
+      return isCool;
+    end;
+  $function$;
+
+-- Функция триггера для проверки на то, что все студенты 
+-- группы имеют те же оценки, что и любой в их группе
+create function TriggerIsCorrect()
+  returns trigger
+  language plpgsql
+  as $function$
+    begin
+      if (not IsCorrect())
+      then
+        raise exception 'Failed adding';
+      end if;
+      return null;
+    end;
+  $function$;
+
+-- Триггер для проверки на то, что все студенты группы имеют
+-- те же оценки, что и любой в их группе. 
+-- Добавление или изменение оценки
+
+create trigger onMark after insert or update of StudentId, CourseId or delete on Marks
+  for each statement execute procedure TriggerIsCorrect();
+  
+-- Триггер для проверки на то, что все студенты группы имеют
+-- те же оценки, что и любой в их группе
+-- Перевод или добавление студента
+
+create trigger onStudent after insert or update of StudentId, GroupId on Students
+  for each statement execute procedure TriggerIsCorrect();
+  
+-- Проверка в самом начале, что табличка соответствует требованиям. 
+-- Внимание! Она всего лишь выводит конфликты, но не решает их
+-- Вывод будет только при isRaise() = true
+
+do $$ begin
+  perform isCorrect();
+end $$;
+
+
+====================
+ДЗ-7.6.3s. Триггер PreserveMarks (sql)
+====================
+-- psql (PostgreSQL) 
+-- 12.8 
+-- Ubuntu 12.8-0ubuntu0.20.04.1
+
+create function CompareAndSet()
+  returns trigger
+  language plpgsql
+  as $function$
+    begin
+      if new.Mark > old.Mark then
+        return new;
+      else
+        return null;
+      end if;
+    end;
+  $function$;
+
+create trigger PreserverMarks after update on Marks 
+  for each row execute procedure CompareAndSet();
+
+

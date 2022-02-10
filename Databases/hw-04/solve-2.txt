@@ -1,0 +1,316 @@
+Start : (StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+
+----- 1 НФ -----
+
+Рассмотрим (StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+Все группы различны.
+Все атрибуты атомарны.
+
+Вывод:
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark) => (StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+
+----- 2 НФ -----
+
+На рассмотрение:
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+
+Рассмотрим: (StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+Найдено: StudentId -> StudentName, GroupId, GroupName
+
+На рассмотрение:
+(StudentId, CourseId, CourseName, LecturerId, LecturerName, Mark)
+(StudentId, StudentName, GroupId, GroupName)
+
+Рассмотрим: (StudentId, CourseId, CourseName, LecturerId, LecturerName, Mark)
+Найдено: CourseId -> CourseName
+
+На рассмотрение:
+(StudentId, CourseId, LecturerId, LecturerName, Mark)
+(StudentId, StudentName, GroupId, GroupName)
+(CourseId, CourseName)
+
+Рассмотрим: (StudentId, CourseId, LecturerId, LecturerName, Mark)
+StudentId - ключ
+CourseId - ключ
+LecturerId - (StudentId, CourseId) -> (LecturerId)
+LecturerName - (LecturerId) -> (LecturerName)
+Mark - (StudentId, CourseId) -> (Mark)
+
+На рассмотрение:
+(StudentId, StudentName, GroupId, GroupName)
+(CourseId, CourseName)
+
+Рассмотрим: (StudentId, StudentName, GroupId, GroupName)
+StudentId - ключ
+StudentName - (StudentId) -> (StudentName)
+GroupId - (StudentId) -> (GroupId)
+GroupName - (GroupId) -> (GroupName)
+
+На рассмотрение:
+(CourseId, CourseName)
+
+Рассмотрим: (CourseId, CourseName)
+CourseId - ключ
+CourseName - (CourseId) -> (CourseName)
+
+Вывод:
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark) => (StudentId, CourseId, LecturerId, LecturerName, Mark); (StudentId, StudentName, GroupId, GroupName);(CourseId, CourseName)
+
+----- 3 НФ -----
+
+На рассмотрение:
+(StudentId, CourseId, LecturerId, LecturerName, Mark)
+(StudentId, StudentName, GroupId, GroupName)
+(CourseId, CourseName)
+
+Рассмотрим: (StudentId, CourseId, LecturerId, LecturerName, Mark)
+Найдено: LecturerId -> LecturerName
+
+На рассмотрение:
+(StudentId, CourseId, LecturerId, Mark)
+(StudentId, StudentName, GroupId, GroupName)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+
+Рассмотрим: (StudentId, StudentName, GroupId, GroupName)
+Найдено: GroupId -> GroupName
+
+На рассмотрение:
+(StudentId, CourseId, LecturerId, Mark)
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (StudentId, CourseId, LecturerId, Mark)
+StudentId - ключ
+CourseId - ключ
+LecturerId - ключ
+Mark - (StudentId, CourseId) -> (Mark)
+
+На рассмотрение:
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (StudentId, StudentName, GroupId)
+StudentId - ключ
+StudentName - (StudentId) -> (StudentName)
+GroupId - (StudentId) -> (GroupId)
+
+На рассмотрение:
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (CourseId, CourseName)
+CourseId - ключ
+CourseName - (CourseId) -> (CourseName)
+
+На рассмотрение:
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (LecturerId, LecturerName)
+LecturerId - ключ
+LecturerName - (LecturerId) -> (LecturerName)
+
+На рассмотрение:
+(GroupId, GroupName)
+
+Рассмотрим: (GroupId, GroupName)
+GroupId - ключ
+GroupName - (GroupId) -> (GroupName)
+
+Вывод:
+(StudentId, CourseId, LecturerId, LecturerName, Mark) => (StudentId, CourseId, LecturerId, Mark); (LecturerId, LecturerName)
+(StudentId, StudentName, GroupId, GroupName) => (StudentId, StudentName, GroupId); (GroupId, GroupName)
+(CourseId, CourseName) => (CourseId, CourseName)
+
+----- НФБК -----
+
+На рассмотрение:
+(StudentId, CourseId, LecturerId, Mark)
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (StudentId, CourseId, LecturerId, Mark)
+StudentId - нет зависимостей
+CourseId - нет зависимостей
+LecturerId - [(StudentId, CourseId) -> (LecturerId)]
+Mark - [(StudentId, CourseId) -> (Mark)]
+
+На рассмотрение:
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (StudentId, StudentName, GroupId)
+StudentId - нет зависимостей
+StudentName - [(StudentId) -> (StudentName)]
+GroupId - [(StudentId) -> (GroupId)]
+
+На рассмотрение:
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (CourseId, CourseName)
+Теорема о достижимости НФБК - отношение из двух атрибутов находится НФБК
+
+На рассмотрение:
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (LecturerId, LecturerName)
+Теорема о достижимости НФБК - отношение из двух атрибутов находится НФБК
+
+На рассмотрение:
+(GroupId, GroupName)
+
+Рассмотрим: (GroupId, GroupName)
+Теорема о достижимости НФБК - отношение из двух атрибутов находится НФБК
+
+Вывод:
+(StudentId, CourseId, LecturerId, Mark) => (StudentId, CourseId, LecturerId, Mark)
+(StudentId, StudentName, GroupId) => (StudentId, StudentName, GroupId)
+(CourseId, CourseName) => (CourseId, CourseName)
+(LecturerId, LecturerName) => (LecturerId, LecturerName)
+(GroupId, GroupName) => (GroupId, GroupName)
+
+----- 4НФ -----
+
+На рассмотрение:
+(StudentId, CourseId, LecturerId, Mark)
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (StudentId, CourseId, LecturerId, Mark)
+Ключи: [(StudentId, CourseId)]
+Ключ не простой, теорема Дейта-Фейгина 1 не применима
+Ключ не простой, теорема Дейта-Фейгина 2 не применима
+Функциональные нетривиальные зависимости:
+(StudentId, CourseId) -> (LecturerId, Mark)
+Теперь остановим наш алгоритм, так как перебор не влезет в форму)
+Пусть у нас есть какая то МЗ X ->> Y | Z, которая удовлетворяет какому либо из условий:
+1) Существует атрибут А: X -> A не существует
+2) X не надключ
+3) Не является ФЗ
+
+Если докажем, что таких случаев быть не может, то наше отношение в 4НФ
+2) Если X не надключ, то есть X не включает в себя подмножество (StudentId, CourseId) не полностью. Рассмотрим такой случай:
+(student_id, course_id, lecturer_id, mark)
+2.1) Если мы не включили лектора:
+(1, 1, 1, 1),
+(1, 2, 1, 1)
+Таким образом, мы знаем, что мы получили за два различных предмета у одного преподавателя одинаковую оценку, и это действительно возможно в нашем мире (например, Скаков и два различных предмета в один семестр по выбору). Но такое запрещено, если бы было такое МЗ
+2.2) Если мы не включили студента:
+(1, 1, 1, 1),
+(2, 1, 1, 1)
+Таким образом, мы знаем, что два различных студента у одного преподавателя получили одинаковую оценку по одному предмету, и это возможно в нашем мире (иногда оценки совпадают). Но такое запрещено, если бы было такое МЗ
+
+Таким образом, мы доказали, что во всех наших МЗ X ->> Y | Z, X содержит (StudentId, CourseId)
+
+1) Заметим, что у нас есть ФЗ (StudentId, CourseId) -> (LecturerId, Mark), а значит, и (StudentId, CourseId) -> (StudentId, CourseId, LecturerId, Mark). Таким образом, мы можем добавить к левой части любой из атрибутов и получить выполнимую для нашего отношения ФЗ. А значит, что пункт 1 тоже верен, так как у нас любая ФЗ - МЗ
+
+3) Мы находимся в НФБК и доказали, что существует любая МЗ X ->> Y | Z, и любая ФЗ X -> Y, такая, что X содержит (StudentId, CourseId). Значит, этот пункт тоже верен
+
+На рассмотрение:
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (StudentId, StudentName, GroupId)
+Ключи: [(StudentId)]
+Ключи простой, по теореме Дейта-Фейгина 2 мы в 4НФ
+
+На рассмотрение:
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (CourseId, CourseName)
+По теореме о декомпозиции отношение из двух не независимых атрибутов в 4НФ: (CourseId) -> (CourseName)
+
+На рассмотрение:
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (LecturerId, LecturerName)
+По теореме о декомпозиции отношение из двух не независимых атрибутов в 4НФ: (LecturerId) -> (LecturerName)
+
+На рассмотрение:
+(GroupId, GroupName)
+
+Рассмотрим: (GroupId, GroupName)
+По теореме о декомпозиции отношение из двух не независимых атрибутов в 4НФ: (GroupId) -> (GroupName)
+
+Вывод:
+(StudentId, CourseId, LecturerId, Mark) => (StudentId, CourseId, LecturerId, Mark)
+(StudentId, StudentName, GroupId) => (StudentId, StudentName, GroupId)
+(CourseId, CourseName) => (CourseId, CourseName)
+(LecturerId, LecturerName) => (LecturerId, LecturerName)
+(GroupId, GroupName) => (GroupId, GroupName)
+
+-- 5НФ --
+
+На рассмотрение:
+(StudentId, CourseId, LecturerId, Mark)
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (StudentId, CourseId, LecturerId, Mark)
+Ключи: [(StudentId, CourseId)]
+В предыдущем пункте для этого отношения мы доказали, что в любом МЗ X ->> Y | Z, X содержит (StudentId, CourseId).
+Рассмотрим все ЗС размера 2. Существование ЗС вида {XY, XZ} => существование МЗ вида X ->> Y | Z. Это выполняется у нас только для X содержащих (StudentId, CourseId). Значит, что XY содержит ключ и XZ содержит ключ. Значит, пока что условие для 5НФ выполняется.
+Рассмотрим все ЗС размера больше 2. Попытаемся добиться противоречия. Пусть существует ЗС A = *{X_1, X_2, ..., X_i, ..., X_n}, где X_i не содержит ключа. Пусть X_i не содержит знаний о студенте, то есть не содержит атрибута StudentId. Попытаемся обьединить ее с чем то, что содержит StudentId. Заметим, что у нас может быть несколько студентов, которые имеют одинаковые предметы, лекторов и оценки. То есть, если в табличке нет StudentId, но есть много студентов, которые имеют одинаковые данные, за исключением id, они соеднятся неверно. Аналогично получится и с курсом. Противоречие, таких А не существует. Значит, что мы находимся в 5НФ
+
+На рассмотрение:
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (StudentId, StudentName, GroupId)
+Ключи: [(StudentId)]
+Ключи простые, по теореме Дейта-Фейгина 1 мы в 5НФ
+
+На рассмотрение:
+(CourseId, CourseName)
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (CourseId, CourseName)
+Ключи: [(CourseId)]
+Ключ простой, по теореме Дейта-Фейгина 1 мы в 5НФ
+
+На рассмотрение:
+(LecturerId, LecturerName)
+(GroupId, GroupName)
+
+Рассмотрим: (LecturerId, LecturerName)
+Ключи: [(LecturerId)]
+Ключ простой, по теореме Дейта-Фейгина 1 мы в 5НФ
+
+На рассмотрение:
+(GroupId, GroupName)
+
+Рассмотрим: (GroupId, GroupName)
+Ключи: [(GroupId), (GroupName)]
+Ключи простые, по теореме Дейта-Фейгина 1 мы в 5НФ
+
+Вывод:
+(StudentId, CourseId, LecturerId, Mark) => (StudentId, CourseId, LecturerId, Mark)
+(StudentId, StudentName, GroupId) => (StudentId, StudentName, GroupId)
+(CourseId, CourseName) => (CourseId, CourseName)
+(LecturerId, LecturerName) => (LecturerId, LecturerName)
+(GroupId, GroupName) => (GroupId, GroupName)

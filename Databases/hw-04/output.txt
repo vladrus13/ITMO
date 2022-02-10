@@ -1,0 +1,394 @@
+ФЗ:
+StudentId -> StudentName, GroupId
+-- Конечно же, у студента есть имя, и оно однозначно определены
+GroupId -> GroupName
+-- Конечно же у группы есть имя, и оно однозначно определено
+GroupName -> GroupId
+-- В нашем университете названия группа уникальны
+CourseId -> CourseName
+-- Конечно же, у курса есть имя, и оно однозначно определено
+LecturerId -> LecturerName
+-- Конечно же, у лектора есть имя, и оно однозначно определено
+StudentId, CourseId -> Mark
+-- У студента на каком либо курсе может быть оценка, и она однозначно определна
+GroupId, CourseId -> LecturerId
+-- У группы курс ведет всегда определенный преподаватель (практики иногда разные, но лекторы нет)
+
+
+Ключи:
+StudentId, CourseId
+
+
+--------------------- NF1 ----------------- Talk
+Рассмотрим отношение:
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+
+Слишком много фз
+
+
+--------------------- NF1 ----------------- Result
+
+Аттрибуты
+{StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark}
+Ключи:
+{[StudentId, CourseId]}
+Слишком много фз
+
+--------------------- NF2 ----------------- Talk
+Рассмотрим отношение:
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+
+Слишком много фз
+Ключи:{[StudentId, CourseId]}
+Вижу конфликт с зависимостью: 
+{[StudentId] -> [StudentName, GroupId]}
+Разделение:
+[StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark] => [StudentId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark]; [StudentId, StudentName, GroupId]
+Рассмотрим отношение:
+(StudentId, StudentName, GroupId)
+
+ФЗ:{
+{[StudentId] -> [StudentName, GroupId]}
+{[StudentId] -> [StudentName, GroupId, StudentId]}
+{[StudentId, StudentName] -> [StudentName, GroupId]}
+{[StudentId, GroupId] -> [StudentName, GroupId]}
+}
+Ключи:{[StudentId]}
+Рассмотрим отношение:
+(StudentId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+
+Слишком много фз
+Ключи:{[StudentId, CourseId, LecturerId]}
+Вижу конфликт с зависимостью: 
+{[CourseId] -> [CourseName]}
+Разделение:
+[StudentId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark] => [StudentId, GroupName, CourseId, LecturerId, LecturerName, Mark]; [CourseId, CourseName]
+Рассмотрим отношение:
+(StudentId, StudentName, GroupId)
+
+ФЗ:{
+{[StudentId] -> [StudentName, GroupId]}
+{[StudentId] -> [StudentName, GroupId, StudentId]}
+{[StudentId, StudentName] -> [StudentName, GroupId]}
+{[StudentId, GroupId] -> [StudentName, GroupId]}
+}
+Ключи:{[StudentId]}
+Рассмотрим отношение:
+(CourseId, CourseName)
+
+ФЗ:{
+{[CourseId] -> [CourseName]}
+{[CourseId] -> [CourseName, CourseId]}
+}
+Ключи:{[CourseId]}
+Рассмотрим отношение:
+(StudentId, GroupName, CourseId, LecturerId, LecturerName, Mark)
+
+Слишком много фз
+Ключи:{[StudentId, CourseId, LecturerId]}
+Вижу конфликт с зависимостью: 
+{[LecturerId] -> [LecturerName]}
+Разделение:
+[StudentId, GroupName, CourseId, LecturerId, LecturerName, Mark] => [StudentId, GroupName, CourseId, LecturerId, Mark]; [LecturerId, LecturerName]
+Рассмотрим отношение:
+(StudentId, StudentName, GroupId)
+
+ФЗ:{
+{[StudentId] -> [StudentName, GroupId]}
+{[StudentId] -> [StudentName, GroupId, StudentId]}
+{[StudentId, StudentName] -> [StudentName, GroupId]}
+{[StudentId, GroupId] -> [StudentName, GroupId]}
+}
+Ключи:{[StudentId]}
+Рассмотрим отношение:
+(CourseId, CourseName)
+
+ФЗ:{
+{[CourseId] -> [CourseName]}
+{[CourseId] -> [CourseName, CourseId]}
+}
+Ключи:{[CourseId]}
+Рассмотрим отношение:
+(LecturerId, LecturerName)
+
+ФЗ:{
+{[LecturerId] -> [LecturerName]}
+{[LecturerId] -> [LecturerName, LecturerId]}
+}
+Ключи:{[LecturerId]}
+Рассмотрим отношение:
+(StudentId, GroupName, CourseId, LecturerId, Mark)
+
+Слишком много фз
+Ключи:{[StudentId, CourseId, LecturerId]}
+Вижу конфликт с зависимостью: 
+{[StudentId, CourseId] -> [Mark]}
+Разделение:
+[StudentId, GroupName, CourseId, LecturerId, Mark] => [StudentId, GroupName, CourseId, LecturerId]; [StudentId, CourseId, Mark]
+Рассмотрим отношение:
+(StudentId, StudentName, GroupId)
+
+ФЗ:{
+{[StudentId] -> [StudentName, GroupId]}
+{[StudentId] -> [StudentName, GroupId, StudentId]}
+{[StudentId, StudentName] -> [StudentName, GroupId]}
+{[StudentId, GroupId] -> [StudentName, GroupId]}
+}
+Ключи:{[StudentId]}
+Рассмотрим отношение:
+(CourseId, CourseName)
+
+ФЗ:{
+{[CourseId] -> [CourseName]}
+{[CourseId] -> [CourseName, CourseId]}
+}
+Ключи:{[CourseId]}
+Рассмотрим отношение:
+(LecturerId, LecturerName)
+
+ФЗ:{
+{[LecturerId] -> [LecturerName]}
+{[LecturerId] -> [LecturerName, LecturerId]}
+}
+Ключи:{[LecturerId]}
+Рассмотрим отношение:
+(StudentId, CourseId, Mark)
+
+ФЗ:{
+{[StudentId, CourseId] -> [Mark]}
+{[StudentId, CourseId] -> [Mark, StudentId]}
+{[StudentId, CourseId] -> [Mark, CourseId]}
+}
+Ключи:{[StudentId, CourseId]}
+Рассмотрим отношение:
+(StudentId, GroupName, CourseId, LecturerId)
+
+ФЗ:{
+{[StudentId] -> [GroupName]}
+}
+Ключи:{[StudentId, CourseId, LecturerId]}
+Вижу конфликт с зависимостью: 
+{[StudentId] -> [GroupName]}
+Разделение:
+[StudentId, GroupName, CourseId, LecturerId] => [StudentId, CourseId, LecturerId]; [StudentId, GroupName]
+Рассмотрим отношение:
+(StudentId, StudentName, GroupId)
+
+ФЗ:{
+{[StudentId] -> [StudentName, GroupId]}
+{[StudentId] -> [StudentName, GroupId, StudentId]}
+{[StudentId, StudentName] -> [StudentName, GroupId]}
+{[StudentId, GroupId] -> [StudentName, GroupId]}
+}
+Ключи:{[StudentId]}
+Рассмотрим отношение:
+(CourseId, CourseName)
+
+ФЗ:{
+{[CourseId] -> [CourseName]}
+{[CourseId] -> [CourseName, CourseId]}
+}
+Ключи:{[CourseId]}
+Рассмотрим отношение:
+(LecturerId, LecturerName)
+
+ФЗ:{
+{[LecturerId] -> [LecturerName]}
+{[LecturerId] -> [LecturerName, LecturerId]}
+}
+Ключи:{[LecturerId]}
+Рассмотрим отношение:
+(StudentId, CourseId, Mark)
+
+ФЗ:{
+{[StudentId, CourseId] -> [Mark]}
+{[StudentId, CourseId] -> [Mark, StudentId]}
+{[StudentId, CourseId] -> [Mark, CourseId]}
+}
+Ключи:{[StudentId, CourseId]}
+Рассмотрим отношение:
+(StudentId, GroupName)
+
+ФЗ:{
+{[StudentId] -> [GroupName]}
+}
+Ключи:{[StudentId]}
+Рассмотрим отношение:
+(StudentId, CourseId, LecturerId)
+
+ФЗ:{
+
+}
+Ключи:{[StudentId, CourseId, LecturerId]}
+
+
+--------------------- NF2 ----------------- Result
+
+Аттрибуты
+{StudentId, StudentName, GroupId}
+Ключи:
+{[StudentId]}
+ФЗ:{
+{[StudentId] -> [StudentName, GroupId]}
+{[StudentId] -> [StudentName, GroupId, StudentId]}
+{[StudentId, StudentName] -> [StudentName, GroupId]}
+{[StudentId, GroupId] -> [StudentName, GroupId]}
+}
+
+Аттрибуты
+{CourseId, CourseName}
+Ключи:
+{[CourseId]}
+ФЗ:{
+{[CourseId] -> [CourseName]}
+{[CourseId] -> [CourseName, CourseId]}
+}
+
+Аттрибуты
+{LecturerId, LecturerName}
+Ключи:
+{[LecturerId]}
+ФЗ:{
+{[LecturerId] -> [LecturerName]}
+{[LecturerId] -> [LecturerName, LecturerId]}
+}
+
+Аттрибуты
+{StudentId, CourseId, Mark}
+Ключи:
+{[StudentId, CourseId]}
+ФЗ:{
+{[StudentId, CourseId] -> [Mark]}
+{[StudentId, CourseId] -> [Mark, StudentId]}
+{[StudentId, CourseId] -> [Mark, CourseId]}
+}
+
+Аттрибуты
+{StudentId, GroupName}
+Ключи:
+{[StudentId]}
+ФЗ:{
+{[StudentId] -> [GroupName]}
+}
+
+Аттрибуты
+{StudentId, CourseId, LecturerId}
+Ключи:
+{[StudentId, CourseId, LecturerId]}
+ФЗ:{
+
+}
+
+--------------------- NF3 ----------------- Talk
+Рассмотрим отношение:
+(StudentId, StudentName, GroupId)
+
+ФЗ:{
+{[StudentId] -> [StudentName, GroupId]}
+{[StudentId] -> [StudentName, GroupId, StudentId]}
+{[StudentId, StudentName] -> [StudentName, GroupId]}
+{[StudentId, GroupId] -> [StudentName, GroupId]}
+}
+Ключи:{[StudentId]}
+
+Рассмотрим отношение:
+(CourseId, CourseName)
+
+ФЗ:{
+{[CourseId] -> [CourseName]}
+{[CourseId] -> [CourseName, CourseId]}
+}
+Ключи:{[CourseId]}
+
+Рассмотрим отношение:
+(LecturerId, LecturerName)
+
+ФЗ:{
+{[LecturerId] -> [LecturerName]}
+{[LecturerId] -> [LecturerName, LecturerId]}
+}
+Ключи:{[LecturerId]}
+
+Рассмотрим отношение:
+(StudentId, CourseId, Mark)
+
+ФЗ:{
+{[StudentId, CourseId] -> [Mark]}
+{[StudentId, CourseId] -> [Mark, StudentId]}
+{[StudentId, CourseId] -> [Mark, CourseId]}
+}
+Ключи:{[StudentId, CourseId]}
+
+Рассмотрим отношение:
+(StudentId, GroupName)
+
+ФЗ:{
+{[StudentId] -> [GroupName]}
+}
+Ключи:{[StudentId]}
+
+Рассмотрим отношение:
+(StudentId, CourseId, LecturerId)
+
+ФЗ:{
+
+}
+Ключи:{[StudentId, CourseId, LecturerId]}
+
+
+--------------------- NF3 ----------------- Result
+
+Аттрибуты
+{StudentId, StudentName, GroupId}
+Ключи:
+{[StudentId]}
+ФЗ:{
+{[StudentId] -> [StudentName, GroupId]}
+{[StudentId] -> [StudentName, GroupId, StudentId]}
+{[StudentId, StudentName] -> [StudentName, GroupId]}
+{[StudentId, GroupId] -> [StudentName, GroupId]}
+}
+
+Аттрибуты
+{CourseId, CourseName}
+Ключи:
+{[CourseId]}
+ФЗ:{
+{[CourseId] -> [CourseName]}
+{[CourseId] -> [CourseName, CourseId]}
+}
+
+Аттрибуты
+{LecturerId, LecturerName}
+Ключи:
+{[LecturerId]}
+ФЗ:{
+{[LecturerId] -> [LecturerName]}
+{[LecturerId] -> [LecturerName, LecturerId]}
+}
+
+Аттрибуты
+{StudentId, CourseId, Mark}
+Ключи:
+{[StudentId, CourseId]}
+ФЗ:{
+{[StudentId, CourseId] -> [Mark]}
+{[StudentId, CourseId] -> [Mark, StudentId]}
+{[StudentId, CourseId] -> [Mark, CourseId]}
+}
+
+Аттрибуты
+{StudentId, GroupName}
+Ключи:
+{[StudentId]}
+ФЗ:{
+{[StudentId] -> [GroupName]}
+}
+
+Аттрибуты
+{StudentId, CourseId, LecturerId}
+Ключи:
+{[StudentId, CourseId, LecturerId]}
+ФЗ:{
+
+}

@@ -1,0 +1,4 @@
+π{TeamName}(
+  π{TeamId, TeamName, ContestId}(Sessions ⋈ Teams)
+  ∖
+  π{TeamId, TeamName, ContestId}(Teams ⋈ Runs ⋈ Sessions))

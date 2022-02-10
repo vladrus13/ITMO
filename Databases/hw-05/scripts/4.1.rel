@@ -1,0 +1,4 @@
+Students ∖ 
+  (Students ⋈ 
+    π{StudentId}(Marks ⋈ 
+      (π{CourseId}(σ{CourseName = :CourseName}(Courses)))))

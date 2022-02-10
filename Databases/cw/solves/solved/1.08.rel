@@ -1,0 +1,9 @@
+
+π{SessionId}(Sessions)
+∖
+(π{SessionId}(
+  π{SessionId, Letter}(Problems ⋈ Sessions)
+  ∖
+  π{SessionId, Letter}(σ{Accepted = 1}(Runs))
+)
+)

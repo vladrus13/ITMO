@@ -1,0 +1,4 @@
+π{StudentName, CourseName}(
+  σ{StudentGroupId=PlanGroupId}(
+    (ρ{StudentGroupId=GroupId}(Students)) × 
+    (ρ{PlanGroupId=GroupId}(Plan ⋈ Courses))))

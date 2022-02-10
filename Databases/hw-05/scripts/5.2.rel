@@ -1,0 +1,11 @@
+π{StudentName, CourseName}(
+  ((π{StudentId, StudentName, CourseId}(
+    ρ{GroupId=StudentGroupId}(σ{StudentGroupId=PlanGroupId}(
+      (ρ{StudentGroupId=GroupId}(Students)) × 
+      (ρ{PlanGroupId=GroupId}(Plan)))))) ∖ 
+        (π{StudentId, StudentName, CourseId}(ρ{GroupId=StudentGroupId}(
+          σ{StudentGroupId=PlanGroupId}(
+            (ρ{StudentGroupId=GroupId}(Students)) × 
+            (ρ{PlanGroupId=GroupId}(Plan)))) ⋈ 
+              Marks))) ⋈ 
+              Courses)

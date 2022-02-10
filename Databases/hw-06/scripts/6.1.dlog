@@ -1,0 +1,10 @@
+StudentsWithMarks(StudentId, CourseId) :- 
+  Marks(StudentId, CourseId, _).
+BannedStudents(GroupId, CourseId) :-
+  Courses(CourseId, _),
+  Students(StudentId, _, GroupId),
+  ¬ StudentsWithMarks(StudentId, CourseId).
+NotBannedGroup(GroupId, CourseId) :-
+  Groups(GroupId, GroupName),
+  Courses(CourseId, _),
+  ¬ BannedStudents(GroupId, CourseId).

@@ -1,0 +1,1 @@
+π{StudentId}(σ{LecturerName = :LecturerName}(Marks ⋈ Students ⋈ Plan ⋈ Lecturers))

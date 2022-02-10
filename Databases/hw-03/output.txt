@@ -1,0 +1,513 @@
+ФЗ:
+StudentId -> StudentName, GroupId
+-- Конечно же, у студента есть имя и его группа, и они однозначно определены
+GroupId -> GroupName
+-- Конечно же у группы есть имя, и оно однозначно определено
+GroupName -> GroupId
+-- В нашем университете названия группа уникальны
+CourseId -> CourseName
+-- Конечно же, у курса есть имя, и оно однозначно определено
+LecturerId -> LecturerName
+-- Конечно же, у лектора есть имя, и оно однозначно определено
+StudentId, CourseId -> Mark
+-- У студента на каком либо курсе может быть оценка, и она однозначно определна
+GroupId, CourseId -> LecturerId
+-- У группы курс ведет всегда определенный преподаватель (практики иногда разные, но лекторы нет)
+
+Получение ключей:
+Попытка убрать ключ: StudentId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: StudentName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ StudentName. Подключ: StudentId, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark
+Попытка убрать ключ: GroupId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ GroupId. Подключ: StudentId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark
+Попытка убрать ключ: GroupName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ GroupName. Подключ: StudentId, CourseId, CourseName, LecturerId, LecturerName, Mark
+Попытка убрать ключ: CourseId
+Получено замыкание: CourseName, GroupName, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: CourseName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ CourseName. Подключ: StudentId, CourseId, LecturerId, LecturerName, Mark
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, CourseId, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, CourseId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, CourseId
+У нас есть ключ StudentId, CourseId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, CourseId, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, CourseId, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, CourseId, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, CourseId, LecturerId, LecturerName
+Попытка убрать ключ: LecturerId
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, CourseId, CourseName, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, CourseId, CourseName, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, CourseId, CourseName
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, CourseId, CourseName, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, CourseId, CourseName, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, CourseId, CourseName, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, CourseId, CourseName, LecturerId, LecturerName
+Попытка убрать ключ: CourseId
+Получено замыкание: GroupName, CourseName, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: CourseName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ CourseName. Подключ: StudentId, GroupName, CourseId, LecturerId, LecturerName, Mark
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, GroupName, CourseId, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupName, CourseId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupName, CourseId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupName, CourseId, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupName, CourseId, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupName, CourseId, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupName, CourseId, LecturerId, LecturerName
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, GroupName, CourseId, CourseName, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupName, CourseId, CourseName, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupName, CourseId, CourseName
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupName, CourseId, CourseName, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupName, CourseId, CourseName, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupName, CourseId, CourseName, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupName, CourseId, CourseName, LecturerId, LecturerName
+Попытка убрать ключ: GroupName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ GroupName. Подключ: StudentId, GroupId, CourseId, CourseName, LecturerId, LecturerName, Mark
+Попытка убрать ключ: CourseId
+Получено замыкание: CourseName, GroupName, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: CourseName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ CourseName. Подключ: StudentId, GroupId, CourseId, LecturerId, LecturerName, Mark
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, GroupId, CourseId, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupId, CourseId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, CourseId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, CourseId, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupId, CourseId, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, CourseId, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, CourseId, LecturerId, LecturerName
+Попытка убрать ключ: LecturerId
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, GroupId, CourseId, CourseName, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupId, CourseId, CourseName, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, CourseId, CourseName
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, CourseId, CourseName, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupId, CourseId, CourseName, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, CourseId, CourseName, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, CourseId, CourseName, LecturerId, LecturerName
+Попытка убрать ключ: CourseId
+Получено замыкание: GroupName, CourseName, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: CourseName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ CourseName. Подключ: StudentId, GroupId, GroupName, CourseId, LecturerId, LecturerName, Mark
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, GroupId, GroupName, CourseId, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupId, GroupName, CourseId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, GroupName, CourseId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, GroupName, CourseId, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupId, GroupName, CourseId, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, GroupName, CourseId, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, GroupName, CourseId, LecturerId, LecturerName
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, GroupId, GroupName, CourseId, CourseName, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupId, GroupName, CourseId, CourseName, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, GroupName, CourseId, CourseName
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, GroupName, CourseId, CourseName, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, GroupId, GroupName, CourseId, CourseName, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, GroupName, CourseId, CourseName, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName
+Попытка убрать ключ: GroupId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ GroupId. Подключ: StudentId, StudentName, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark
+Попытка убрать ключ: GroupName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ GroupName. Подключ: StudentId, StudentName, CourseId, CourseName, LecturerId, LecturerName, Mark
+Попытка убрать ключ: CourseId
+Получено замыкание: CourseName, GroupName, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: CourseName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ CourseName. Подключ: StudentId, StudentName, CourseId, LecturerId, LecturerName, Mark
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, StudentName, CourseId, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, CourseId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, CourseId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, CourseId, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, CourseId, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, CourseId, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, CourseId, LecturerId, LecturerName
+Попытка убрать ключ: LecturerId
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, StudentName, CourseId, CourseName, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, CourseId, CourseName, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, CourseId, CourseName
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, CourseId, CourseName, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, CourseId, CourseName, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, CourseId, CourseName, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, CourseId, CourseName, LecturerId, LecturerName
+Попытка убрать ключ: CourseId
+Получено замыкание: GroupName, CourseName, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: CourseName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ CourseName. Подключ: StudentId, StudentName, GroupName, CourseId, LecturerId, LecturerName, Mark
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, StudentName, GroupName, CourseId, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupName, CourseId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupName, CourseId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupName, CourseId, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupName, CourseId, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupName, CourseId, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupName, CourseId, LecturerId, LecturerName
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, StudentName, GroupName, CourseId, CourseName, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupName, CourseId, CourseName, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupName, CourseId, CourseName
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupName, CourseId, CourseName, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupName, CourseId, CourseName, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupName, CourseId, CourseName, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupName, CourseId, CourseName, LecturerId, LecturerName
+Попытка убрать ключ: GroupName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ GroupName. Подключ: StudentId, StudentName, GroupId, CourseId, CourseName, LecturerId, LecturerName, Mark
+Попытка убрать ключ: CourseId
+Получено замыкание: CourseName, GroupName, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: CourseName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ CourseName. Подключ: StudentId, StudentName, GroupId, CourseId, LecturerId, LecturerName, Mark
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, StudentName, GroupId, CourseId, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupId, CourseId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, CourseId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, CourseId, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupId, CourseId, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, CourseId, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, CourseId, LecturerId, LecturerName
+Попытка убрать ключ: LecturerId
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, StudentName, GroupId, CourseId, CourseName, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupId, CourseId, CourseName, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, CourseId, CourseName
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, CourseId, CourseName, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupId, CourseId, CourseName, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, CourseId, CourseName, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: CourseName, GroupName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, CourseId, CourseName, LecturerId, LecturerName
+Попытка убрать ключ: CourseId
+Получено замыкание: GroupName, CourseName, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно не полное. Мы не будем убирать этот ключ
+Попытка убрать ключ: CourseName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ CourseName. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, LecturerId, LecturerName, Mark
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, LecturerId, LecturerName
+Попытка убрать ключ: LecturerId
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerId. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerName, Mark
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, CourseName
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerName
+Попытка убрать ключ: LecturerName
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ LecturerName. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, Mark
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId
+Попытка убрать ключ: Mark
+Получено замыкание: GroupName, CourseName, CourseId, Mark, LecturerName, StudentName, LecturerId, StudentId, GroupId
+Оно полное! Убираем ключ Mark. Подключ: StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName
+
+
+Ключи:
+StudentId, CourseId
+
+Задания:
+Задача 0:
+{CourseId, GroupId}
+Run rule:
+[GroupId] -> [GroupName]
+{CourseId, GroupId, GroupName}
+Run rule:
+[CourseId] -> [CourseName]
+{CourseId, CourseName, GroupId, GroupName}
+Run rule:
+[GroupId, CourseId] -> [LecturerId]
+{CourseId, CourseName, GroupId, GroupName, LecturerId}
+Run rule:
+[LecturerId] -> [LecturerName]
+{CourseId, CourseName, GroupId, GroupName, LecturerId, LecturerName}
+
+Задача 1:
+{CourseId, StudentId}
+Run rule:
+[StudentId] -> [StudentName, GroupId]
+{CourseId, GroupId, StudentId, StudentName}
+Run rule:
+[GroupId] -> [GroupName]
+{CourseId, GroupId, GroupName, StudentId, StudentName}
+Run rule:
+[CourseId] -> [CourseName]
+{CourseId, CourseName, GroupId, GroupName, StudentId, StudentName}
+Run rule:
+[StudentId, CourseId] -> [Mark]
+{CourseId, CourseName, GroupId, GroupName, Mark, StudentId, StudentName}
+Run rule:
+[GroupId, CourseId] -> [LecturerId]
+{CourseId, CourseName, GroupId, GroupName, LecturerId, Mark, StudentId, StudentName}
+Run rule:
+[LecturerId] -> [LecturerName]
+{CourseId, CourseName, GroupId, GroupName, LecturerId, LecturerName, Mark, StudentId, StudentName}
+
+Задача 2:
+{LecturerId, StudentId}
+Run rule:
+[StudentId] -> [StudentName, GroupId]
+{GroupId, LecturerId, StudentId, StudentName}
+Run rule:
+[GroupId] -> [GroupName]
+{GroupId, GroupName, LecturerId, StudentId, StudentName}
+Run rule:
+[LecturerId] -> [LecturerName]
+{GroupId, GroupName, LecturerId, LecturerName, StudentId, StudentName}
+
+
+
+После этапа сплита:
+StudentId -> StudentName
+StudentId -> GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+StudentId, CourseId -> Mark
+GroupId, CourseId -> LecturerId
+
+
+После этапа удаления атрибутов:
+StudentId -> StudentName
+StudentId -> GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+StudentId, CourseId -> Mark
+GroupId, CourseId -> LecturerId
+
+
+После этапа удаления правил:
+StudentId -> StudentName
+StudentId -> GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+StudentId, CourseId -> Mark
+GroupId, CourseId -> LecturerId

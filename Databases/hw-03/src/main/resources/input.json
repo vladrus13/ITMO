@@ -1,0 +1,27 @@
+{
+  "attributes": [
+    "StudentId",
+    "StudentName",
+    "GroupId",
+    "GroupName",
+    "CourseId",
+    "CourseName",
+    "LecturerId",
+    "LecturerName",
+    "Mark"
+  ],
+  "functional": [
+    {"from": ["StudentId"], "to": ["StudentName", "GroupId"], "why": "Конечно же, у студента есть имя и его группа, и они однозначно определены"},
+    {"from": ["GroupId"], "to": ["GroupName"], "why": "Конечно же у группы есть имя, и оно однозначно определено"},
+    {"from": ["GroupName"], "to": ["GroupId"], "why": "В нашем университете названия группа уникальны"},
+    {"from": ["CourseId"], "to": ["CourseName"], "why": "Конечно же, у курса есть имя, и оно однозначно определено"},
+    {"from": ["LecturerId"], "to": ["LecturerName"], "why": "Конечно же, у лектора есть имя, и оно однозначно определено"},
+    {"from": ["StudentId", "CourseId"], "to": ["Mark"], "why": "У студента на каком либо курсе может быть оценка, и она однозначно определна"},
+    {"from": ["GroupId", "CourseId"], "to": ["LecturerId"], "why": "У группы курс ведет всегда определенный преподаватель (практики иногда разные, но лекторы нет)"}
+  ],
+  "task_closure": [
+    ["GroupId", "CourseId"],
+    ["StudentId", "CourseId"],
+    ["StudentId", "LecturerId"]
+  ]
+}

@@ -1,0 +1,4 @@
+
+TeamsWrong(TeamId) :-
+  Runs(_, SessionId, :Letter, _, 0),
+  Sessions(SessionId, TeamId, :ContestId, _).

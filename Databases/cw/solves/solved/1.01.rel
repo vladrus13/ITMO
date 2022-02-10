@@ -1,0 +1,1 @@
+π{TeamId}(σ{ContestId = :ContestId}(Sessions))

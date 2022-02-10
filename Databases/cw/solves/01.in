@@ -1,0 +1,196 @@
+comment Id городов, в которых продают товар номер :GId
+
+set-var :TeamId = 1
+
+set-var :ContestId = 2
+
+print-ra π{TeamId, ContestId, RunId, SessionId, Letter, SubmitTime}((σ{TeamId = :TeamId && ContestId = :ContestId}(Sessions)) ⋈ Contests ⋈ Problems ⋈ Runs)
+
+print-sql 
+  select distinct CId from SGC where GId = :GId;
+    # CId
+    # '1'
+    # '4'
+    # '2'
+    # '5'
+
+comment Id городов, в которых продают товар с названием :GName
+
+set-var :GName = 'Монитор'
+
+print-ra π{CId}(σ{GName = :GName}(SGC ⋈ G))
+    # CId
+    # 1  
+    # 4  
+    # 2  
+    # 5  
+
+print-sql 
+  select distinct CId from SGC natural join G where GName = :GName;
+    # CId
+    # '1'
+    # '2'
+    # '4'
+    # '5'
+
+comment Названия городов, в которых продают товар с названием :GName
+
+set-var :GName = 'Монитор'
+
+print-ra π{CName}(σ{GName = :GName}(SGC ⋈ G ⋈ C))
+    # CName   
+    # 'СПб'   
+    # 'Псков' 
+    # 'Москва'
+
+print-sql 
+  select distinct CName
+  from SGC natural join G natural join C
+  where GName = :GName;
+    # CName   
+    # 'СПб'   
+    # 'Москва'
+    # 'Псков' 
+
+print-sql 
+  select CName, count(CId) as cnt
+  from (
+    select distinct CId
+    from SGC natural join G
+    where GName = :GName
+  ) C1 natural join C
+  group by CName;
+    # CName   , cnt
+    # 'Москва', 1  
+    # 'Псков' , 1  
+    # 'СПб'   , 2  
+
+comment Названия городов, в которых продают что-нибудь, 
+  кроме товаров с названием :GName
+
+set-var :GName = 'Монитор'
+
+print-ra π{CName}(σ{GName ≠ :GName}(SGC ⋈ G) ⋈ C)
+    # CName   
+    # 'СПб'   
+    # 'Москва'
+
+print-sql 
+  select CName
+  from (
+    select distinct CId
+    from SGC natural join G
+    where GName <> 'Монитор'
+  ) С1 natural join C
+    # CName   
+    # 'СПб'   
+    # 'Москва'
+
+print-sql 
+  select distinct CName
+  from SGC natural join G natural join C
+  where GName <> :GName
+    # CName   
+    # 'СПб'   
+    # 'Москва'
+
+comment Названия городов, в которых не продают товары с названием :GName
+
+set-var :GName = 'Монитор'
+
+print-ra π{CName}(C ∖ π{CId, CName}(σ{GName = :GName}(SGC ⋈ G ⋈ C)))
+    # CName   
+    # 'Казань'
+
+print-sql 
+  select CName from C
+  except
+  select CName
+    from SGC natural join G natural join C
+    where GName = :GName
+    # CName   
+    # 'Казань'
+
+
+#############################
+subsection Запросы с делением
+
+comment Товары, продаваемые всеми поставщиками
+
+print-ra π{SId, GId}(SGC) ÷ π{SId}(S)
+    # GId
+    # 1  
+
+print-ra π{GId}(SGC) ∖ π{GId}(π{GId}(SGC) × π{SId}(S) ∖ π{GId, SId}(SGC))
+    # GId
+    # 1  
+
+print-sql 
+  select GId from G
+  except
+  select GID from (
+    select SGC.GId, S.SId from SGC, S
+    except
+    select GId, SId from SGC
+  ) R
+    # GId
+    # '1'
+
+comment Товары, продаваемые всеми поставщиками в городе :CId
+
+set-var :CId = 1
+
+print-ra π{SId, GId}(σ{CId = :CId}(SGC)) ÷ π{SId}(S)
+    # GId
+
+print-sql 
+  select GId from G
+  except
+  select GId from (
+    select distinct SGC.GId, S.SId from SGC, S
+    except
+    select GId, SId from SGC where SGC.CId = :CId
+  ) R
+    # EmptyResult
+
+comment Товары, продаваемые всеми поставщиками, находящимися в городе :CId
+
+print-ra π{GId, SId}(SGC) ÷ π{SId}(σ{CId = :CId}(SGC))
+    # GId
+    # 1  
+
+
+################################
+subsection Аггрегирующие запросы
+
+comment Самое дешевое предложение товара :GId, :SId
+
+set-var :GId = 1
+
+set-var :CId = 1
+
+print-sql 
+  select min(Price) from SGC where GId = :GId and CId = :CId
+    # min(Price)
+    # '10000'   
+
+print-sql 
+  select SId
+  from SGC
+    inner join (
+      select min(Price) as MinPrice from SGC where GId = :GId and CId = :CId
+    ) P on SGC.Price = MinPrice
+    # SId
+    # '2'
+
+print-sql 
+  select SId, P.GId, Price
+  from SGC
+    inner join (
+      select min(Price) as MinPrice, GId
+      from SGC where CId = :CId
+      group by GId
+    ) P on SGC.Price = MinPrice and SGC.GId = P.GId
+    # SId, GId, Price  
+    # '1', '2', '500'  
+    # '2', '1', '10000'

@@ -1,0 +1,42 @@
+Начало:
+
+(StudentId, CourseId)
+StudentId -> StudentName, GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+StudentId, CourseId -> Mark
+GroupId, CourseId -> LecturerId
+
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+
+-- StudentId -> StudentName, GroupId
+(StudentId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+(StudentId, StudentName, GroupId)
+
+-- CourseId -> CourseName
+(StudentId, GroupName, CourseId, LecturerId, LecturerName, Mark)
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+
+-- StudentId -> GroupName
+(StudentId, CourseId, LecturerId, LecturerName, Mark)
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(StudentId, GroupName)
+
+---------------
+
+3НФ
+
+-- LecturerId -> LecturerName
+(StudentId, CourseId, LecturerId, Mark)
+(LecturerId, LecturerName)
+(StudentId, StudentName, GroupId)
+(CourseId, CourseName)
+(StudentId, GroupName)
+
+----------------
+
+

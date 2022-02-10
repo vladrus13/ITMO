@@ -1,0 +1,32 @@
+Рассмотрим действия:
+1) Показать свободные места(:FlightId) =
+start transaction read only isolation level read committed;
+FreeSeats(:FlightId);
+commit;
+2) Купить анонимно(:FlightId, :SeatNo) =
+start transaction read write isolation level read committed;
+BuyFree(:FlightId, :SeatNo);
+commit;
+3) Забронировать(:UserId, :Password, :FlightId, :SeatNo) =
+start transaction read write isolation level read committed;
+Reserve(:UserId, :Password, :FlightId, :SeatNo);
+commit;
+4) Продлить бронь на 3 дня(:UserId, :Password, :FlightId, :SeatNo) =
+start transaction read write isolation level repeatable read;
+ExtendReservation(:UserId, :Password, :FlightId, :SeatNo);
+commit;
+5) Купить забронированную(:UserId, :Password, :FlightId, :SeatNo)
+start transaction read write isolation level repeatable read;
+buyreserved(1, 'password1', 1, '3A');
+commit;
+
+Заметим, что каждое действие возвращает строку или строки - результаты операции, которые можно уже показать пользователю
+
+Наш сервис работает так:
+:FlightId <- (получаем от пользователя нужный ему рейс)
+Отправляем ему список <- execute(Показать свободные места(:FlightId))
+:d <- (получаем от пользователя какое то действие с нужными полями)
+if (d is Купить анонимно) отправить пользователю <- execute(Купить анонимно(d.FlightId, d.SeatNo))
+if (d is Забронировать) отправить пользователю <- execute(Забронировать(d.UserId, d.Password, d.FlightId, d.SeatNo))
+if (d is Продлить бронь на 3 дня) отправить пользователю <- execute(Продлить бронь на 3 дня(d.UserId, d.Password, d.FlightId, d.SeatNo))
+if (d is Купить забронированную) отправить пользователю <- execute(Купить забронированную(d.UserId, d.Password, d.FlightId, d.SeatNo))
