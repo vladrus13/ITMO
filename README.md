@@ -173,3 +173,13 @@
   ## [Эволюционные алгоритмы](https://github.com/vladrus13/ITMO/tree/master/EvolutionaryAlgorithms)
   
   ## [Распределенное программирование](https://github.com/vladrus13/ITMO/tree/master/PDS)
+  
+  ## [Параллельные алгоритмы](https://github.com/vladrus13/ITMO/tree/master/ParallelAlgo)
+  
+  ## [Теория кодирования](https://github.com/vladrus13/ITMO/tree/master/TheorCode)
+  
+  ## [Базы данных](https://github.com/vladrus13/ITMO/tree/master/Databases)
+  
+  1. [Домашки](https://github.com/vladrus13/ITMO/tree/master/Databases)
+  2. [Генератор проекта](https://github.com/vladrus13/database-project)
+  
